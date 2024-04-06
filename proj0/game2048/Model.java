@@ -114,12 +114,99 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        board.setViewingPerspective(side);
+
+        // iterate over 4 columns
+
+//        column_check (1 to 4)
+//
+//        move_eligible? (1,2,3)
+//
+//        already_merged?
+//
+//                move_tile
+
+        for (int c = 0; c < board.size() ; c++) {
+            if(check_column(c) == true){
+                changed = true;
+            }
+        }
+
+        board.setViewingPerspective(Side.NORTH);
+
+
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
     }
+
+
+    public boolean hasSameValue(Tile t1, Tile t2){
+
+        return t1.value() == t2.value();
+    }
+
+    public boolean check_column(int c){
+
+        boolean [] isMergedColumn = new boolean[4];
+
+        boolean changed;
+        changed = false;
+
+        for(int r = 2; r >= 0; r--){
+
+            if (board.tile(c, r) == null) {
+                continue;
+            }
+
+            Tile t = board.tile(c, r);
+
+            int counter = 0;
+            // i tests for a given number of moves 1 to 3
+            for(int i = 1; i <= 3-r; i++){
+
+                Tile w = board.tile(c, r+i);
+
+//                int next_pos = r + i;
+
+                // w is null -> add one to counter
+                // w is already merged -> break loop, don't increment counter
+                // w==t,  -> increment counter, and merge then break loop
+                // w != t -> don't increment counter, then break loop
+
+                if(w==null){
+                    counter++;
+
+                } else if(isMergedColumn[r+i]==true){
+                    break;
+                } else if(hasSameValue(t,w)==true){
+                    counter++;
+                    isMergedColumn[r+i]=true;
+                    changed=true;
+                    break;
+                } else if(hasSameValue(t,w)==false) {
+                    break;
+                }
+
+                }
+            if(counter > 0) {
+                board.move(c, r + counter, t);
+                changed=true;
+            }
+            if(isMergedColumn[r+counter]==true){
+                score += board.tile(c, r+counter).value();
+            } else {
+                score += 0;
+            }
+
+            }
+        return changed;
+        }
+
+
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -138,6 +225,18 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+
+
+
+        int sz = b.size();
+
+        for (int col = 0; col < sz; col += 1) {
+            for (int row = 0; row < sz; row += 1) {
+                if (b.tile(col,row)==null){
+                    return true;
+                }
+        }
+        }
         return false;
     }
 
@@ -148,6 +247,22 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+
+        int sz = b.size();
+        int t = 0;
+
+        for (int col = 0; col < sz; col += 1) {
+            for (int row = 0; row < sz; row += 1) {
+//                t=b.tile(col,row);
+                if (b.tile(col,row) != null){
+                if (b.tile(col,row).value()==MAX_PIECE){
+                    return true;
+                }
+                }
+            }
+        }
+
+
         return false;
     }
 
@@ -159,9 +274,55 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+
+        int sz = b.size();
+
+        if (emptySpaceExists(b) == true) {
+
+            return true;
+        }
+
+        int x = 0;
+        int y = 0;
+
+        for (int col = 0; col < sz; col += 1) {
+            for (int row = 0; row < sz-1; row += 1) {
+
+                x = col + 1;
+                y = row + 1;
+//                t=b.tile(col,row);
+//                if (b.tile(col,row) != null){
+                if (b.tile(col, row).value() == b.tile(col, y).value()) {
+                    return true;
+                }
+            }
+
+
+            for (int col1 = 0; col1 < sz-1; col1 += 1) {
+                for (int row1 = 0; row1 < sz; row1 += 1) {
+
+                    x = col1 + 1;
+                    y = row1 + 1;
+//                t=b.tile(col,row);
+//                if (b.tile(col,row) != null){
+                    if (b.tile(col1, row1).value() == b.tile(x, row1).value()) {
+                        return true;
+                    }
+
+                }
+
+//                if ((x < sz ) & (col < x) & (b.tile(col, row).value() == b.tile(x, row).value())) {
+//                    return true;
+////                }
+//                }
+
+            }
+
+
+
+        }
         return false;
     }
-
 
     @Override
      /** Returns the model as a string, used for debugging. */
