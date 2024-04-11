@@ -11,20 +11,20 @@ public class IntListExercises {
     public static void addConstant(IntList lst, int c) {
         IntList head = lst;
 
-        if (head.rest == null) {
-            head.first += c;
-            return;
-        }
-
-        head.first += c;
-//        head = head.rest;
-
-        addConstant(head.rest, c);
-
-//        while (head.rest != null) {
+//        if (head.rest == null) {
 //            head.first += c;
-//            head = head.rest;
+//            return;
 //        }
+//
+//        head.first += c;
+////        head = head.rest;
+//
+//        addConstant(head.rest, c);
+
+        while (head != null) {
+            head.first += c;
+            head = head.rest;
+        }
 //
 //        while (head.rest != null) {
 //            head.first += c;
@@ -104,33 +104,44 @@ public class IntListExercises {
 //    }
 
 //    private static boolean changed=false;
-    private static boolean changed=false;
+//    private static boolean changed=false;
+//
+//    public static boolean changed() {
+//        return changed;
+//    }
+//    public static boolean squarePrimes(IntList lst) {
+//        // Base Case: we have reached the end of the list
+//
+//        if (lst == null) {
+////            return false;
+//            return changed();
+//        }
+//
+//        boolean currElemIsPrime = Primes.isPrime(lst.first);
+//
+//        if (currElemIsPrime) {
+//            lst.first *= lst.first;
+//            changed = true;
+//        }
+//
+//        boolean changed = false;
+//
+//        return squarePrimes(lst.rest);
+////        return currElemIsPrime || squarePrimes(lst.rest);
+//    }
 
-    public static boolean changed() {
-        return changed;
-    }
     public static boolean squarePrimes(IntList lst) {
         // Base Case: we have reached the end of the list
-
-
-
         if (lst == null) {
-//            return false;
-            return changed();
+            return false;
         }
 
         boolean currElemIsPrime = Primes.isPrime(lst.first);
 
         if (currElemIsPrime) {
             lst.first *= lst.first;
-            changed = true;
         }
 
-        boolean changed = false;
-
-        return squarePrimes(lst.rest);
-
-
-//        return currElemIsPrime || squarePrimes(lst.rest);
+        return squarePrimes(lst.rest) || currElemIsPrime;
     }
 }
