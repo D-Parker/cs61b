@@ -1,5 +1,8 @@
 package timingtest;
 
+import java.lang.Math;
+
+
 /** Array based list.
  *  @author Josh Hug
  */
@@ -34,7 +37,7 @@ public class AList<Item> {
     /** Inserts X into the back of the list. */
     public void addLast(Item x) {
         if (size == items.length) {
-            resize(size + 1);
+            resize((int) Math.round(size * 1.01));
         }
 
         items[size] = x;

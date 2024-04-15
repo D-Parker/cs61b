@@ -17,11 +17,42 @@ public class TimeAList {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         timeAListConstruction();
+
+
+
     }
 
     public static void timeAListConstruction() {
         // TODO: YOUR CODE HERE
+
+
+        int[] b;
+        b = new int[]{1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000,10000000};
+
+        AList X = new  AList();
+
+        AList Y = new  AList();
+
+        for (int j = 0; j < b.length; j+= 1 ) {
+            AList Temp = new AList();
+            X.addLast(b[j]);
+            Stopwatch t = new Stopwatch();
+            for (int i = 1; i <= b[j]; i += 1) {
+                Temp.addLast(0);
+            }
+
+            double timeInSeconds = t.elapsedTime();
+            Y.addLast(timeInSeconds);
+
+        }
+
+        AList Z = X;
+
+        printTimingTable(X, Y, Z);
     }
+
+
 }
