@@ -146,9 +146,9 @@ public class LinkedListDeque<T> implements Iterable<T>  {
 
 
 // returns the first item in the deque
-    public T getFirst() {
-        return sentinel.next.item;
-    }
+//    public T getFirst() {
+//        return sentinel.next.item;
+//    }
 
     // constructs an IntNode
     private class IntNode {
@@ -181,8 +181,8 @@ public class LinkedListDeque<T> implements Iterable<T>  {
 
 
 
-    public static void main(String[] args) {
-
+//    public static void main(String[] args) {
+//
 //        System.out.print("abc");
 
 //        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
@@ -229,8 +229,8 @@ public class LinkedListDeque<T> implements Iterable<T>  {
 //        lld1.printDeque();
 //
 //        System.out.println(lld1.getFirst());
-
-    }
+//
+//    }
 }
 
 
