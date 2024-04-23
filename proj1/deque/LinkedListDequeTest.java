@@ -1,12 +1,147 @@
 package deque;
 
 import org.junit.Test;
+
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 
 /** Performs some basic linked list tests. */
 public class LinkedListDequeTest {
 
+
+    @Test
+    /**
+     Tests construction of deque, and the addFirst and getFirst methods
+     */
+
+    public void basicDequeTest() {
+
+        // Test that String type works
+        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        // test case of empty list
+
+        assertEquals(null, lld1.getFirst());
+        // test after adding one item
+        lld1.addFirst("gtg");
+        assertEquals("gtg", lld1.getFirst());
+
+        // test after adding multiple items
+        lld1.addFirst("xyz");
+        assertEquals("xyz", lld1.getFirst());
+
+        // Test that integer type works
+//        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+//        lld2.addFirst(6);
+//
+//        assertEquals(, 6, lld2.getFirst() );
+    }
+
+
+
+
+    @Test
+    /**
+     Test of addLast method
+     */
+
+
+    public void addLastDequeTest() {
+
+        // Test that String type works
+        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        // test case of empty list
+
+        assertEquals(0, lld1.size());
+
+        lld1.addLast("abc");
+
+        assertEquals("abc", lld1.getFirst());
+
+        lld1.addLast("def");
+
+        assertEquals("abc", lld1.getFirst());
+
+        assertEquals(2, lld1.size());
+
+        System.out.println("Printing out deque: ");
+        lld1.printDeque();
+
+        lld1.addFirst("www");
+
+        assertEquals("www", lld1.removeFirst());
+
+        assertEquals("abc", lld1.removeFirst());
+
+        assertEquals("def", lld1.removeFirst());
+
+        assertEquals(null, lld1.removeFirst());
+
+
+
+        lld1.addFirst("aaa");
+        assertEquals("aaa", lld1.removeLast());
+        lld1.addFirst("bbb");
+        lld1.addFirst("ccc");
+        assertEquals("bbb", lld1.removeLast());
+        assertEquals("ccc", lld1.removeLast());
+        assertEquals(null, lld1.removeLast());
+
+        // test after adding one item
+//        lld1.addFirst("gtg");
+//        assertEquals("gtg", lld1.getFirst());
+//
+//        // test after adding multiple items
+//        lld1.addFirst("xyz");
+//        assertEquals("xyz", lld1.getFirst());
+
+        // Test that integer type works
+//        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+//        lld2.addFirst(6);
+//
+//        assertEquals(, 6, lld2.getFirst() );
+    }
+
+
+    @Test
+    /**
+     Test of addLast method
+     */
+
+
+    public void getDequeTest() {
+
+        LinkedListDeque<String> lld3 = new LinkedListDeque<>();
+        assertEquals(null, lld3.get(0));
+
+        lld3.addFirst("xyz");
+
+        assertEquals("xyz", lld3.get(0));
+        assertEquals("xyz", lld3.getRecursive(0));
+
+        lld3.addFirst("aaa");
+        lld3.addFirst("bbb");
+
+        assertEquals("xyz", lld3.get(2));
+        assertEquals("xyz", lld3.getRecursive(2));
+
+        assertEquals("aaa", lld3.get(1));
+        assertEquals("xyz", lld3.getRecursive(2));
+    }
+
+
+
+
+
+//        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+////        assertNull(lld1.getFirst());
+////        lld1.addFirst("abc");
+//         System.out.println("abc");
+////        assertEquals("abc", lld1.getFirst());
+//    }
+//
+//
     @Test
     /** Adds a few things to the list, checking isEmpty() and size() are correct,
      * finally printing the results.
