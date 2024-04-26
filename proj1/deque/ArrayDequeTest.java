@@ -9,87 +9,107 @@ public class ArrayDequeTest {
 
 
     @Test
-    /**
-     Tests construction of ArrayDeque
-     */
 
-    public void basicDequeTest() {
+    public void addFirstTest() {
         ArrayDeque<String> A = new ArrayDeque<>();
         assertNotNull(A);
-        A.addFirst("w");
-        assertEquals("w", A.get(0));
-        A.addLast("w");
-        A.addLast("w");
-        A.addLast("w");
-        A.addLast("w");
-        A.addLast("w");
-        A.addLast("w");
-        A.addLast("w");
-        A.addLast("w");
-        assertEquals(A.size(), 9);
-        A.addFirst("f");
-        assertEquals(A.size(), 10);
-        assertEquals(A.get(0), "f");
-        assertEquals(A.get(1), "w");
+        A.addLast("z");
+        A.addLast("z");
 
-        System.out.print(A.removeFirst() );
-        A.addFirst("f");
-        System.out.print(A.removeFirst() );
+        ArrayDeque<String> B = new ArrayDeque<>();
+        assertNotNull(A);
+        B.addLast("k");
 
+        A.equals(B);
+
+        assertEquals(A.get(0),"z");
+
+        A.addFirst("a");
+        A.addLast("z");
+
+        A.addFirst("b");
+        A.addFirst("c");
+        A.printDeque();
+        assertEquals(A.get(4),"z");
+        assertEquals(A.get(2),"a");
+
+    }
+    @Test
+
+    public void removeFirstTest() {
+        ArrayDeque<String> A = new ArrayDeque<>();
+        assertEquals(A.removeFirst(),null);
+
+        A.addFirst("a");
+        assertEquals(A.removeFirst(),"a");
+        assertEquals(A.size(), 0);
+        A.addFirst("b");
+
+        A.printDeque();
+
+
+        ArrayDeque<String> B = new ArrayDeque<>();
+        B.addLast("a");
+        assertEquals(B.removeFirst(),"a");
+        assertEquals(B.size(), 0);
+        B.addFirst("c");
+
+        B.printDeque();
+    }
+@Test
+    public void removeLastTest() {
+        ArrayDeque<String> A = new ArrayDeque<>();
+        assertEquals(A.removeLast(),null);
+
+        A.addFirst("a");
+        assertEquals(A.removeLast(),"a");
+        assertEquals(A.size(), 0);
+
+        A.addLast("b");
+        assertEquals(A.removeLast(), "b");
+        A.printDeque();
     }
 
     @Test
-    public void removeTest() {
+    public void resizeTest(){
 
-        ArrayDeque<Integer> A = new ArrayDeque<>();
+        ArrayDeque<String> A = new ArrayDeque<>();
+        A.addFirst("a");
+        A.addFirst("b");
+        A.addFirst("c");
 
-        assertTrue(A.isEmpty());
+        A.addFirst("d");
+        A.addFirst("e");
+        A.addFirst("f");
 
-        assertNotNull(A);
-        A.addFirst(1);
+        A.addFirst("g");
+        A.addFirst("h");
+        A.addFirst("i");
+        A.addFirst("j");
 
-        assertFalse(A.isEmpty());
-        int c = A.get(0);
-        assertEquals(1, c);
-        A.addLast(2);
-        A.addLast(3);
-        A.addLast(7);
+        assertEquals(A.removeLast(), "a");
+        assertEquals(A.removeLast(), "b");
+        assertEquals(A.removeLast(), "c");
 
-        assertEquals(A.size(), 4);
-
-        c = A.removeFirst();
-        System.out.println(c);
-        assertEquals(c, 1);
-        assertEquals(A.size(), 3);
-
-
-
-        A.addLast(54);
+        A.removeLast();
+        A.removeLast();
+        A.removeLast();
+        A.removeLast();
 
         System.out.println(A.size());
 
-        c = A.removeLast();
-        System.out.println(c);
-//        assertEquals(c, 54);
-//        assertEquals(A.size(), 3);
+        A.printDeque();
     }
 
     @Test
-    public void addFirstTest() {
+    public void addLastTest() {
+        ArrayDeque<String> A = new ArrayDeque<>();
 
-
-        ArrayDeque<Integer> A = new ArrayDeque<>();
-
-
-        A.addLast(5);
-        A.addFirst(1);
-        A.addFirst(2);
-        A.addFirst(3);
-
-        System.out.println(A.get(0));
-        System.out.println(A.get(1));
-        System.out.println(A.get(2));
-
+        A.addLast("a");
+        A.addLast("b");
+        A.addLast("c");
+        A.addFirst("g");
+        A.addFirst("f");
+        A.printDeque();
     }
-
 }

@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T>  {
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
     private IntNode sentinel;
     private int size;
@@ -17,6 +17,7 @@ public class LinkedListDeque<T> implements Iterable<T>  {
     }
 
     // inserts an item at the front of the deque
+    @Override
     public void addFirst(T item) {
        IntNode temp = new IntNode(item);
 
@@ -30,6 +31,7 @@ public class LinkedListDeque<T> implements Iterable<T>  {
     }
 
     // inserts an item at the back of the deque
+    @Override
     public void addLast(T item) {
 
         IntNode temp = new IntNode(item);
@@ -43,19 +45,19 @@ public class LinkedListDeque<T> implements Iterable<T>  {
         size += 1;
     }
 
-    public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
+//    public boolean isEmpty() {
+//        if (size == 0) {
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
+//    }
+@Override
     public int size() {
         return size;
     }
-
+    @Override
     public void printDeque() {
 
         IntNode p = sentinel;
@@ -67,7 +69,7 @@ public class LinkedListDeque<T> implements Iterable<T>  {
         System.out.println();
     }
 
-
+    @Override
     public T removeFirst() {
         if (this.isEmpty()) {
             return null;
@@ -80,7 +82,7 @@ public class LinkedListDeque<T> implements Iterable<T>  {
             return temp.item;
         }
     }
-
+    @Override
     public T removeLast() {
         if (this.isEmpty()) {
             return null;
@@ -93,7 +95,7 @@ public class LinkedListDeque<T> implements Iterable<T>  {
             return temp.item;
         }
     }
-
+    @Override
     public T get(int index) {
 
         if (this.isEmpty()) {
@@ -178,13 +180,10 @@ public class LinkedListDeque<T> implements Iterable<T>  {
         return true;
         }
 
-
-
-
 //    public static void main(String[] args) {
 //
 //        System.out.print("abc");
-
+//
 //        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
 //        LinkedListDeque<String> lld2 = new LinkedListDeque<>();
 //
@@ -216,21 +215,23 @@ public class LinkedListDeque<T> implements Iterable<T>  {
 //
 //        System.out.println(b.hasNext());
 //        System.out.println(b.hasNext());
-
-
-
-
+//
+//
+//
+//
 //
 //        lld1.iterator();
-
+//
 //        lld1.addFirst("gtg");
 //        lld1.addFirst("xyz");
 //
 //        lld1.printDeque();
 //
-//        System.out.println(lld1.getFirst());
+////        System.out.println(lld1.getFirst());
 //
 //    }
+
+
 }
 
 
