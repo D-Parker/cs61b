@@ -153,8 +153,6 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     }
 
 
-
-
 // returns the first item in the deque
 //    public T getFirst() {
 //        return sentinel.next.item;
@@ -174,13 +172,24 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     @Override
     public boolean equals(Object o) {
 
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null) {
+            return false;
+        }
+
         if ((o instanceof LinkedListDeque) == false) {
             return false;
         }
+
+
+
         Iterator a = ((LinkedListDeque) o).iterator();
         Iterator b = this.iterator();
 
-        while (b.hasNext() == true && a.hasNext() == true) {
+        while (b.hasNext() == true || a.hasNext() == true) {
             if (a.next() != b.next()) {
                 return false;
             }
