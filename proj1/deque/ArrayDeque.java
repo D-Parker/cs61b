@@ -207,7 +207,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
         private int pos;
         public ArrayDequeIterator() {
-            pos = first;
+            pos = 0;
         }
         @Override
         public boolean hasNext() {
@@ -215,13 +215,17 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         @Override
         public T next() {
-            pos = pos + 1;
-            if (pos > items.length - 1){
+
+            T returnItem = get(pos);
+
+            pos += 1;
+            if (pos > items.length - 1) {
                 pos = 0;
             }
-            return get(pos);
+            return returnItem;
+            }
         }
-    }
+
     public Iterator<T> iterator() {
         return new ArrayDequeIterator();
     }
@@ -237,7 +241,12 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
 
-        while (b.hasNext()==true && a.hasNext()==true) {
+        while (b.hasNext()==true || a.hasNext()==true) {
+
+//            System.out.print(a.next());
+//            System.out.print(b.next());
+//            System.out.println();
+
             if (a.next() != b.next()) {
                 return false;
             }
@@ -245,6 +254,35 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return true;
     }
 
+//    public static void main(String[] args) {
+//        ArrayDeque<String> lld1 = new ArrayDeque<>();
+//
+//
+//        lld1.addLast("a");
+//        lld1.addLast("b");
+//        lld1.addLast("c");
+//
+////        Iterator<String> b = lld1.iterator();
+//
+////        System.out.println(b.next() );
+////        System.out.println(b.next() );
+////        System.out.println(b.next() );
+//
+//        ArrayDeque<String> lld2 = new ArrayDeque<>();
+//
+//        lld2.addLast("a");
+//        lld2.addLast("b");
+//        lld2.addLast("c");
+////        lld2.addLast("d");
+////        lld2.addLast("e");
+//
+////        Iterator<String> a = lld1.iterator();
+//
+//        System.out.println(lld1.equals(lld2)) ;
+//
+//
+//
+//    }
 
 
 }

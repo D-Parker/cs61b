@@ -180,6 +180,18 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         return true;
         }
 
+
+//    public static void main(String[] args) {
+//
+//
+//
+//
+//    }
+//
+
+
+
+
 //    public static void main(String[] args) {
 //
 //        System.out.print("abc");
