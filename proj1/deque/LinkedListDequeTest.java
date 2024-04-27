@@ -114,7 +114,6 @@ public class LinkedListDequeTest {
         assertEquals("Should return null when removeFirst is called on an empty Deque,", null, lld1.removeFirst());
         assertEquals("Should return null when removeLast is called on an empty Deque,", null, lld1.removeLast());
 
-
     }
 
     @Test
@@ -145,7 +144,18 @@ public class LinkedListDequeTest {
         LinkedListDeque<String> lld1 = new LinkedListDeque<>();
         LinkedListDeque<String> lld2 = new LinkedListDeque<>();
 
+        ArrayDeque<String> ad1 = new ArrayDeque<>();
+
+
+        ad1.addFirst("k");
+
         lld1.addFirst("k");
+        lld2.addFirst("k");
+
+        assertTrue(lld1.equals(lld2));
+
+//        assertTrue(lld1.equals(ad1));
+
         lld1.addFirst("h");
 
         lld1.addFirst("b");
