@@ -168,7 +168,21 @@ public class LinkedListDequeTest {
 //        assertEquals(x.next(), "b");
 //
 //        assertTrue(x.hasNext());
+    }
+@Test
+public void equalsTest() {
 
+            LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+            LinkedListDeque<String> lld2 = new LinkedListDeque<>();
+
+            lld1.addFirst("a");
+            lld2.addFirst("a");
+
+//            assertEquals(lld1, lld2);
+
+            assertTrue(lld1.equals(lld2));
+
+        }
 
 
 //System.out.println(x.next() );
@@ -187,8 +201,6 @@ public class LinkedListDequeTest {
     }
 
 
-
-}
 
 
 //package deque;
