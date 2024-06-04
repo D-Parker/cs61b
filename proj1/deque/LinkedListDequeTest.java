@@ -182,6 +182,11 @@ public void equalsTest() {
 
             assertTrue(lld1.equals(lld2));
 
+    LinkedListDeque<String> lld3 = lld1;
+
+    assertTrue(lld1.equals(lld3));
+
+
         }
 
 

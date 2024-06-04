@@ -172,47 +172,62 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     @Override
     public boolean equals(Object o) {
 
-
-        if (o == null) {
-            return false;
-        }
-
-        if (this == null) {
-            return false;
-        }
-
-        if (this == o) {
+        if (this == o){
             return true;
         }
-
-        if ((o instanceof Deque) == false) {
-            return false;
-        }
-
-        if ((this instanceof Deque) == false) {
-            return false;
-        }
-
-        Deque<T> other = (Deque<T>) o;
-        if (this.size() != other.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < size(); i++) {
-            if (!this.get(i).equals(other.get(i))) {
+        if (o instanceof Deque) {
+            Deque<T> target = (Deque<T>) o;
+            if (target.size() != size) {
                 return false;
             }
-        }
-
-        Iterator a = ((LinkedListDeque) o).iterator();
-        Iterator b = this.iterator();
-
-        while (b.hasNext() == true || a.hasNext() == true) {
-            if (a.next() != b.next()) {
-                return false;
+            for (int i = 0; i < size; i++) {
+                if (!target.get(i).equals(this.get(i))) {
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
+        return false;
+//        if (o == null) {
+//            return false;
+//        }
+//
+//        if (this == null) {
+//            return false;
+//        }
+//
+//        if (this == o) {
+//            return true;
+//        }
+//
+//        if ((o instanceof Deque) == false) {
+//            return false;
+//        }
+//
+//        if ((this instanceof Deque) == false) {
+//            return false;
+//        }
+//
+//        Deque<T> other = (Deque<T>) o;
+//        if (this.size() != other.size()) {
+//            return false;
+//        }
+//
+//        for (int i = 0; i < size(); i++) {
+//            if (!this.get(i).equals(other.get(i))) {
+//                return false;
+//            }
+//        }
+
+//        Iterator a = ((LinkedListDeque) o).iterator();
+//        Iterator b = this.iterator();
+//
+//        while (b.hasNext() == true || a.hasNext() == true) {
+//            if (a.next() != b.next()) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
 
