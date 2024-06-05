@@ -214,22 +214,39 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             pos = 0;
         }
 
+//        @Override
+//        public boolean hasNext() {
+//            return pos < last;
+//        }
+//
+//        @Override
+//        public T next() {
+//
+//            T returnItem = get(pos);
+//
+//            pos += 1;
+////            if (pos > items.length - 1) {
+////                pos = 0;
+////            }
+//            return returnItem;
+//        }
+
         @Override
         public boolean hasNext() {
-            return pos < last;
+            return pos < size;
         }
 
         @Override
         public T next() {
-
             T returnItem = get(pos);
-
-            pos += 1;
-            if (pos > items.length - 1) {
-                pos = 0;
-            }
+            pos = pos + 1;
             return returnItem;
         }
+
+
+
+
+
     }
 
     public Iterator<T> iterator() {

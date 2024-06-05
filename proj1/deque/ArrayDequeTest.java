@@ -5,11 +5,9 @@ import java.util.Iterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Optional;
-
 
 public class ArrayDequeTest {
 
@@ -328,6 +326,11 @@ public class ArrayDequeTest {
         Iterator<Integer> iter2 = ad1.iterator();
 
         int k;
+        for (int i = 0; i < targetSize; i++){
+            k=iter2.next();
+            assertEquals(i,k);
+        }
+
         for (int i = 0; i < targetSize; i++){
             k=iter2.next();
             assertEquals(i,k);
