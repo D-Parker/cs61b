@@ -216,7 +216,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
         @Override
         public boolean hasNext() {
-            return pos != last;
+            return pos < last;
         }
 
         @Override
@@ -239,25 +239,47 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public boolean equals(Object o) {
 
-        if ((o instanceof Deque) == false) {
-            return false;
+        if (this == o) {
+            return true;
         }
-        Iterator a = ((ArrayDeque) o).iterator();
-        Iterator b = this.iterator();
-
-
-        Deque<T> other = (Deque<T>) o;
-        if (this.size() != other.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < size(); i++) {
-            if (!this.get(i).equals(other.get(i))) {
+        if (o instanceof Deque) {
+            Deque<T> target = (Deque<T>) o;
+            if (target.size() != size) {
                 return false;
             }
+            for (int i = 0; i < size; i++) {
+                if (!target.get(i).equals(this.get(i))) {
+                    return false;
+                }
+            }
+            return true;
         }
+        return false;
+    }
 
-        return true;
+//    public boolean equals(Object o) {
+//
+//        if ((o instanceof Deque) == false) {
+//            return false;
+//        }
+////        Iterator a = ((ArrayDeque) o).iterator();
+//
+//        Iterator a = ((Deque) o).iterator();
+//        Iterator b = this.iterator();
+//
+//
+//        Deque<T> other = (Deque<T>) o;
+//        if (this.size() != other.size()) {
+//            return false;
+//        }
+//
+//        for (int i = 0; i < size(); i++) {
+//            if (!this.get(i).equals(other.get(i))) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
 
 
 
@@ -306,4 +328,4 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 //    }
 
 
-}
+

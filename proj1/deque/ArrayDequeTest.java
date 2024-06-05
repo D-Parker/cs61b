@@ -280,4 +280,73 @@ public class ArrayDequeTest {
             }
         }
     }
+
+    @Test
+    public void equalsTest3(){
+
+        ArrayDeque<String> ad1 = new ArrayDeque<>();
+
+        ad1.addFirst("z");
+
+        LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
+
+        lld1.addFirst("z");
+
+        assertTrue(ad1.equals(lld1));
+        assertTrue(lld1.equals(ad1));
+
+    }
+
+    @Test
+    public void nextTest3(){
+
+        ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
+
+        Iterator<Integer> iter = ad1.iterator();
+
+        assertFalse(iter.hasNext());
+
+        int targetSize = 10;
+        for (int i = 0; i < targetSize; i++){
+            ad1.addLast(i);
+        }
+
+        assertTrue(iter.hasNext());
+
+        int g;
+        for (int i = 0; i < targetSize; i++){
+            g = iter.next();
+        }
+
+        assertFalse(iter.hasNext());
+
+
+        for (int i = 0; i < targetSize; i++){
+            ad1.addLast(i);
+        }
+
+        Iterator<Integer> iter2 = ad1.iterator();
+
+        int k;
+        for (int i = 0; i < targetSize; i++){
+            k=iter2.next();
+            assertEquals(i,k);
+        }
+
+
+//        assertTrue(iter.hasNext()==false);
+
+//        int exp = 0;
+//        while (iter.hasNext()){
+//            int act = iter.next();
+//            assertEquals(exp, act);
+//            exp += 1;
+//        }
+
+
+
+    }
+
+
+
 }
