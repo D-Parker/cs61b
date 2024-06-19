@@ -32,6 +32,18 @@ public class CapersRepository {
      */
     public static void setupPersistence() {
         // TODO
+        CAPERS_FOLDER.mkdir();
+        File DOGS_FOLDER= join(CAPERS_FOLDER, "dogs");
+        DOGS_FOLDER.mkdir();
+
+        File f = join(CAPERS_FOLDER, "story") ;
+//
+        f.createNewFile();
+
+//        if(!f.exists()) {
+//            f.createNewFile();
+//        }
+
     }
 
     /**
