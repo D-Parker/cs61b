@@ -1,29 +1,24 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
+
 import static capers.Utils.*;
 
-/** A repository for Capers 
- * @author TODO
+/** A repository for Capers
+ * @author jason
  * The structure of a Capers Repository is as follows:
  *
  * .capers/ -- top level folder for all persistent data in your lab12 folder
  *    - dogs/ -- folder containing all of the persistent data for dogs
  *    - story -- file containing the current story
- *
- * TODO: change the above structure if you do something different.
  */
 public class CapersRepository {
     /** Current Working Directory. */
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = Utils.join(CWD, ".capers"); // TODO Hint: look at the `join`
-                                            //      function in Utils
-
-
-
-    static final File STORY = join(CAPERS_FOLDER, "story");
+    static final File CAPERS_FOLDER = join(CWD, ".capers");
 
     /**
      * Does required filesystem operations to allow for persistence.
@@ -35,33 +30,29 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
         CAPERS_FOLDER.mkdir();
         File dogFolder = join(CAPERS_FOLDER, "dogs");
         dogFolder.mkdir();
-
+        File storyFile = join(CAPERS_FOLDER, "story");
+        try{
+            storyFile.createNewFile();
+        } catch (IOException excp) {
+            throw new IllegalArgumentException(excp.getMessage());
+        }
     }
 
     /**
      * Appends the first non-command argument in args
      * to a file called `story` in the .capers directory.
+     * Also prints out the hole story.
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        // TODO
-        File story = join(CAPERS_FOLDER,"story");
-        String new_text;
-        if (story.exists()){
-            new_text = readContentsAsString(story) + "\n" + text;
-        }
-        else {
-            new_text = text;
-        }
-
-        writeContents(story, new_text);
-
-        System.out.println(new_text.toString());
-
+        File storyFile = join(CAPERS_FOLDER, "story");
+        String lastStory = Utils.readContentsAsString(storyFile);
+        Utils.writeContents(storyFile, lastStory, text, "\n");
+        String story = Utils.readContentsAsString(storyFile);
+        System.out.print(story);
     }
 
     /**
@@ -70,16 +61,9 @@ public class CapersRepository {
      * Also prints out the dog's information using toString().
      */
     public static void makeDog(String name, String breed, int age) {
-        // TODO
-
-        Dog d = new Dog(name, breed, age);
-        d.saveDog();
-
-        System.out.println(d);
-
-//        System.out.println(d.toString());
-
-
+        Dog newDog = new Dog(name, breed, age);
+        newDog.saveDog();
+        System.out.println(newDog.toString());
     }
 
     /**
@@ -89,19 +73,8 @@ public class CapersRepository {
      * @param name String name of the Dog whose birthday we're celebrating.
      */
     public static void celebrateBirthday(String name) {
-        // TODO
-
-        Dog d  =  Dog.fromFile(name);
-
-        d.haveBirthday();
-        d.saveDog();
-
-//        if(d != null) {
-//
-//            d.haveBirthday();
-//            d.saveDog();
-////            System.out.println(d.toString());
-//        }
-
+        Dog dog = Dog.fromFile(name);
+        dog.haveBirthday();
+        dog.saveDog();
     }
 }

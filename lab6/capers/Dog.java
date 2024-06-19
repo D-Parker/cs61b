@@ -1,23 +1,17 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import static capers.Utils.*;
-import java.io.IOException;
 
 /** Represents a dog that can be serialized.
- * @author TODO
-*/
-public class Dog implements Serializable { // TODO
+ * @author jason
+ */
+public class Dog implements Serializable{
 
     /** Folder that dogs live in. */
-//    static final File DOG_FOLDER = null;
-    // TODO (hint: look at the `join`
-                                         //      function in Utils)
-
-//    static final File DOG_FOLDER = join(CapersRepository.CAPERS_FOLDER, "dogs");
-
-    static final File DOG_FOLDER = Utils.join(".capers", "dogs");
+    static final File DOG_FOLDER = join(".capers", "dogs");
 
     /** Age of dog. */
     private int age;
@@ -45,17 +39,10 @@ public class Dog implements Serializable { // TODO
      * @return Dog read from file
      */
     public static Dog fromFile(String name) {
-        // TODO (hint: look at the Utils file)
         Dog dog;
         File readFile = join(DOG_FOLDER, name);
         dog = readObject(readFile, Dog.class);
         return dog;
-
-//        if (f.exists() ) {
-
-
-//        }
-//        return null;
     }
 
     /**
@@ -70,10 +57,8 @@ public class Dog implements Serializable { // TODO
     /**
      * Saves a dog to a file for future use.
      */
-    public void saveDog() {
-        // TODO (hint: don't forget dog names are unique)
-
-        File saveFile = Utils.join(DOG_FOLDER, this.name);
+    public void saveDog(){
+        File saveFile = join(DOG_FOLDER, this.name);
         if (!saveFile.exists()){
             try{
                 saveFile.createNewFile();
@@ -82,16 +67,13 @@ public class Dog implements Serializable { // TODO
             }
         }
         writeObject(saveFile, this);
-
-
-
     }
 
     @Override
     public String toString() {
         return String.format(
-            "Woof! My name is %s and I am a %s! I am %d years old! Woof!",
-            name, breed, age);
+                "Woof! My name is %s and I am a %s! I am %d years old! Woof!",
+                name, breed, age);
     }
 
 }
