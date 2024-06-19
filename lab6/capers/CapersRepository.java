@@ -21,6 +21,10 @@ public class CapersRepository {
     static final File CAPERS_FOLDER = join(CWD, ".capers"); // TODO Hint: look at the `join`
                                             //      function in Utils
 
+
+
+    static final File STORY = join(CAPERS_FOLDER, "story");
+
     /**
      * Does required filesystem operations to allow for persistence.
      * (creates any necessary folders or files)
@@ -33,12 +37,9 @@ public class CapersRepository {
     public static void setupPersistence() {
         // TODO
         CAPERS_FOLDER.mkdir();
-        File DOGS_FOLDER= join(CAPERS_FOLDER, "dogs");
-        DOGS_FOLDER.mkdir();
+        Dog.DOG_FOLDER.mkdir();
 
-        File f = join(CAPERS_FOLDER, "story") ;
-//
-        f.createNewFile();
+
 
 //        if(!f.exists()) {
 //            f.createNewFile();
@@ -53,6 +54,17 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
+        File story = join(CAPERS_FOLDER,"story");
+        String new_text;
+        if (story.exists()){
+            new_text = readContentsAsString(story) + "\n" + text;
+        }
+        else {
+            new_text = text;
+        }
+
+        writeContents(story, new_text);
+
     }
 
     /**
