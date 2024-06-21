@@ -4,9 +4,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 
-public class BSTMap<K extends Comparable, V> implements Map61B<K,V> {
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
 
-    private final Comparator<K> comparator;
     private class BSTNode {
         public K key;
         public V value;
@@ -15,35 +14,51 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K,V> {
         public BSTNode right;
 
         public BSTNode(K k, V v){
-            key = k;
-            value = v;
+            this.key = k;
+            this.value = v;
 //            parent = null;
-            left = null;
-            right = null;
+            this.left = null;
+            this.right = null;
         }
     }
 
     private BSTNode root;
     private int size;
 
-    // BSTMap constructor
-public BSTMap(Comparator<K> c) {
+public BSTMap() {
 
-    super();
-    comparator = c;
-
-    root = new BSTNode(null, null);
-    size = 0;
+//    root = new BSTNode(null, null);
+//    size = 0;
 }
 
     public void clear(){
         root = null;
-        size = 0;
+//        size = 0;
     }
 
     /* Returns true if this map contains a mapping for the specified key. */
-    public boolean containsKey(K key){
-        return !(get(key)==null);
+    public boolean containsKey(K key) {
+        return containsKey(root, key);
+    }
+
+    private boolean containsKey(BSTNode T, K key){
+
+        if (T==null){
+            return false;
+        }
+
+        int cmp = key.compareTo(T.key);
+
+        if (cmp == 0 ){
+            return true;
+        }
+        else if (cmp < 0){
+            containsKey(T.left, key);
+        }
+        else if (cmp > 0){
+            containsKey(T.right, key);
+        }
+        return false;
         }
 
 
@@ -51,22 +66,30 @@ public BSTMap(Comparator<K> c) {
      * map contains no mapping for the key.
      */
     public V get(K key){
-        return get(key, root);
+        return get(root, key);
     }
 
-    private V get(K k, BSTNode T){
+    private V get(BSTNode T, K k){
         if (T==null){
             return null;
         }
-        if (k == T.key){
+//
+//        if (containsKey(T, k)==false){
+//            return null;
+//        }
+
+        int cmp = k.compareTo(T.key);
+
+        if (cmp == 0){
             return T.value;
         }
-        else if (k < T.key){
-            get(k, T.left);
+        else if (cmp < 0){
+            get(T.left, k);
         }
-        else if (k > T.key){
-            get(k, T.right);
+        else if (cmp > 0){
+            get(T.right, k);
         }
+        return T.value;
     }
 
 
@@ -78,36 +101,54 @@ public BSTMap(Comparator<K> c) {
     /* Associates the specified value with the specified key in this map. */
     public void put(K k, V v) {
 
-        if (this.containsKey(k)==true){
+        if (this.containsKey(k)) {
             return;
         }
 
-        BSTNode parent = put(k, root, null);
-        BSTNode child = new BSTNode(k, v);
+        if (root == null){
+            root = BSTNode(k, v);
+        }
 
-        if (parent==null){
-            root = child;
-            size +=1;
-            return;
-        }
-        if (child.key < parent.key) {
-            parent.left = child;
-            size +=1;
-        }
-        else if (child.key > parent.key) {
-            parent.right = child;
-            size +=1;
-        }
+        put(root, k, v, root);
+
+
+
     }
+
+    private BSTNode put(BSTNode T, K key, V value, BSTNode p){
+        if (T==null){
+            size += 1;
+
+T = p;
+            return p;
+        }
+        int cmp = key.compareTo(T.key);
+
+        if (cmp < 0){
+            size += 1;
+            put(T.left, key, value, T);
+        }
+        else if (cmp > 0){
+            size += 1;
+            put(T.right, key, value, T);
+        }
+        return T;
+    }
+
+
+
 
     private BSTNode put(K k, BSTNode curr, BSTNode prev){
         if (curr == null){
             return prev;
         }
-        if (k < curr.key){
+
+        int cmp = k.compareTo(curr.key);
+
+        if (cmp < 0){
             put(k, curr.left, curr);
         }
-        else if (k > curr.key){
+        else if (cmp > 0){
             put(k, curr.right, curr);
         }
         return curr;
