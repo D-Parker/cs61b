@@ -9,19 +9,18 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
     private BSTNode root;
     private int size;
 
-    private class BSTNode {
-        public K key;
-        public V value;
-//        public BSTNode parent;
-        public BSTNode left;
-        public BSTNode right;
+    public class BSTNode {
+         K key;
+         V value;
+
+         BSTNode left;
+         BSTNode right;
 
         public BSTNode(K k, V v){
-            this.key = k;
-            this.value = v;
-//            parent = null;
-            this.left = null;
-            this.right = null;
+            key = k;
+            value = v;
+//            left = null;
+//            right = null;
         }
     }
 
@@ -41,29 +40,29 @@ public BSTMap() {
         return containsKey(root, key);
     }
 
-    private boolean containsKey(BSTNode T, K key){
-
-        if (T==null){
-            return false;
-        }
-
-        BSTNode p = T;
-        int cmp;
-
-        while (p != null) {
-            cmp = key.compareTo(T.key);
-            if (cmp == 0 ){
-                return true;
-            }
-            else if (cmp < 0){
-                containsKey(T.left, key);
-            }
-            else if (cmp > 0){
-                containsKey(T.right, key);
-            }
-        }
-        return false;
-        }
+//    private boolean containsKey(BSTNode T, K key){
+//
+//        if (T==null){
+//            return false;
+//        }
+//
+//        BSTNode p = T;
+//        int cmp;
+//
+//        while (p != null) {
+//            cmp = key.compareTo(T.key);
+//            if (cmp == 0 ){
+//                return true;
+//            }
+//            else if (cmp < 0){
+//                containsKey(T.left, key);
+//            }
+//            else if (cmp > 0){
+//                containsKey(T.right, key);
+//            }
+//        }
+//        return false;
+//        }
 
 
     /* Returns the value to which the specified key is mapped, or null if this
@@ -100,6 +99,7 @@ public BSTMap() {
 
     /* Returns the number of key-value mappings in this map. */
     public int size(){
+
         return size;
     }
 
@@ -109,25 +109,30 @@ public BSTMap() {
             return;
         }
         root = put(root, k, v);
+        size += 1;
     }
 
+    private BSTNode put(BSTNode T, K key, V value) {
 
-
-    private BSTNode put(BSTNode T, K key, V value){
-
-        int cmp = key.compareTo(T.key);
-
-        if (T == null){
-            return BSTNode(key,value);
+        if (T == null) {
+            return new BSTNode(key, value);
         }
-        else if (cmp < 0) {
+        if (key.compareTo(T.key) < 0) {
             T.left = put(T.left, key, value);
-        }
-        else if (cmp > 0) {
+        } else if (key.compareTo(T.key) < 0) {
             T.right = put(T.right, key, value);
         }
+
         return T;
     }
+
+
+
+
+
+
+
+
 
 //    private BSTNode put(BSTNode T, K key, V value, BSTNode p){
 //        if (T==null){
