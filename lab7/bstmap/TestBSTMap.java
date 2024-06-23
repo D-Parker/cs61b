@@ -8,20 +8,20 @@ public class TestBSTMap {
 
 
 
-//    @Test
-//    public void dptest() {
-//
-//        BSTMap<Integer, Integer> b = new BSTMap<Integer, Integer>();
-//
-//        b.put(5,1);
-//        b.put(6,2);
-//        b.put(7,3);
-//
-//        System.out.println(b.get(5));
-//        System.out.println(b.get(6));
-//        System.out.println(b.get(7));
-////        assertEquals(b.get(5), 1 );
-//    }
+    @Test
+    public void dptest() {
+
+        BSTMap<Integer, Integer> b = new BSTMap<Integer, Integer>();
+
+        b.put(5,1);
+        b.put(6,2);
+        b.put(7,3);
+
+        System.out.println(b.get(5));
+        System.out.println(b.get(6));
+        System.out.println(b.get(7));
+//        assertEquals(b.get(5), 1 );
+    }
   	@Test
     public void sanityGenericsTest() {
     	try {
