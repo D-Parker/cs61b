@@ -6,19 +6,21 @@ import org.junit.Test;
 /** Tests by Brendan Hu, Spring 2015, revised for 2016 by Josh Hug */
 public class TestBSTMap {
 
-//    @Test
-//    public void dptest() {
-//
-//        BSTMap<Integer, Integer> b = new BSTMap<Integer, Integer>();
-//
-//        b.put(5,1);
-//        b.put(6,2);
-//        b.put(7,3);
-//
-//        System.out.println(b.get(5));
-//        System.out.println(b.get(6));
-//        System.out.println(b.get(7));
-//    }
+    @Test
+    public void dptest() {
+
+        BSTMap<Integer, Integer> b = new BSTMap<Integer, Integer>();
+
+        b.put(5,1);
+        b.put(6,2);
+        b.put(7,3);
+
+        System.out.println(b.get(5));
+        System.out.println(b.get(6));
+        System.out.println(b.get(7));
+
+
+    }
   	@Test
     public void sanityGenericsTest() {
     	try {
