@@ -19,8 +19,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
         public BSTNode(K k, V v){
             key = k;
             value = v;
-//            left = null;
-//            right = null;
         }
     }
 
@@ -46,40 +44,9 @@ public BSTMap() {
 
         return true;
 
-//        if (key == null){
-//            return false;
-//        }
-//        V temp = get(key);
-//        if (temp == null){
-//            return false;
-//        }
-//        return true;
-//        return containsKey(root, key);
+
     }
 
-//    private boolean containsKey(BSTNode T, K key){
-//
-//        if (T==null){
-//            return false;
-//        }
-//
-//        BSTNode p = T;
-//        int cmp;
-//
-//        while (p != null) {
-//            cmp = key.compareTo(T.key);
-//            if (cmp == 0 ){
-//                return true;
-//            }
-//            else if (cmp < 0){
-//                containsKey(T.left, key);
-//            }
-//            else if (cmp > 0){
-//                containsKey(T.right, key);
-//            }
-//        }
-//        return false;
-//        }
 
 
     /* Returns the value to which the specified key is mapped, or null if this
@@ -109,38 +76,14 @@ public BSTMap() {
         return null;
     }
 
-
-//        BSTNode p = T;
-//        int cmp;
-//
-//        while (p != null) {
-//            cmp = k.compareTo(T.key);
-//
-//            if (cmp == 0){
-//                return T.value;
-//            }
-//            else if (cmp < 0){
-//                get(T.left, k);
-//            }
-//            else if (cmp > 0){
-//                get(T.right, k);
-//            }
-//        }
-//        return null;
-//    }
-
-
     /* Returns the number of key-value mappings in this map. */
     public int size(){
-
         return size;
     }
 
     /* Associates the specified value with the specified key in this map. */
     public void put(K k, V v) {
-//        if (this.containsKey(k)) {
-//            return;
-//        }
+
         root = put(root, k, v);
 
     }
@@ -159,54 +102,6 @@ public BSTMap() {
 
         return T;
     }
-
-
-
-
-
-
-
-
-
-//    private BSTNode put(BSTNode T, K key, V value, BSTNode p){
-//        if (T==null){
-//            size += 1;
-//
-//T = p;
-//            return p;
-//        }
-//        int cmp = key.compareTo(T.key);
-//
-//        if (cmp < 0){
-//            size += 1;
-//            put(T.left, key, value, T);
-//        }
-//        else if (cmp > 0){
-//            size += 1;
-//            put(T.right, key, value, T);
-//        }
-//        return T;
-//    }
-
-
-
-//
-//    private BSTNode put(K k, BSTNode curr, BSTNode prev){
-//        if (curr == null){
-//            return prev;
-//        }
-//
-//        int cmp = k.compareTo(curr.key);
-//
-//        if (cmp < 0){
-//            put(k, curr.left, curr);
-//        }
-//        else if (cmp > 0){
-//            put(k, curr.right, curr);
-//        }
-//        return curr;
-//    }
-
 
 
     /* Returns a Set view of the keys contained in this map. Not required for Lab 7.
