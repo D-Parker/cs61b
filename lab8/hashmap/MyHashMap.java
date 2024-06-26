@@ -13,8 +13,10 @@ import java.util.*;
  *
  * @author YOUR NAME HERE
  */
-public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
+public class MyHashMap<K, V> implements Map61B<K, V> {
 
+
+//    Iterable<K>
     /**
      * Protected helper class to store key/value pairs
      * The protected qualifier allows subclass access
