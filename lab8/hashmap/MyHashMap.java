@@ -125,10 +125,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     // TODO: Implement the methods of the Map61B Interface below
     // Your code won't compile until you do so!
 
-
+// ???
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException("This operation is not supported.");
+        return HashSet.iterator();
+//        return new MyIterator();
     }
+
 
     /**
      * Removes all of the mappings from this map.
@@ -426,7 +428,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * UnsupportedOperationException.
      */
     public V remove(K key) {
-        throw new UnsupportedOperationException("This operation is not supported.");
+
+        int index = getHashCode(key, this.buckets);
+        Collection<Node> bucket = getBucket(index, this.buckets);
+        Node node = getNode(key);
+        V val = node.value;
+
+        bucket.remove(node);
+        HashSet.remove(key);
+        return val;
     }
 
     /**
@@ -435,7 +445,13 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.
      */
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException("This operation is not supported.");
+
+        Node node = getNode(key);
+
+        if (node.value.equals(value)){
+            remove(key);
+        }
+        return null;
     }
 
 
