@@ -169,15 +169,24 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
         return Math.floorMod(temp, tableSize);
     }
 
+    private void addKey (K key){
+        this.HashSet.add(key);
+    }
+
 
     /**
      * Returns the value to which the specified key is mapped, or null if this
      * map contains no mapping for the key.
      */
     public V get(K key) {
+        if (!containsKey(key)) {
+            return null;
+        }
+        return getNode(key).value;
+    }
 
-        throw new UnsupportedOperationException("This operation is not supported.");
-        //        int index = getIndex(key);
+
+    //        int index = getIndex(key);
 //        Collection<Node> bucket = buckets[index];
 //        Collection<Node> i;
 //        Iterator<Node> iterator = bucket.iterator();
@@ -196,7 +205,6 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //            }
 //        }
 //        return null;
-    }
 
 
     /**
@@ -249,6 +257,9 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
         Collection<Node> current_bucket;
         current_bucket = getBucket(index, table);
 
+        // set current_node variable
+        Node current_node;
+
         // check if key is in the hashmap using equals to compare
         // if yes, getNode(key) and updateNode(key, value)
         // if no, createNode and addNode -- current_bucket.add(createNode(key,value)
@@ -258,104 +269,112 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
             // add key to HashSet
             HashSet.add(key);
             // add Node to the bucket
-            current_bucket.add(createNode(key, value));
-            return;
+            addNode(current_bucket, key, value);
         }
         // if there is a key, find its node in the bucket and update the node's value
+        // Collection<Node>  getNode(key, bucket)
+        // void updateNode(node, value)
         else {
-            for (Node node : current_bucket) {
-                if (node.key.equals(key)) {
-                    node.value = value;
-                    return
-                }
+            current_node = getNode(current_bucket, key);
+            current_node.value = value;
+        }
+        return;
+    }
+
+    private Node getNode(Collection<Node> bucket, K key) {
+        for (Node node : bucket) {
+            if (node.key.equals(key)) {
+                return node;
             }
         }
+        return null;
     }
 
-    // is there already a bucket for the key's hashcode?
-    // if not, create bucket
-            if(!
+    private Node getNode(K key) {
+        if (!containsKey(key)) {
+            return null;
+        }
+        int index = getHashCode(buckets, key);
+        Collection<Node> bucket = buckets[index];
 
-    bucketExists())
-
-    {
-        buckets[index] = createBucket();
+        for (Node node : bucket) {
+            if (node.key.equals(key)) {
+                return node;
+            }
+        }
+        return null;
     }
 
-    current_bucket =buckets[index];
-    Node new_node = createNode(key, value);
-            current_bucket.add(new_node);
-            return;
-}
 
-        }
-                // if there is already a key in the hashmap
-                // get the node associated with the key by iterating through buckets[index]
-                // update the node's value
-                else{
-                getNode(key);
-                updateNode();
-                addNode();
-                getValue();
-                }
-
-                int index=getIndex(key);
-                updateMap(index,key,value)
-
-                // create node and add to buckets
-                int key_hash=key.hashCode();
-
-                int temp=key.hashCode();
-                return Math.floorMod(key.hashCode(),tableSize);
-                }
-                }
-
-private void resizeMap(){
-
-        int size=this.buckets.length;
-        int new_size=size*2;
-
-        int new hash;
-
-        Collection<Node>[]new_table=createTable(new_size);
-
-        // iterate through buckets and node to populate the new_table
-        // then point buckets at the new table
-
-        Collection<Node> current_bucket;
-        int new_hash;
-
-        for(int i=0;i< this.buckets.length){
-        current_bucket=buckets[i];
-
-        for(Node node:current_bucket){
-        new_hash=node.key.hashCode();
-
-        new_hash=getHashCode(key,new_table.length);
-
-        // put(node.key, node.value) in the new table. It will create new buckets as needed
+    private void addNode(Collection<Node> bucket, K key, V value) {
+        bucket.add(createNode(key, value));
+    }
 
 
-        }
+//    int index = getIndex(key);
+
+//    updateMap(index, key, value)
+
+    // create node and add to buckets
+//    int key_hash = key.hashCode();
+
+//    int temp = key.hashCode();
+//                return Math.floorMod(key.hashCode(),tableSize);
+//}
+//                }
+
+//    private void resizeMap() {
+//
+//        int size = this.buckets.length;
+//        int new_size = size * 2;
+//
+//        int new hash;
+//
+//        Collection<Node>[] new_table = createTable(new_size);
+//
+//        // iterate through buckets and node to populate the new_table
+//        // then point buckets at the new table
+//
+//        Collection<Node> current_bucket;
+//        int new_hash;
+//
+//        for (int i = 0; i < this.buckets.length) {
+//            current_bucket = buckets[i];
+//
+//            for (Node node : current_bucket) {
+//                new_hash = node.key.hashCode();
+//
+//                new_hash = getHashCode(key, new_table.length);
+//
+//                // put(node.key, node.value) in the new table. It will create new buckets as needed
 
 
-        }
+//            }
+//
+//
+//        }
 
-private boolean isTableFull(){
-        return currentLoad()>=this.loadFactor;
-        }
-private double currentLoad(){
-        return(double)HashSet.size()/(double)this.initialSize;
-        }
+//        private boolean isTableFull () {
+//            double cl = currentLoad();
+//
+//            if (cl >= this.loadFactor) {
+//                return true;
+//            }
+//            return false;
+//        }
+//        private double currentLoad () {
+//
+//            double result = (double) HashSet.size() / (double) this.initialSize;
+//
+//            return result;
+//        }
 
 
-private void addKey(K key){
-        this.HashSet.add(key);
-        }
 
-private void addNode(Node node,int index){
-        this.buckets[index].add(node);
-        }
+
+//private void addNode(Node node,int index){
+//        this.buckets[index].add(node);
+//        }
 
 
 //        int index = getIndex(key);
@@ -378,8 +397,8 @@ private void addNode(Node node,int index){
 /**
  * Returns a Set view of the keys contained in this map.
  */
-public Set<K> keySet(){
-        return this.HashSet;
+        public Set<K> keySet() {
+            return this.HashSet;
         }
 
 /**
@@ -387,8 +406,8 @@ public Set<K> keySet(){
  * Not required for Lab 8. If you don't implement this, throw an
  * UnsupportedOperationException.
  */
-public V remove(K key){
-        throw new UnsupportedOperationException("This operation is not supported.");
+        public V remove (K key){
+            throw new UnsupportedOperationException("This operation is not supported.");
         }
 
 /**
@@ -396,9 +415,9 @@ public V remove(K key){
  * the specified value. Not required for Lab 8. If you don't implement this,
  * throw an UnsupportedOperationException.
  */
-public V remove(K key,V value){
-        throw new UnsupportedOperationException("This operation is not supported.");
+        public V remove (K key, V value){
+            throw new UnsupportedOperationException("This operation is not supported.");
         }
 
 
-        }
+    }
