@@ -255,9 +255,9 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     private void put(K key, V value, Collection<Node>[] table) {
         // resize if table is full
 
-//        if (this.isTableFull()) {
-//            this.resizeMap();
-//        }
+        if (isTableFull(table)) {
+            table = resizeMap(table);
+        }
 
         // get hashcode for this key and table
         int index;
@@ -279,8 +279,15 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
             // add key to HashSet
             HashSet.add(key);
             // add Node to the bucket
+
+        }
+        // check if there is a node in the bucket
+        // getBucket already ensures this
+        if (getNode(current_bucket, key) == null) {
             addNode(current_bucket, key, value);
         }
+
+
         // if there is a key, find its node in the bucket and update the node's value
         // Collection<Node>  getNode(key, bucket)
         // void updateNode(node, value)
@@ -293,7 +300,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 
     private Node getNode(Collection<Node> bucket, K key) {
         for (Node node : bucket) {
-            if (node.key.equals(key)) {
+            if (key.equals(node.key)) {
                 return node;
             }
         }
@@ -333,51 +340,53 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //}
 //                }
 
-//    private void resizeMap() {
-//
-//        int size = this.buckets.length;
-//        int new_size = size * 2;
-//
-//        int new hash;
-//
-//        Collection<Node>[] new_table = createTable(new_size);
-//
-//        // iterate through buckets and node to populate the new_table
-//        // then point buckets at the new table
-//
-//        Collection<Node> current_bucket;
-//        int new_hash;
-//
-//        for (int i = 0; i < this.buckets.length) {
-//            current_bucket = buckets[i];
-//
-//            for (Node node : current_bucket) {
+    private Collection<Node>[] resizeMap(Collection<Node>[] table) {
+
+//        int new_size = this.buckets.length * 2;
+        Collection<Node>[] new_table = createTable(table.length * 2);
+
+        // iterate through buckets and node to populate the new_table
+        // then point buckets at the new table
+
+        Collection<Node> current_bucket;
+        int new_hash;
+
+        for (int i = 0; i < table.length; i++) {
+            if (table[i]!= null) {
+                current_bucket = table[i];
+                for (Node node : current_bucket) {
+                    put(node.key, node.value, new_table);
+                }
+            }
+        }
+        this.buckets = new_table;
+        return this.buckets;
+//        return new_table;
+    }
 //                new_hash = node.key.hashCode();
 //
 //                new_hash = getHashCode(key, new_table.length);
-//
-//                // put(node.key, node.value) in the new table. It will create new buckets as needed
+
+    // put(node.key, node.value) in the new table. It will create new buckets as needed
 
 
-//            }
 //
 //
 //        }
 
-//        private boolean isTableFull () {
-//            double cl = currentLoad();
-//
-//            if (cl >= this.loadFactor) {
-//                return true;
-//            }
-//            return false;
-//        }
-//        private double currentLoad () {
-//
-//            double result = (double) HashSet.size() / (double) this.initialSize;
-//
-//            return result;
-//        }
+    private boolean isTableFull(Collection<Node>[] table) {
+        double cl = currentLoad(table);
+
+        if (cl >= this.loadFactor) {
+            return true;
+        }
+        return false;
+    }
+
+    private double currentLoad(Collection<Node>[] table) {
+        double result = (double) this.HashSet.size() / (double) table.length;
+        return result;
+    }
 
 
 //private void addNode(Node node,int index){
