@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.*;
+
 /**
  * A hash table-backed Map implementation. Provides amortized constant time
  * access to elements via get(), remove(), and put() in the best case.
@@ -38,7 +39,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //    private Collection<Node>[] backing_table;
 
     private int initialSize = 16;
-    private double maxLoad = 0.75;
+    private double loadFactor = 0.75;
     private int tableSize;
     private int size;
 
@@ -65,7 +66,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      */
     public MyHashMap(int initialSize, double maxLoad) {
         this.initialSize = initialSize;
-        this.maxLoad = maxLoad;
+        this.loadFactor = maxLoad;
 
         createTable(initialSize);
     }
@@ -117,7 +118,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     // Your code won't compile until you do so!
 
 
-    public Iterator<K> iterator(){
+    public Iterator<K> iterator() {
         throw new UnsupportedOperationException("This operation is not supported.");
     }
 
@@ -125,10 +126,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      * Removes all of the mappings from this map.
      */
     public void clear() {
-
         this.buckets = null;
-
-//        throw new UnsupportedOperationException("This operation is not supported.");
     }
 
     /**
@@ -146,11 +144,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //        return buckets[index].contains(key);
 
 
-
 //        Iterator<Node> iterator = buckets.iterator();
-
-
-
 
 
 //    public boolean containsKey(K key) {
@@ -165,17 +159,14 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //    }
 
 
-
     private int getIndex(K key) {
-//        return getIndex(key, buckets);
-        throw new UnsupportedOperationException("This operation is not supported.");
+        return getHashCode(key, buckets);
+
     }
 
-    private int getIndex(K key, Collection<Node>[] table) {
-
-        throw new UnsupportedOperationException("This operation is not supported.");
-//        int temp = key.hashCode();
-//        return Math.floorMod(temp, tableSize);
+    private int getHashCode(K key, Collection<Node>[] table) {
+        int temp = key.hashCode();
+        return Math.floorMod(temp, tableSize);
     }
 
 
@@ -223,16 +214,149 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      * If the map previously contained a mapping for the key,
      * the old value is replaced.
      */
+
+    // Add key to HashSet
+    // compute index from key hashcode
+    // create node and add to buckets
+    // overwrite value if there is already a key
     public void put(K key, V value) {
+        put(key, value, buckets);
+    }
 
-        throw new UnsupportedOperationException("This operation is not supported.");
-
-//        put(key, value, buckets);
+    private Collection<Node> getBucket(int index, Collection<Node>[] table) {
+        Collection<Node> bucket;
+        if (!table[index]) {
+            bucket = createBucket();
+            table[index] = bucket;
+        } else {
+            bucket = table[index];
+        }
+        return bucket;
     }
 
     private void put(K key, V value, Collection<Node>[] table) {
+        // resize if table is full
 
-        throw new UnsupportedOperationException("This operation is not supported.");
+//        if (this.isTableFull()) {
+//            this.resizeMap();
+//        }
+
+        // get hashcode for this key and table
+        int index;
+        index = getHashCode(key, table);
+
+        // get or create bucket for the key's hash
+        Collection<Node> current_bucket;
+        current_bucket = getBucket(index, table);
+
+        // check if key is in the hashmap using equals to compare
+        // if yes, getNode(key) and updateNode(key, value)
+        // if no, createNode and addNode -- current_bucket.add(createNode(key,value)
+
+        // if there is no key in the hashmap
+        if (!containsKey(key)) {
+            // add key to HashSet
+            HashSet.add(key);
+            // add Node to the bucket
+            current_bucket.add(createNode(key, value));
+            return;
+        }
+        // if there is a key, find its node in the bucket and update the node's value
+        else {
+            for (Node node : current_bucket) {
+                if (node.key.equals(key)) {
+                    node.value = value;
+                    return
+                }
+            }
+        }
+    }
+
+    // is there already a bucket for the key's hashcode?
+    // if not, create bucket
+            if(!
+
+    bucketExists())
+
+    {
+        buckets[index] = createBucket();
+    }
+
+    current_bucket =buckets[index];
+    Node new_node = createNode(key, value);
+            current_bucket.add(new_node);
+            return;
+}
+
+        }
+                // if there is already a key in the hashmap
+                // get the node associated with the key by iterating through buckets[index]
+                // update the node's value
+                else{
+                getNode(key);
+                updateNode();
+                addNode();
+                getValue();
+                }
+
+                int index=getIndex(key);
+                updateMap(index,key,value)
+
+                // create node and add to buckets
+                int key_hash=key.hashCode();
+
+                int temp=key.hashCode();
+                return Math.floorMod(key.hashCode(),tableSize);
+                }
+                }
+
+private void resizeMap(){
+
+        int size=this.buckets.length;
+        int new_size=size*2;
+
+        int new hash;
+
+        Collection<Node>[]new_table=createTable(new_size);
+
+        // iterate through buckets and node to populate the new_table
+        // then point buckets at the new table
+
+        Collection<Node> current_bucket;
+        int new_hash;
+
+        for(int i=0;i< this.buckets.length){
+        current_bucket=buckets[i];
+
+        for(Node node:current_bucket){
+        new_hash=node.key.hashCode();
+
+        new_hash=getHashCode(key,new_table.length);
+
+        // put(node.key, node.value) in the new table. It will create new buckets as needed
+
+
+        }
+
+
+        }
+
+private boolean isTableFull(){
+        return currentLoad()>=this.loadFactor;
+        }
+private double currentLoad(){
+        return(double)HashSet.size()/(double)this.initialSize;
+        }
+
+
+private void addKey(K key){
+        this.HashSet.add(key);
+        }
+
+private void addNode(Node node,int index){
+        this.buckets[index].add(node);
+        }
+
 
 //        int index = getIndex(key);
 //        boolean ck = containsKey(key);
@@ -248,44 +372,33 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //            table[index].add(Node(key, value));
 //            size += 1;
 //        }
-
-    }
-
-    /**
-     * Returns a Set view of the keys contained in this map.
-     */
-    public Set<K> keySet() {
-
-        throw new UnsupportedOperationException("This operation is not supported.");
-
-//        Set<K> result = new Set<K>();
 //
-//        for (int i = 0; i < buckets.length; i++){
-//            for (Node node: buckets[i]){
-//                result.add(node.key);
-//            }
-//        }
-//        return result;
+//    }
 
-    }
+/**
+ * Returns a Set view of the keys contained in this map.
+ */
+public Set<K> keySet(){
+        return this.HashSet;
+        }
 
-    /**
-     * Removes the mapping for the specified key from this map if present.
-     * Not required for Lab 8. If you don't implement this, throw an
-     * UnsupportedOperationException.
-     */
-    public V remove(K key) {
+/**
+ * Removes the mapping for the specified key from this map if present.
+ * Not required for Lab 8. If you don't implement this, throw an
+ * UnsupportedOperationException.
+ */
+public V remove(K key){
         throw new UnsupportedOperationException("This operation is not supported.");
-    }
+        }
 
-    /**
-     * Removes the entry for the specified key only if it is currently mapped to
-     * the specified value. Not required for Lab 8. If you don't implement this,
-     * throw an UnsupportedOperationException.
-     */
-    public V remove(K key, V value) {
+/**
+ * Removes the entry for the specified key only if it is currently mapped to
+ * the specified value. Not required for Lab 8. If you don't implement this,
+ * throw an UnsupportedOperationException.
+ */
+public V remove(K key,V value){
         throw new UnsupportedOperationException("This operation is not supported.");
-    }
+        }
 
 
-}
+        }
