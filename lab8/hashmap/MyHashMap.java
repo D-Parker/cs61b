@@ -133,6 +133,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      */
     public void clear() {
         this.buckets = null;
+        HashSet.clear();
     }
 
     /**
