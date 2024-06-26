@@ -33,17 +33,17 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     private Collection<Node>[] buckets;
 
     // HashSet contains all the keys
-    private Set<K> HashSet;
+    private Set<K> HashSet = new HashSet<>();
 
 //    private Collection[] buckets;
 //    private Collection<Node>[] backing_table;
 
     private int initialSize = 16;
     private double loadFactor = 0.75;
-    private int tableSize;
-    private int size;
+//    private int tableSize;
+//    private int size;
 
-    private Set<K> result;
+//    private Set<K> result;
 
     // You should probably define some more!
 
@@ -51,10 +51,13 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      * Constructors
      */
     public MyHashMap() {
+        this.buckets = createTable(this.initialSize);
+
     }
 
     public MyHashMap(int initialSize) {
         this.initialSize = initialSize;
+        this.buckets = createTable(this.initialSize);
     }
 
     /**
@@ -68,7 +71,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
         this.initialSize = initialSize;
         this.loadFactor = maxLoad;
 
-        createTable(initialSize);
+        this.buckets = createTable(this.initialSize);
     }
 
     /**
@@ -97,7 +100,10 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
-        return null;
+
+//        return new Collection<>();
+
+        return new ArrayList<>();
     }
 
 
@@ -137,6 +143,9 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     // use index to get the node collection
     // return boolean contains(key) from the HashSet
     public boolean containsKey(K key) {
+        if (this.HashSet == null) {
+            return false;
+        }
         return this.HashSet.contains(key);
     }
 
@@ -161,15 +170,14 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 
     private int getIndex(K key) {
         return getHashCode(key, buckets);
-
     }
 
     private int getHashCode(K key, Collection<Node>[] table) {
         int temp = key.hashCode();
-        return Math.floorMod(temp, tableSize);
+        return Math.floorMod(temp, table.length);
     }
 
-    private void addKey (K key){
+    private void addKey(K key) {
         this.HashSet.add(key);
     }
 
@@ -211,7 +219,8 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
      * Returns the number of key-value mappings in this map.
      */
     public int size() {
-        throw new UnsupportedOperationException("This operation is not supported.");
+        return HashSet.size();
+//        throw new UnsupportedOperationException("This operation is not supported.");
 //        return size;
 
     }
@@ -228,12 +237,12 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     // create node and add to buckets
     // overwrite value if there is already a key
     public void put(K key, V value) {
-        put(key, value, buckets);
+        put(key, value, this.buckets);
     }
 
     private Collection<Node> getBucket(int index, Collection<Node>[] table) {
         Collection<Node> bucket;
-        if (!table[index]) {
+        if (table[index] == null) {
             bucket = createBucket();
             table[index] = bucket;
         } else {
@@ -294,7 +303,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
         if (!containsKey(key)) {
             return null;
         }
-        int index = getHashCode(buckets, key);
+        int index = getHashCode(key, buckets);
         Collection<Node> bucket = buckets[index];
 
         for (Node node : bucket) {
@@ -370,8 +379,6 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //        }
 
 
-
-
 //private void addNode(Node node,int index){
 //        this.buckets[index].add(node);
 //        }
@@ -394,30 +401,30 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
 //
 //    }
 
-/**
- * Returns a Set view of the keys contained in this map.
- */
-        public Set<K> keySet() {
-            return this.HashSet;
-        }
-
-/**
- * Removes the mapping for the specified key from this map if present.
- * Not required for Lab 8. If you don't implement this, throw an
- * UnsupportedOperationException.
- */
-        public V remove (K key){
-            throw new UnsupportedOperationException("This operation is not supported.");
-        }
-
-/**
- * Removes the entry for the specified key only if it is currently mapped to
- * the specified value. Not required for Lab 8. If you don't implement this,
- * throw an UnsupportedOperationException.
- */
-        public V remove (K key, V value){
-            throw new UnsupportedOperationException("This operation is not supported.");
-        }
-
-
+    /**
+     * Returns a Set view of the keys contained in this map.
+     */
+    public Set<K> keySet() {
+        return this.HashSet;
     }
+
+    /**
+     * Removes the mapping for the specified key from this map if present.
+     * Not required for Lab 8. If you don't implement this, throw an
+     * UnsupportedOperationException.
+     */
+    public V remove(K key) {
+        throw new UnsupportedOperationException("This operation is not supported.");
+    }
+
+    /**
+     * Removes the entry for the specified key only if it is currently mapped to
+     * the specified value. Not required for Lab 8. If you don't implement this,
+     * throw an UnsupportedOperationException.
+     */
+    public V remove(K key, V value) {
+        throw new UnsupportedOperationException("This operation is not supported.");
+    }
+
+
+}
