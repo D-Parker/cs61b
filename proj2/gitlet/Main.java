@@ -26,9 +26,13 @@ public class Main {
 
 
         String firstArg = args[0];
-        String secondArg = null;
-        if (args.length == 2){
+        String secondArg ;
+        String thirdArg ;
+        if (args.length >= 2){
             secondArg = args[1];
+        }
+        if (args.length >= 3){
+            thirdArg = args[2];
         }
 
         switch(firstArg) {
@@ -43,14 +47,13 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-
-
+                Commit.addNode(args[2]);
                 break;
-//            case "":
+//            case "checkout -- [file name]":
 //                break;
-//            case "":
+//            case "checkout [commit id] -- [file name]":
 //                break;
-//            case "":
+//            case "log":
 //                break;
 //            case "":
 //                break;
