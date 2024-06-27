@@ -1,6 +1,8 @@
 package gitlet;
 
 import java.io.File;
+import java.io.IOException;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -25,5 +27,36 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
+    public static final File STAGING_DIR = join(GITLET_DIR, "staging");
+
+    public String current_branch = "master";
+
     /* TODO: fill in the rest of this class. */
+    public Repository(){
+    }
+
+    public static void init(){
+        Repository();
+        setupPersistence();
+    }
+
+    public static void setupPersistence() {
+        CWD.mkdir();
+        GITLET_DIR.mkdir();
+        STAGING_DIR.mkdir();
+    }
+
+    // write the file to the staging folder
+    public static void addFile(String filename){
+
+        File temp = join(CWD, filename);
+
+        byte[] new_file = readContents(temp);
+        write
+
+
+    }
+
+
+
 }
