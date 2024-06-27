@@ -1,7 +1,9 @@
 package gitlet;
 
+//import static gitlet.Repository.*;
+
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author Michael Smith
  */
 public class Main {
 
@@ -12,7 +14,8 @@ public class Main {
         // TODO: what if args is empty?
         // return if args are empty
         if (args.length == 0) {
-            return;
+            System.out.println("No arguments provided. Terminating program.");
+            System.exit(0);
         }
 
         // what if there is already a repository?
@@ -31,15 +34,16 @@ public class Main {
         switch(firstArg) {
             case "init":
                 // TODO: handle the `init` command
+                System.out.println("reached init");
                 Repository.init();
                 break;
-            case "add":
-                // TODO: handle the `add [filename]` command
-                Repository.addFile(secondArg);
+//            case "add":
+//                // TODO: handle the `add [filename]` command
+//                Repository.addFile(secondArg);
 
 
 
-                break;
+//                break;
             // TODO: FILL THE REST IN
 //            case "":
 //                break;

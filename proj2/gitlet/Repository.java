@@ -36,27 +36,23 @@ public class Repository {
     }
 
     public static void init(){
-        Repository();
-        setupPersistence();
-    }
-
-    public static void setupPersistence() {
+        Repository temp = Repository();
         CWD.mkdir();
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
     }
+
+//    public static void setupPersistence() {
+//    }
 
     // write the file to the staging folder
     public static void addFile(String filename){
 
         File temp = join(CWD, filename);
 
-        byte[] new_file = readContents(temp);
-        write
+        byte[] input = readContents(temp);
+        File write_file = join(STAGING_DIR, filename);
 
-
+        writeContents(write_file, input);
     }
-
-
-
 }
