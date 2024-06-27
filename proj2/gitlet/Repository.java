@@ -29,30 +29,34 @@ public class Repository {
 
     public static final File STAGING_DIR = join(GITLET_DIR, "staging");
 
-    public String current_branch = "master";
+    public static final File BLOBS_DIR = join(GITLET_DIR, "blobs");
+
+    public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
+
+//    public static Commit current_branch;
 
     /* TODO: fill in the rest of this class. */
-    public Repository(){
-    }
+//    public Repository(){
+//    }
 
     public static void init(){
-        Repository temp = Repository();
-        CWD.mkdir();
+        COMMITS_DIR.mkdir();
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
+        BLOBS_DIR.mkdir();
     }
 
 //    public static void setupPersistence() {
 //    }
 
-    // write the file to the staging folder
+    // Writes the file to the staging folder
     public static void addFile(String filename){
 
         File temp = join(CWD, filename);
 
-        byte[] input = readContents(temp);
+        byte[] read_in = readContents(temp);
         File write_file = join(STAGING_DIR, filename);
 
-        writeContents(write_file, input);
+        writeContents(write_file, read_in);
     }
 }

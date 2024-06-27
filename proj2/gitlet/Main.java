@@ -1,6 +1,7 @@
 package gitlet;
 
-//import static gitlet.Repository.*;
+import static gitlet.Repository.*;
+import static gitlet.Commit.*;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author Michael Smith
@@ -26,32 +27,34 @@ public class Main {
 
 
         String firstArg = args[0];
-        String secondArg;
-        if (args.length == 2){
+        String secondArg ;
+        String thirdArg ;
+        if (args.length >= 2){
             secondArg = args[1];
+        }
+        if (args.length >= 3){
+            thirdArg = args[2];
         }
 
         switch(firstArg) {
             case "init":
                 // TODO: handle the `init` command
-                System.out.println("reached init");
                 Repository.init();
                 break;
-//            case "add":
-//                // TODO: handle the `add [filename]` command
-//                Repository.addFile(secondArg);
+            case "add":
+                // TODO: handle the `add [filename]` command
+                Repository.addFile(secondArg);
 
-
-
-//                break;
+                break;
             // TODO: FILL THE REST IN
-//            case "":
+            case "commit":
+                addNode(secondArg);
+                break;
+//            case "checkout -- [file name]":
 //                break;
-//            case "":
+//            case "checkout [commit id] -- [file name]":
 //                break;
-//            case "":
-//                break;
-//            case "":
+//            case "log":
 //                break;
 //            case "":
 //                break;
