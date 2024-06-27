@@ -1,6 +1,7 @@
 package gitlet;
 
-//import static gitlet.Repository.*;
+import static gitlet.Repository.*;
+import static gitlet.Commit.*;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author Michael Smith
@@ -47,7 +48,7 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-                Commit.addNode(args[2]);
+                Commit.addNode(secondArg);
                 break;
 //            case "checkout -- [file name]":
 //                break;
