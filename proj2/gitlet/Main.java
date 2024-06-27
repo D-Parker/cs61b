@@ -26,7 +26,7 @@ public class Main {
 
 
         String firstArg = args[0];
-        String secondArg;
+        String secondArg = null;
         if (args.length == 2){
             secondArg = args[1];
         }
@@ -34,19 +34,18 @@ public class Main {
         switch(firstArg) {
             case "init":
                 // TODO: handle the `init` command
-                System.out.println("reached init");
                 Repository.init();
                 break;
-//            case "add":
-//                // TODO: handle the `add [filename]` command
-//                Repository.addFile(secondArg);
+            case "add":
+                // TODO: handle the `add [filename]` command
+                Repository.addFile(secondArg);
 
-
-
-//                break;
+                break;
             // TODO: FILL THE REST IN
-//            case "":
-//                break;
+            case "commit":
+
+
+                break;
 //            case "":
 //                break;
 //            case "":
