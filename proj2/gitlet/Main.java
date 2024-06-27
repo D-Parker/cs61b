@@ -48,7 +48,7 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-                Commit.addNode(secondArg);
+                addNode(secondArg);
                 break;
 //            case "checkout -- [file name]":
 //                break;

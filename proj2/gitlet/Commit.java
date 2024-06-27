@@ -29,95 +29,31 @@ public class Commit {
     public class Node {
         public String message;
         public Node parent;
-        public Node(String m, parent p) {
+        public Node(String m, Node p) {
             message = m;
             parent = p;
         }
     }
 
-    public void addNode(String message){
+    public void addNode(String message) {
+        addNode(message, current_branch);
+    }
+
 //            if (current_branch==null){
 //                Commit();
 //                return;
 //            }
-        Node new_node = new Node(message, current_branch);
+
 //            new_node.message = message;
 //        new_node.parent = current_branch;
-        current_branch = new_node;
+
     }
 
+    private void addNode(String message, Node n){
+        Node new_node = new Node(message, n);
+        n = new_node;
 
-
-
-
-
-
-
-
-
-
-//    public Commit master;
-//    public String id;
-//    public String message;
-//    public Commit parent;
-//    public Commit current_branch;
-//
-//    // set up the master commit
-//    public Commit(){
-//        master = null;
-//        id = "master";
-//        message = "initial commit";
-//        parent = null;
-//    }
-//
-//    public createCommit(){
-//        if (master == null){
-//            master = new Commit()
-//        }
-//
-//    }
-
-
-//    public Node master;
-//
-//    public class Node {
-//
-//        public String id;
-//        public String message;
-//        public Node parent;
-//        public Node(String i, String m, Node p){
-//            id = i;
-//            message = m;
-//            parent = p;
-//        }
-//    }
-//    public Commit(){
-//        master = new Node("master","initial commit", null);
-//    }
-
-
-    /** The message of this Commit. */
-
-
-//    public Commit(String branch){}
-
-//    public Commit(){
-////        this.message = message;
-////        this.commit_id = commit_id;
-////        this.parent = parent;
-//    }
-//    public Commit(){
-//        message = "initial commit";
-//        commit_id = "master";
-//        parent = null;
-//    }
-//
-//    public Commit(String hash){
-//        commit_id
-//    }
-
-    // if current branch is null, create master branch
-
+    }
 
 
 
