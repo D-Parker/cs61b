@@ -23,41 +23,34 @@ public class Commit {
     public Node current_branch;
 
     public Commit(){
-        current_branch = new Node("initial commit", null);
+        current_branch = createNode("initial_commit");
+//        current_branch = new Node("initial commit", null);
     }
 
-    public class Node {
-        public String message;
-        public Node parent;
-        public Node(String m, Node p) {
+    public Node createNode(String m){
+        return new Node(m, this.current_branch);
+    }
+
+
+    protected class Node {
+        String message;
+        Node parent;
+        Node(String m, Node p) {
             message = m;
             parent = p;
         }
     }
 
-    public void addNode(String message) {
-        addNode(message, current_branch);
     }
 
-//            if (current_branch==null){
-//                Commit();
-//                return;
-//            }
-
-//            new_node.message = message;
-//        new_node.parent = current_branch;
-
-    }
-
-    private void addNode(String message, Node n){
-        Node new_node = new Node(message, n);
-        n = new_node;
-
-    }
+//    private void addNode(String message, Node n){
+//        Node new_node = new Node(message, n);
+//        n = new_node;
+//
+//    }
 
 
 
-}
 
     /* TODO: fill in the rest of this class. */
 

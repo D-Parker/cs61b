@@ -33,6 +33,8 @@ public class Repository {
 
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
+    public static Commit MASTER;
+
 //    public static Commit current_branch;
 
     /* TODO: fill in the rest of this class. */

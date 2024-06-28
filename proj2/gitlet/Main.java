@@ -27,14 +27,14 @@ public class Main {
 
 
         String firstArg = args[0];
-        String secondArg ;
-        String thirdArg ;
+        String secondArg = null ;
+//        String thirdArg ;
         if (args.length >= 2){
             secondArg = args[1];
         }
-        if (args.length >= 3){
-            thirdArg = args[2];
-        }
+//        if (args.length >= 3){
+//            thirdArg = args[2];
+//        }
 
         switch(firstArg) {
             case "init":
@@ -48,7 +48,12 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-                addNode(secondArg);
+                if (MASTER==null){
+                    MASTER = new Commit();
+                }
+//                else{
+//                    MASTER.createNode(thirdArg);
+//                }
                 break;
 //            case "checkout -- [file name]":
 //                break;
