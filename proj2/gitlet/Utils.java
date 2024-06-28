@@ -93,6 +93,7 @@ class Utils {
     /** Return the entire contents of FILE as a byte array.  FILE must
      *  be a normal file.  Throws IllegalArgumentException
      *  in case of problems. */
+    // sha1() can operate on the byte array (byte[])
     static byte[] readContents(File file) {
         if (!file.isFile()) {
             throw new IllegalArgumentException("must be a normal file");
@@ -107,6 +108,8 @@ class Utils {
     /** Return the entire contents of FILE as a String.  FILE must
      *  be a normal file.  Throws IllegalArgumentException
      *  in case of problems. */
+
+    // used for merges?
     static String readContentsAsString(File file) {
         return new String(readContents(file), StandardCharsets.UTF_8);
     }
@@ -138,8 +141,7 @@ class Utils {
 
     /** Return an object of type T read from FILE, casting it to EXPECTEDCLASS.
      *  Throws IllegalArgumentException in case of problems. */
-    static <T extends Serializable> T readObject(File file,
-                                                 Class<T> expectedClass) {
+    static <T extends Serializable> T readObject(File file, Class<T> expectedClass) {
         try {
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
@@ -232,6 +234,7 @@ class Utils {
 
     /** Print a message composed from MSG and ARGS as for the String.format
      *  method, followed by a newline. */
+    // this is used for log?
     static void message(String msg, Object... args) {
         System.out.printf(msg, args);
         System.out.println();
