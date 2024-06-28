@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.TreeMap;
-
+import java.io.Serializable;
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -20,7 +20,7 @@ import static gitlet.Utils.*;
  *
  * @author TODO
  */
-public class Repository {
+public class Repository implements Serializable{
     /**
      * TODO: add instance variables here.
      *
@@ -121,4 +121,4 @@ public class Repository {
 
     }
 
-}
+

@@ -1,7 +1,8 @@
 package gitlet;
 
-
+import java.util.Set;
 import java.io.File;
+import java.io.Serializable;
 import java.time.Instant;
 // TODO: any imports you need here
 import static gitlet.Utils.*;
@@ -9,7 +10,8 @@ import static gitlet.Utils.*;
 import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.List;
 import java.util.TreeMap;
-
+import java.util.Collection;
+import java.io.Serializable;
 /**
  * Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -17,7 +19,7 @@ import java.util.TreeMap;
  *
  * @author TODO
  */
-public class Commit {
+public class Commit implements Serializable{
     /**
      * TODO: add instance variables here.
      * <p>
@@ -28,9 +30,9 @@ public class Commit {
 //    Instant zeroTimestamp = Instant.EPOCH;
     public Instant ts;
     public String message;
-    public String parent;
+    public Commit parent;
     public String second_parent;
-    public TreeMap<String, File> file_blob_map;
+    public TreeMap<String, File> abc = null;
 
     /**
      * Commit all files in staging folder
@@ -41,14 +43,11 @@ public class Commit {
 //        return blob_files == null;
 //    }
 
-    public commit(){
-
-
+    public Commit(){
+        this.abc = abc;
         // process the files until staging directories are empty
         // generate hash for the commit object
         // if branches reference is null, initiate master and current branches
-
-
     }
 
 
@@ -70,8 +69,8 @@ public class Commit {
         String hash;
 
         // inherit file_blob_map from parent;
-        if (parent.file_blob_map != null) {
-            file_blob_map = new TreeMap<>(parent.file_blob_map);
+        if (this.parent.abc != null) {
+            this.abc = parent.abc;
         }
 
         List<String> staging_files = plainFilenamesIn(Repository.STAGING_DIR);
@@ -92,7 +91,7 @@ public class Commit {
             hash = sha1(hash_object);
 
             // check if hash is already in file_blob_map
-            if (file_blob_map.containsKey(hash)) {
+            if (abc.containsKey(hash)) {
                 continue;
             }
 
@@ -105,7 +104,7 @@ public class Commit {
             }
 
             //
-            file_blob_map.put(hash, blob_file);
+            abc.put(hash, blob_file);
 
             //
             writeContents(blob_file, hash_object);
@@ -130,10 +129,10 @@ public class Commit {
 
     }
 
-    public void makeBlob() {
-
-
-    }
+//    public void makeBlob() {
+//
+//
+//    }
 
 
 //    public Node current_branch;
