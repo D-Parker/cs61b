@@ -74,6 +74,22 @@ public class Repository implements Serializable {
         this.saveRepository();
     }
 
+
+    public void createInitialCommit(){
+
+        Commit c = new Commit();
+        // generate commit hash
+        // set branches
+        // save commit fild
+    }
+
+    public void createCommit(String message){
+
+        Commit c = new Commit(message);
+        
+
+    }
+
     public boolean hasBranches(){
         return BRANCHES.size() > 0;
     }

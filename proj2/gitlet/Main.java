@@ -59,6 +59,13 @@ public class Main {
 
                 // cancel if staging directory is empty
 
+
+                // if commit folder is empty
+                createInitialCommit();
+
+                // else if commit folder is not empty
+                createCommit(message);
+
                 repo = loadRepository();
 
 //                if (plainFilenamesIn(Repository.STAGING_DIR).size()==0){
@@ -81,6 +88,20 @@ public class Main {
                 }
 
                 c.createBlobMap();
+
+                private String generateId() {
+                return sha1(getTimestamp(), message, parents.toString(), tracked.toString());
+
+                return sha1(Instant.now(), message, parent.toString(), secondparent.toString(), blob_map.toString());
+            }
+
+                // Get hash for the commit
+
+                // Save commit to disk
+
+
+
+
 
 //                String c_hash = c.getCommitHash();
 
