@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 import java.util.TreeMap;
 import java.io.Serializable;
 import static gitlet.Utils.*;
@@ -47,52 +48,67 @@ public class Repository implements Serializable{
 
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
-    public static String MASTER;
+//    public static String MASTER = "abc123";
 
     // <branch_name, commit hash >
     public static TreeMap<String, String> BRANCHES;
 
-    public static void addCommit() {
-    }
+
+        // get strings from all the filenames in staging
+        // iterate through the strings
+
 
 //    public static Commit current_branch;
 
     /* TODO: fill in the rest of this class. */
-//    public Repository(){
-//    }
+    public Repository(){
+        super();
+        BRANCHES.put("master",null);
+        BRANCHES.put("current",null);
+        BRANCHES.put("HEAD",null);
 
-    public void init() {
         COMMITS_DIR.mkdir();
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
         BLOBS_DIR.mkdir();
 
-        saveRepository();
+        saveRepository(GITLET_DIR);
     }
+
+//    public void init() {
+//    }
 
 //    public static void setupPersistence() {
 //    }
 
-    public void saveRepository(){
-        byte[] temp = serialize(this);
+// Save current repository to disk
+    public void saveRepository(File dir){
+        File write_file = join(dir, "repository");
+        writeObject(write_file, this);
+    }
 
-        File write_file = join(GITLET_DIR, "repository");
+    public List<String> getListOfDirectoryFiles(File directory){
+        return plainFilenamesIn(directory);
 
-        writeContents(write_file, temp);
+    }
+
+
+    public Commit newCommit(){
+        return new Commit();
     }
 
     public static Repository loadRepository(){
 
         File temp = join(GITLET_DIR, "repository");
 
-        byte[] abc = readContents(temp);
+        Repository result = readObject(temp, Repository.class);
 
-        Repository result = readObject(abc, Repository);
+//        Repository result = readObject(abc, Repository<>() );
         return result;
     }
 
     // Writes the file to the staging folder
-    public void addFile(String filename) {
+    public static void addFile(String filename) {
 
         File temp = join(CWD, filename);
 
