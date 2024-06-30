@@ -3,8 +3,12 @@ import java.time.Instant;
 import java.util.ResourceBundle;
 import static gitlet.Repository.*;
 import static gitlet.Commit.*;
-import static gitlet.Utils.plainFilenamesIn;
-import static gitlet.Utils.sha1;
+import static gitlet.Utils.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
@@ -55,9 +59,11 @@ public class Main {
 
                 // cancel if staging directory is empty
 
-                if (plainFilenamesIn(Repository.BLOBS_DIR).size()==0){
-                    return;
-                }
+                repo = loadRepository();
+
+//                if (plainFilenamesIn(Repository.STAGING_DIR).size()==0){
+//                    return;
+//                }
 
                 Commit c = new Commit();
 
@@ -76,15 +82,25 @@ public class Main {
 
                 c.createBlobMap();
 
-                String c_hash = sha1(c);
-                if (repo.hasBranches()==false){
-                    repo.BRANCHES.put("master", c_hash);
-                    repo.BRANCHES.put("current_branch", c_hash);
-                    repo.BRANCHES.put("HEAD", c_hash);
-                } else {
-                    repo.BRANCHES.put("current_branch", c_hash);
-                    repo.BRANCHES.put("HEAD", c_hash);
-                }
+//                String c_hash = c.getCommitHash();
+
+//                File temp1 = join(Repository.COMMITS_DIR, "temp");
+//              writeObject(temp1, c);
+////
+//                String c_serial = readContentsAsString(temp1);
+//                String c_hash = sha1(c_serial);
+
+//                byte[] c_serial = readObject(c, Commit.class);
+//                String c_hash = sha1(serialize(c));
+
+//                if (repo.hasBranches()==false){
+//                    repo.BRANCHES.put("master", c_hash);
+//                    repo.BRANCHES.put("current_branch", c_hash);
+//                    repo.BRANCHES.put("HEAD", c_hash);
+//                } else {
+//                    repo.BRANCHES.put("current_branch", c_hash);
+//                    repo.BRANCHES.put("HEAD", c_hash);
+//                }
                 c.saveCommit();
                 repo.saveRepository();
 

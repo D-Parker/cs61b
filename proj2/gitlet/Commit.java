@@ -34,7 +34,7 @@ public class Commit implements Serializable {
     public String message;
     public String parent;
     public String second_parent;
-    public TreeMap<String, String> blob_map;
+    public TreeMap<String, String> blob_map = new TreeMap<>();
 
 
     // constructor
@@ -73,6 +73,9 @@ public class Commit implements Serializable {
         return plainFilenamesIn(Repository.BLOBS_DIR);
     }
 
+    public List<String> getStagingFiles() {
+        return plainFilenamesIn(Repository.STAGING_DIR);
+    }
 
     public void createBlobMap() {
 
@@ -81,9 +84,9 @@ public class Commit implements Serializable {
         String item_hash;
         File blob_file;
 
-        List<String> blob_files = getBlobFiles();
+        List<String> staging_files = getStagingFiles();
 
-        for (String item : blob_files) {
+        for (String item : staging_files) {
             item_file = join(Repository.STAGING_DIR, item);
             item_object = readContents(item_file);
             item_hash = getFileHash(item_file);
@@ -95,9 +98,10 @@ public class Commit implements Serializable {
             // Write blob file to disk
             writeContents(blob_file, item_object);
             // Delete from staging folder
-            restrictedDelete(item_file);
+            item_file.delete();
         }
     }
+}
 
 
 //            // read in file
@@ -113,14 +117,6 @@ public class Commit implements Serializable {
 //            writeContents(blob_file, item_object);
 
 
-}
-
-
-
-}
-
-
-        }
 //    public List<String> staging_list;
 
 //    public Commit(String message){
@@ -138,11 +134,10 @@ public class Commit implements Serializable {
  */
 
 
-public void addCommit(){
-
-        // get the commit hash for the set of all of the files
-        List<String> staging_list=plainFilenamesIn(Repository.STAGING_DIR);
-
+//public void addCommit() {
+//    // get the commit hash for the set of all of the files
+//    List<String> staging_list = plainFilenamesIn(Repository.STAGING_DIR);
+//}
 
 //
 ////    public boolean isFirstCommit(){
