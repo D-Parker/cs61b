@@ -51,7 +51,7 @@ public class Repository implements Serializable {
 //    public static String MASTER = "abc123";
 
     // <branch_name, commit hash >
-    public static TreeMap<String, String> BRANCHES;
+    public TreeMap<String, String> BRANCHES = new TreeMap<>();
 
     // get strings from all the filenames in staging
     // iterate through the strings
@@ -71,12 +71,16 @@ public class Repository implements Serializable {
         STAGING_DIR.mkdir();
         BLOBS_DIR.mkdir();
 
-        saveRepository(GITLET_DIR);
+        this.saveRepository();
+    }
+
+    public boolean hasBranches(){
+        return BRANCHES.size() > 0;
     }
 
     // Save current repository to disk
-    public void saveRepository(File dir) {
-        File write_file = join(dir, "repository");
+    public void saveRepository() {
+        File write_file = join(GITLET_DIR, "repository");
         writeObject(write_file, this);
     }
 
@@ -84,17 +88,18 @@ public class Repository implements Serializable {
         return plainFilenamesIn(directory);
     }
 
-    public Commit newCommit() {
-        return new Commit();
+    public void updateBranch(String branch, String hash){
+        this.BRANCHES.put(branch, hash);
     }
 
+
+//    public Commit newCommit() {
+//        return new Commit();
+//    }
+
     public static Repository loadRepository() {
-
         File temp = join(GITLET_DIR, "repository");
-
-        Repository result = readObject(temp, Repository.class);
-
-        return result;
+        return readObject(temp, Repository.class);
     }
 
     // Writes the file to the staging folder
@@ -111,6 +116,11 @@ public class Repository implements Serializable {
         File write_file = join(STAGING_DIR, filename);
 
         writeContents(write_file, read_in);
+    }
+
+    public boolean isStagingEmpty(){
+        List<String> temp = plainFilenamesIn(Repository.BLOBS_DIR);
+        return temp.size()==0;
     }
 
 }
@@ -149,7 +159,7 @@ public class Repository implements Serializable {
             ;
 
             // serialize and save branches to disk
-        }
+
 
 //        public void addCommit(String abc){
 //

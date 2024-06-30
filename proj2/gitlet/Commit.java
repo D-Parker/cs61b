@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Collection;
 import java.io.Serializable;
+
 /**
  * Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -19,7 +20,7 @@ import java.io.Serializable;
  *
  * @author TODO
  */
-public class Commit implements Serializable{
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      * <p>
@@ -35,35 +36,91 @@ public class Commit implements Serializable{
     public String second_parent;
     public TreeMap<String, String> blob_map;
 
+
+    // constructor
+
+//    public Commit(String message){
+//
+//    }
+
+
     // methods
 
-    public void saveCommit(File dir){
-        File write_file = join(dir, getHash(this) );
+    public void saveCommit() {
+        File write_file = join(Repository.COMMITS_DIR, getHash(this));
         writeObject(write_file, this);
     }
 
-    public void updateBranch(String branch, String hash){
-        Repository.BRANCHES.put(branch, hash);
-    }
-
-    public static Commit loadCommit(String hash){
+    public static Commit loadCommit(String hash) {
         File file = join(Repository.COMMITS_DIR, hash);
         return readObject(file, Commit.class);
     }
 
-    public String getHash(Serializable obj){
+    public String getHash(Serializable obj) {
         return sha1(obj);
     }
-    public String getCommitHash(){
+
+    public String getCommitHash() {
         return getHash(this);
     }
 
-    public String getFileHash(File file){
+    public String getFileHash(File file) {
         byte[] temp = readContents(file);
         return getHash(temp);
     }
 
+    public List<String> getBlobFiles() {
+        return plainFilenamesIn(Repository.BLOBS_DIR);
+    }
+
+
+    public void createBlobMap() {
+
+        byte[] item_object;
+        File item_file;
+        String item_hash;
+        File blob_file;
+
+        List<String> blob_files = getBlobFiles();
+
+        for (String item : blob_files) {
+            item_file = join(Repository.STAGING_DIR, item);
+            item_object = readContents(item_file);
+            item_hash = getFileHash(item_file);
+
+            // Set name of blob file
+            blob_file = join(Repository.BLOBS_DIR, item_hash);
+            // Add record to commit tree
+            blob_map.put(item, item_hash);
+            // Write blob file to disk
+            writeContents(blob_file, item_object);
+            // Delete from staging folder
+            restrictedDelete(item_file);
+        }
+    }
+
+
+//            // read in file
+
+//            // convert file to memory object
+
+//            // compute hash from memory object
+//            item_hash = sha1(item_object);
+//            // generate name of blob file
+//            blob_file = join(Repository.BLOBS_DIR, item_hash);
+//            // add entry to the blob map for the commit
+//            // write blob file to disk
+//            writeContents(blob_file, item_object);
+
+
 }
+
+
+
+}
+
+
+        }
 //    public List<String> staging_list;
 
 //    public Commit(String message){
@@ -76,42 +133,17 @@ public class Commit implements Serializable{
 //    }
 
 
+/**
+ * Commit all files in staging folder
+ */
 
 
+public void addCommit(){
 
-    /**
-     * Commit all files in staging folder
-     */
+        // get the commit hash for the set of all of the files
+        List<String> staging_list=plainFilenamesIn(Repository.STAGING_DIR);
 
 
-//    public void addCommit() {
-//
-//        // get the commit hash for the set of all of the files
-//        List<String> staging_list = plainFilenamesIn(Repository.STAGING_DIR);
-//
-//        byte[] item_object;
-//        File item_file;
-//        String item_hash;
-//        File blob_file;
-//
-//
-//        for (String item : staging_list) {
-//
-//            // read in file
-//            item_file= join(Repository.STAGING_DIR, item);
-//            // convert file to memory object
-//            item_object = readContents(item_file);
-//            // compute hash from memory object
-//            item_hash = sha1(item_object);
-//            // generate name of blob file
-//            blob_file = join(Repository.BLOBS_DIR, item_hash);
-//            // add entry to the blob map for the commit
-//
-//            blob_map.put(item, item_hash);
-//
-//            // write blob file to disk
-//            writeContents(blob_file, item_object);
-//        }
 //
 ////    public boolean isFirstCommit(){
 ////        List<String> blob_files = plainFilenamesIn(Repository.COMMITS_DIR);
@@ -135,8 +167,8 @@ public class Commit implements Serializable{
 //
 //        // 1. staged for addition 2. staged for removal
 //
-//        List<String> blob_files = plainFilenamesIn(Repository.BLOBS_DIR);
-//
+
+
 //        if (blob_files == null){
 //            return;
 //        }

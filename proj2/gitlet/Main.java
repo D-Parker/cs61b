@@ -1,7 +1,11 @@
 package gitlet;
+import java.time.Instant;
 import java.util.ResourceBundle;
 import static gitlet.Repository.*;
 import static gitlet.Commit.*;
+import static gitlet.Utils.plainFilenamesIn;
+import static gitlet.Utils.sha1;
+
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -15,6 +19,13 @@ public class Main {
     public static void main(String[] args) {
         // TODO: what if args is empty?
         // this is for
+
+        Repository repo;
+        if (GITLET_DIR.exists()){
+            repo = loadRepository();
+        }
+
+
         validateNumArgs(args);
         // return if args are empty
         // what if there is already a repository?
@@ -37,29 +48,59 @@ public class Main {
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
-
-                // adding file to staging doesn't involve the repo
-
                 Repository.addFile(secondArg);
-
-//                repo.addFile(secondArg);
-
                 break;
             // TODO: FILL THE REST IN
             case "commit":
 
-                // load the repository into memory
+                // cancel if staging directory is empty
 
-                Commit.Commit(secondArg);
+                if (plainFilenamesIn(Repository.BLOBS_DIR).size()==0){
+                    return;
+                }
+
+                Commit c = new Commit();
+
+                // update all of Commit c's instance variables
+
+                if (repo.hasBranches()==false){
+                    c.ts = Instant.EPOCH;
+                    c.message = "initial commit";
+                    c.parent = null;
+                    c.second_parent = null;
+                } else {
+                    c.ts = Instant.now();
+                    c.message = secondArg;
+                    c.parent = repo.BRANCHES.get("current_branch");
+                }
+
+                c.createBlobMap();
+
+                String c_hash = sha1(c);
+                if (repo.hasBranches()==false){
+                    repo.BRANCHES.put("master", c_hash);
+                    repo.BRANCHES.put("current_branch", c_hash);
+                    repo.BRANCHES.put("HEAD", c_hash);
+                } else {
+                    repo.BRANCHES.put("current_branch", c_hash);
+                    repo.BRANCHES.put("HEAD", c_hash);
+                }
+                c.saveCommit();
+                repo.saveRepository();
 
 
-                Repository repo = Repository.loadRepository();
 
-                Commit temp_commit = repo.newCommit();
 
-                temp_commit.addCommit();
-
-                Commit.Commit(secondArg);
+//                Commit.Commit(secondArg);
+//
+//
+//                Repository repo = Repository.loadRepository();
+//
+//                Commit temp_commit = repo.newCommit();
+//
+//                temp_commit.addCommit();
+//
+//                Commit.Commit(secondArg);
 
 
 //                if (MASTER==null){
@@ -121,6 +162,11 @@ public class Main {
             throw new RuntimeException(
                     String.format("Invalid number of arguments for: %s.", cmd));
         }
+
+//            if (cmd == "commit" && BLOBS_DIR. != 2) {
+//                throw new RuntimeException(
+//                        String.format("Invalid number of arguments for: %s.", cmd));
+//        }
 
     }
 
