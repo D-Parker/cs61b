@@ -1,5 +1,7 @@
 package gitlet;
 
+import java.util.ResourceBundle;
+
 import static gitlet.Repository.*;
 import static gitlet.Commit.*;
 
@@ -23,10 +25,7 @@ public class Main {
 
 
         // return if args are empty
-        if (args.length == 0) {
-            System.out.println("No arguments provided. Terminating program.");
-            System.exit(0);
-        }
+
 
         // what if there is already a repository?
 
@@ -55,15 +54,26 @@ public class Main {
                     System.out.println("A Gitlet version-control system already exists in the current directory");
                     System.exit(0);
                 }
-                Repository.init();
+                // need to create and save the repository
+                Repository temp = new Repository();
+                temp.init();
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
-                Repository.addFile(secondArg);
+
+                Repository repo = Repository.loadRepository();
+
+                repo.addFile(secondArg);
+
+
 
                 break;
             // TODO: FILL THE REST IN
             case "commit":
+
+                Repository.addCommit();
+
+
 //                if (MASTER==null){
 //                    MASTER = new Commit();
 
@@ -102,6 +112,12 @@ public class Main {
 }
 
     public static void validateNumArgs(String[] args) {
+
+//        if (args.length == 0) {
+//            System.out.println("No arguments provided. Terminating program.");
+//            System.exit(0);
+//        }
+
         String cmd = args[0];
         if (cmd == "init" && args.length != 1) {
             throw new RuntimeException(

@@ -16,7 +16,10 @@ import static gitlet.Utils.*;
 /**
  * Represents a gitlet repository.
  *  TODO: It's a good idea to give a description here of what else this Class
+
  *  does at a high level.
+ *  A repository stores references to staging files and commits.
+ *
  *
  * @author TODO
  */
@@ -49,24 +52,47 @@ public class Repository implements Serializable{
     // <branch_name, commit hash >
     public static TreeMap<String, String> BRANCHES;
 
+    public static void addCommit() {
+    }
+
 //    public static Commit current_branch;
 
     /* TODO: fill in the rest of this class. */
 //    public Repository(){
 //    }
 
-    public static void init() {
+    public void init() {
         COMMITS_DIR.mkdir();
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
         BLOBS_DIR.mkdir();
+
+        saveRepository();
     }
 
 //    public static void setupPersistence() {
 //    }
 
+    public void saveRepository(){
+        byte[] temp = serialize(this);
+
+        File write_file = join(GITLET_DIR, "repository");
+
+        writeContents(write_file, temp);
+    }
+
+    public static Repository loadRepository(){
+
+        File temp = join(GITLET_DIR, "repository");
+
+        byte[] abc = readContents(temp);
+
+        Repository result = readObject(abc, Repository);
+        return result;
+    }
+
     // Writes the file to the staging folder
-    public static void addFile(String filename) {
+    public void addFile(String filename) {
 
         File temp = join(CWD, filename);
 
@@ -95,7 +121,7 @@ public class Repository implements Serializable{
             temp.message = message;
         }
 
-        temp.commitFiles();
+//        temp.commitFiles();
         //
         String commit_hash = sha1(temp);
 
@@ -114,10 +140,24 @@ public class Repository implements Serializable{
             ;
 
             // serialize and save branches to disk
+        }
+
+        public void addCommit(String abc){
+
+            if (BRANCHES == null){
+                BRANCHES.put("master", null);
+                BRANCHES.put("current_branch", null);
+                return;
+            }
+            // createCommit() with the files in staging
+
+
 
         }
-        ;
 
+//        public void new addBranch(String key, String value){
+//        BRANCHES.put()
+//    }
 
     }
 
