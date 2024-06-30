@@ -1,17 +1,13 @@
 package gitlet;
-
 import java.util.ResourceBundle;
-
 import static gitlet.Repository.*;
 import static gitlet.Commit.*;
-
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
  * @author Michael Smith
  */
 public class Main {
-
     /**
      * Usage: java gitlet.Main ARGS, where ARGS contains
      * <COMMAND> <OPERAND1> <OPERAND2> ...
@@ -27,7 +23,6 @@ public class Main {
 
         String cmd = args[0];
         String secondArg = null;
-//        String thirdArg ;
         if (args.length >= 2) {
             secondArg = args[1];
         }
@@ -109,7 +104,6 @@ public class Main {
             System.out.println("No arguments provided. Terminating program.");
             System.exit(0);
         }
-
         String cmd = args[0];
         if (cmd == "init" && args.length != 1) {
             throw new RuntimeException(
@@ -129,7 +123,7 @@ public class Main {
         }
 
     }
-        
+
 }
 
 

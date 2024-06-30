@@ -28,11 +28,41 @@ public class Commit implements Serializable{
      * variable is used. We've provided one example for `message`.
      */
 
+    // instance variables
     public Instant ts;
     public String message;
     public String parent;
     public String second_parent;
     public TreeMap<String, String> blob_map;
+
+    // methods
+
+    public void saveCommit(File dir){
+        File write_file = join(dir, getHash(this) );
+        writeObject(write_file, this);
+    }
+
+    public void updateBranch(String branch, String hash){
+        Repository.BRANCHES.put(branch, hash);
+    }
+
+    public static Commit loadCommit(String hash){
+        File file = join(Repository.COMMITS_DIR, hash);
+        return readObject(file, Commit.class);
+    }
+
+    public String getHash(Serializable obj){
+        return sha1(obj);
+    }
+    public String getCommitHash(){
+        return getHash(this);
+    }
+
+    public String getFileHash(File file){
+        byte[] temp = readContents(file);
+        return getHash(temp);
+    }
+
 }
 //    public List<String> staging_list;
 

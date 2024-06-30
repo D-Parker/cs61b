@@ -24,7 +24,7 @@ import static gitlet.Utils.*;
  *
  * @author TODO
  */
-public class Repository implements Serializable{
+public class Repository implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -53,19 +53,18 @@ public class Repository implements Serializable{
     // <branch_name, commit hash >
     public static TreeMap<String, String> BRANCHES;
 
-
-        // get strings from all the filenames in staging
-        // iterate through the strings
-
+    // get strings from all the filenames in staging
+    // iterate through the strings
 
 //    public static Commit current_branch;
 
     /* TODO: fill in the rest of this class. */
-    public Repository(){
+    public Repository() {
         super();
-        BRANCHES.put("master",null);
-        BRANCHES.put("current",null);
-        BRANCHES.put("HEAD",null);
+//        if BRANCHES size is zero
+//        BRANCHES.put("master",null);
+//        BRANCHES.put("current",null);
+//        BRANCHES.put("HEAD",null);
 
         COMMITS_DIR.mkdir();
         GITLET_DIR.mkdir();
@@ -75,35 +74,26 @@ public class Repository implements Serializable{
         saveRepository(GITLET_DIR);
     }
 
-//    public void init() {
-//    }
-
-//    public static void setupPersistence() {
-//    }
-
-// Save current repository to disk
-    public void saveRepository(File dir){
+    // Save current repository to disk
+    public void saveRepository(File dir) {
         File write_file = join(dir, "repository");
         writeObject(write_file, this);
     }
 
-    public List<String> getListOfDirectoryFiles(File directory){
+    public List<String> getListOfDirectoryFiles(File directory) {
         return plainFilenamesIn(directory);
-
     }
 
-
-    public Commit newCommit(){
+    public Commit newCommit() {
         return new Commit();
     }
 
-    public static Repository loadRepository(){
+    public static Repository loadRepository() {
 
         File temp = join(GITLET_DIR, "repository");
 
         Repository result = readObject(temp, Repository.class);
 
-//        Repository result = readObject(abc, Repository<>() );
         return result;
     }
 
@@ -123,58 +113,61 @@ public class Repository implements Serializable{
         writeContents(write_file, read_in);
     }
 
-    public static void makeCommit(String message) {
+}
 
-        Commit temp = new Commit();
 
-        if (BRANCHES == null) {
-            temp.ts = Instant.EPOCH;
-            temp.message = "initial commit";
-            temp.parent = null;
-        }
-        else {
-            temp.ts = Instant.now();
-            temp.message = message;
-        }
+//    public static void makeCommit(String message) {
+//
+//        Commit temp = new Commit();
+//
+//        if (BRANCHES == null) {
+//            temp.ts = Instant.EPOCH;
+//            temp.message = "initial commit";
+//            temp.parent = null;
+//        }
+//        else {
+//            temp.ts = Instant.now();
+//            temp.message = message;
+//        }
 
 //        temp.commitFiles();
         //
-        String commit_hash = sha1(temp);
-
-        byte[] branch;
-
-        File file;
-
-        if (BRANCHES == null) {
-            BRANCHES.put("master", commit_hash);
-        }
-        BRANCHES.put("current_branch", commit_hash);
-
-        branch = serialize(BRANCHES);
-        file = join(COMMITS_DIR, "branches");
-        writeObject(file, branch);
+//        String commit_hash = sha1(temp);
+//
+//        byte[] branch;
+//
+//        File file;
+//
+//        if (BRANCHES == null) {
+//            BRANCHES.put("master", commit_hash);
+//        }
+//        BRANCHES.put("current_branch", commit_hash);
+//
+//        branch = serialize(BRANCHES);
+//        file = join(COMMITS_DIR, "branches");
+//        writeObject(file, branch);
             ;
 
             // serialize and save branches to disk
         }
 
-        public void addCommit(String abc){
-
-            if (BRANCHES == null){
-                BRANCHES.put("master", null);
-                BRANCHES.put("current_branch", null);
-                return;
-            }
+//        public void addCommit(String abc){
+//
+//            if (BRANCHES == null){
+//                BRANCHES.put("master", null);
+//                BRANCHES.put("current_branch", null);
+//                return;
+//            }
             // createCommit() with the files in staging
 
 
 
-        }
+
 
 //        public void new addBranch(String key, String value){
 //        BRANCHES.put()
 //    }
 
-    }
+
 
 
