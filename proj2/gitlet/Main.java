@@ -56,6 +56,8 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
+
+                Repository repo = loadRepository();
         }
     }
 

@@ -1,5 +1,8 @@
 package gitlet;
 
+
+import java.io.*;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,6 +63,8 @@ public class Repository implements Serializable {
     public TreeMap<String, String> STAGING_ADD = new TreeMap<>();
     public TreeMap<String, String> STAGING_REMOVE = new TreeMap<>();
 
+    public TreeMap<String, String> BLOBS = new TreeMap<>();
+
     // get strings from all the filenames in staging
     // iterate through the strings
 
@@ -69,11 +74,7 @@ public class Repository implements Serializable {
 
     // This constructor is run just once to initialize the repository
     public Repository() {
-//        super();
-//        if BRANCHES size is zero
-//        BRANCHES.put("master",null);
-//        BRANCHES.put("current",null);
-//        BRANCHES.put("HEAD",null);
+        super();
 
         GITLET_DIR.mkdir();
         COMMITS_DIR.mkdir();
@@ -84,40 +85,64 @@ public class Repository implements Serializable {
         // generate commit hash
 
         // Set master branch
-        BRANCHES_ORIGIN.put("master", c.generateId());
-        BRANCHES.put("master", c.generateId());
+        BRANCHES_ORIGIN.put("master", c.generateInitialId());
+        BRANCHES.put("master", c.generateInitialId());
         BRANCHES.put("current", "master");
-        BRANCHES.put("HEAD", c.generateId());
+        BRANCHES.put("HEAD", c.generateInitialId());
 
-        c.saveCommit();
-        c = null;
+        c.saveInitialCommit();
 
         saveRepository();
     }
 
+    // Create commits after the initial one.
+    public void createCommit(String message){
+        Commit c = new Commit(message);
+        c.parent = BRANCHES.get("HEAD");
+        c.second_parent = BRANCHES.get("HEAD");
 
-//    public void createRepository(){
-//        new Repository();
-//
-//        createInitialCommit();
-//
-//    }
+        Commit prev = Commit.loadCommit(c.parent);
 
-    public Commit createInitialCommit(){
+        if (prev.tracked != null){
+            c.tracked.putAll(prev.tracked);
+        }
 
-        Commit c = new Commit();
-        // generate commit hash
+        List<String> staging = getStagingFiles();
+        List<String> staging = getStagingFiles();
 
-        // Set master branch
-        BRANCHES_ORIGIN.put("master", c.generateId());
-        BRANCHES.put("master", c.generateId());
-        BRANCHES.put("current", "master");
-        BRANCHES.put("HEAD", c.generateId());
+        // Populate tracking map
+        //        write all files to blobs folder
+        for (String file : staging){
+            File staging_file = join(STAGING_DIR, file);
+//            byte[] item_object = readContents(staging_file);
+            String hash = getFileHash(staging_file);
 
-        saveCommit(c);
+            c.tracked.put(file, hash);
 
-        return c;
+            File blob_file = join(BLOBS_DIR, hash);
+            writeContents(blob_file, readContents(staging_file));
+        }
 
+
+        for (Map.Entry<String, String> entry : c.tracked){
+           File blob_file = join(Repository.BLOBS_DIR, entry.getValue());
+           byte[] item_object = readContents();
+           writeContents(blob_file, item_object)
+
+
+        }
+
+
+    }
+
+
+    public String getFileHash(File file) {
+        byte[] temp = readContents(file);
+        return Commit.getHash(temp);
+    }
+
+    public List<String> getStagingFiles() {
+        return plainFilenamesIn(Repository.STAGING_DIR);
     }
 
     public void saveCommit(Commit c) {
