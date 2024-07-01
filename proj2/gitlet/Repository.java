@@ -7,7 +7,8 @@ import java.nio.file.Paths;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.*;
 import java.util.TreeMap;
 import java.io.Serializable;
 import static gitlet.Utils.*;
@@ -52,6 +53,12 @@ public class Repository implements Serializable {
 
     // <branch_name, commit hash >
     public TreeMap<String, String> BRANCHES = new TreeMap<>();
+    public TreeMap<String, String> BRANCHES_ORIGIN = new TreeMap<>();
+
+    public List<String> CWD_FILES ;
+
+    public TreeMap<String, String> STAGING_ADD = new TreeMap<>();
+    public TreeMap<String, String> STAGING_REMOVE = new TreeMap<>();
 
     // get strings from all the filenames in staging
     // iterate through the strings
@@ -59,35 +66,78 @@ public class Repository implements Serializable {
 //    public static Commit current_branch;
 
     /* TODO: fill in the rest of this class. */
+
+    // This constructor is run just once to initialize the repository
     public Repository() {
-        super();
+//        super();
 //        if BRANCHES size is zero
 //        BRANCHES.put("master",null);
 //        BRANCHES.put("current",null);
 //        BRANCHES.put("HEAD",null);
 
-        COMMITS_DIR.mkdir();
         GITLET_DIR.mkdir();
+        COMMITS_DIR.mkdir();
         STAGING_DIR.mkdir();
         BLOBS_DIR.mkdir();
 
-        this.saveRepository();
+        Commit c = new Commit();
+        // generate commit hash
+
+        // Set master branch
+        BRANCHES_ORIGIN.put("master", c.generateId());
+        BRANCHES.put("master", c.generateId());
+        BRANCHES.put("current", "master");
+        BRANCHES.put("HEAD", c.generateId());
+
+        c.saveCommit();
+        c = null;
+
+        saveRepository();
     }
 
 
-    public void createInitialCommit(){
+//    public void createRepository(){
+//        new Repository();
+//
+//        createInitialCommit();
+//
+//    }
+
+    public Commit createInitialCommit(){
 
         Commit c = new Commit();
         // generate commit hash
-        // set branches
-        // save commit fild
+
+        // Set master branch
+        BRANCHES_ORIGIN.put("master", c.generateId());
+        BRANCHES.put("master", c.generateId());
+        BRANCHES.put("current", "master");
+        BRANCHES.put("HEAD", c.generateId());
+
+        saveCommit(c);
+
+        return c;
+
     }
 
+    public void saveCommit(Commit c) {
+        File write_file = join(Repository.COMMITS_DIR, "Commit_abc");
+//        File write_file = join(Repository.COMMITS_DIR, this.generateId());
+        writeObject(write_file, this);
+    }
+
+    // for commits after the initial commit
     public void createCommit(String message){
 
         Commit c = new Commit(message);
+        // get commit hash and save commit
 
+        c.parent = BRANCHES.get("HEAD");
 
+        // fill in the tracked object
+
+        // save the commit with hash name
+        c.saveCommit();
     }
 
     public boolean hasBranches(){

@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Collection;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Represents a gitlet commit object.
@@ -34,20 +38,52 @@ public class Commit implements Serializable {
     public String message;
     public String parent;
     public String second_parent;
-    public TreeMap<String, String> blob_map = new TreeMap<>();
+    public TreeMap<String, String> tracked ;
 
+    // constructor for init command only
+    public Commit(){
+        super();
+        this.ts = Instant.EPOCH;
+        this.message = "Initial commit" ;
+//        this.parent = ;
+//        this.second_parent = ;
+        this.tracked = new TreeMap<>();
+    }
 
-    // constructor
+    public Commit(String message){
+        super();
+        this.ts = Instant.now();
+        this.message = message;
+//        this.parent = ;
+//        this.second_parent = null;
+        this.tracked = new TreeMap<>();
+    }
 
-//    public Commit(String message){
-//
+    public String generateId() {
+        return sha1(ts.toString(), message, parent.toString(), second_parent.toString()
+//                , tracked.toString()
+        );
+    }
+//    public String getHashFromCommit(){
+//        List<String> temp = new ArrayList<>();
+//        temp.add(this.ts.toString());
+////        temp.add(message.toString());
+////        temp.add(parent.toString());
+////        temp.add(second_parent.toString());
+////        temp.add(tracked.toString());
+//        return sha1(temp);
 //    }
 
 
+//    public String getTimestamp() {
+//        // Thu Jan 1 00:00:00 1970 +0000
+//        DateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.ENGLISH);
+//        return dateFormat.format(ts);
+//    }
     // methods
 
     public void saveCommit() {
-        File write_file = join(Repository.COMMITS_DIR, getHash(this));
+        File write_file = join(Repository.COMMITS_DIR, this.generateId());
         writeObject(write_file, this);
     }
 
@@ -77,30 +113,30 @@ public class Commit implements Serializable {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }
 
-    public void createBlobMap() {
-
-        byte[] item_object;
-        File item_file;
-        String item_hash;
-        File blob_file;
-
-        List<String> staging_files = getStagingFiles();
-
-        for (String item : staging_files) {
-            item_file = join(Repository.STAGING_DIR, item);
-            item_object = readContents(item_file);
-            item_hash = getFileHash(item_file);
-
-            // Set name of blob file
-            blob_file = join(Repository.BLOBS_DIR, item_hash);
-            // Add record to commit tree
-            blob_map.put(item, item_hash);
-            // Write blob file to disk
-            writeContents(blob_file, item_object);
-            // Delete from staging folder
-            item_file.delete();
-        }
-    }
+//    public void createBlobMap() {
+//
+//        byte[] item_object;
+//        File item_file;
+//        String item_hash;
+//        File blob_file;
+//
+//        List<String> staging_files = getStagingFiles();
+//
+//        for (String item : staging_files) {
+//            item_file = join(Repository.STAGING_DIR, item);
+//            item_object = readContents(item_file);
+//            item_hash = getFileHash(item_file);
+//
+//            // Set name of blob file
+//            blob_file = join(Repository.BLOBS_DIR, item_hash);
+//            // Add record to commit tree
+//            tracked.put(item, item_hash);
+//            // Write blob file to disk
+//            writeContents(blob_file, item_object);
+//            // Delete from staging folder
+//            item_file.delete();
+//        }
+//    }
 }
 
 

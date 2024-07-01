@@ -24,10 +24,10 @@ public class Main {
         // TODO: what if args is empty?
         // this is for
 
-        Repository repo;
-        if (GITLET_DIR.exists()){
-            repo = loadRepository();
-        }
+//        Repository repo;
+//        if (GITLET_DIR.exists()){
+//            repo = loadRepository();
+//        }
 
 
         validateNumArgs(args);
@@ -56,44 +56,47 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
+        }
+    }
+
 
                 // cancel if staging directory is empty
 
 
                 // if commit folder is empty
-                createInitialCommit();
+//                createInitialCommit();
+//
+//                // else if commit folder is not empty
+//                createCommit(message);
 
-                // else if commit folder is not empty
-                createCommit(message);
-
-                repo = loadRepository();
+//                repo = loadRepository();
 
 //                if (plainFilenamesIn(Repository.STAGING_DIR).size()==0){
 //                    return;
 //                }
 
-                Commit c = new Commit();
+//                Commit c = new Commit();
 
                 // update all of Commit c's instance variables
 
-                if (repo.hasBranches()==false){
-                    c.ts = Instant.EPOCH;
-                    c.message = "initial commit";
-                    c.parent = null;
-                    c.second_parent = null;
-                } else {
-                    c.ts = Instant.now();
-                    c.message = secondArg;
-                    c.parent = repo.BRANCHES.get("current_branch");
-                }
+//                if (repo.hasBranches()==false){
+//                    c.ts = Instant.EPOCH;
+//                    c.message = "initial commit";
+//                    c.parent = null;
+//                    c.second_parent = null;
+//                } else {
+//                    c.ts = Instant.now();
+//                    c.message = secondArg;
+//                    c.parent = repo.BRANCHES.get("current_branch");
+//                }
+//
+//                c.createBlobMap();
 
-                c.createBlobMap();
+//                private String generateId() {
+//                return sha1(getTimestamp(), message, parents.toString(), tracked.toString());
+//
+//                return sha1(Instant.now(), message, parent.toString(), secondparent.toString(), blob_map.toString());
 
-                private String generateId() {
-                return sha1(getTimestamp(), message, parents.toString(), tracked.toString());
-
-                return sha1(Instant.now(), message, parent.toString(), secondparent.toString(), blob_map.toString());
-            }
 
                 // Get hash for the commit
 
@@ -122,8 +125,8 @@ public class Main {
 //                    repo.BRANCHES.put("current_branch", c_hash);
 //                    repo.BRANCHES.put("HEAD", c_hash);
 //                }
-                c.saveCommit();
-                repo.saveRepository();
+//                c.saveCommit();
+//                repo.saveRepository();
 
 
 
@@ -146,7 +149,7 @@ public class Main {
 //                else{
 //                    MASTER.createNode(thirdArg);
 //                }
-                break;
+//                break;
 //            case "checkout -- [file name]":
 //                break;
 //            case "checkout [commit id] -- [file name]":
@@ -155,7 +158,7 @@ public class Main {
 //                break;
 //            case "":
 //                break;
-        }
+
 
 
 //    public static void validateNumArgs(String cmd, String[] args, int n) {
@@ -174,7 +177,8 @@ public class Main {
 //                    String.format("Invalid number of arguments for: %s.", cmd));
 //        }
 //    }
-    }
+
+
 
     public static void validateNumArgs(String[] args) {
 
