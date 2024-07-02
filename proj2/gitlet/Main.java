@@ -1,9 +1,12 @@
 package gitlet;
+
 import java.time.Instant;
 import java.util.ResourceBundle;
+
 import static gitlet.Repository.*;
 import static gitlet.Commit.*;
 import static gitlet.Utils.*;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,17 +75,20 @@ public class Main {
                     r.checkout(args[3]);
                     break;
                 }
+                break;
 
-
-
+            case "log":
+                Repository x = loadRepository();
+                x.printLog();
+                break;
         }
     }
 
 
-                // cancel if staging directory is empty
+    // cancel if staging directory is empty
 
 
-                // if commit folder is empty
+    // if commit folder is empty
 //                createInitialCommit();
 //
 //                // else if commit folder is not empty
@@ -96,7 +102,7 @@ public class Main {
 
 //                Commit c = new Commit();
 
-                // update all of Commit c's instance variables
+    // update all of Commit c's instance variables
 
 //                if (repo.hasBranches()==false){
 //                    c.ts = Instant.EPOCH;
@@ -117,12 +123,9 @@ public class Main {
 //                return sha1(Instant.now(), message, parent.toString(), secondparent.toString(), blob_map.toString());
 
 
-                // Get hash for the commit
+    // Get hash for the commit
 
-                // Save commit to disk
-
-
-
+    // Save commit to disk
 
 
 //                String c_hash = c.getCommitHash();
@@ -146,8 +149,6 @@ public class Main {
 //                }
 //                c.saveCommit();
 //                repo.saveRepository();
-
-
 
 
 //                Commit.Commit(secondArg);
@@ -179,7 +180,6 @@ public class Main {
 //                break;
 
 
-
 //    public static void validateNumArgs(String cmd, String[] args, int n) {
 //        if (args.length != n) {
 //            throw new RuntimeException(
@@ -187,7 +187,7 @@ public class Main {
 //        }
 //    }
 
-        // Validates commands for complete syntax
+    // Validates commands for complete syntax
 
 
 //    public static void validateArgs(String cmd, String[] args, int n) {
@@ -196,7 +196,6 @@ public class Main {
 //                    String.format("Invalid number of arguments for: %s.", cmd));
 //        }
 //    }
-
 
 
     public static void validateNumArgs(String[] args) {

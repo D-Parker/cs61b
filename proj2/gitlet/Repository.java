@@ -152,6 +152,22 @@ public class Repository implements Serializable {
 
 
 
+    public void printLog(){
+
+        String curr = BRANCHES.get("HEAD");
+
+        while (curr != null){
+            Commit c = Commit.loadCommit(curr);
+            System.out.println("===");
+            System.out.println("commit " + curr);
+            System.out.println("Date: " + c.getTimestamp());
+            System.out.println(c.message);
+            System.out.println();
+
+            curr = c.parent;
+        }
+    }
+
 
     public String getFileHash(File file) {
         byte[] temp = readContents(file);

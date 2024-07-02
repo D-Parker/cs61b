@@ -8,7 +8,9 @@ import static org.junit.Assert.*;
 
 import java.io.Serializable;
 import java.util.TreeMap;
+
 import gitlet.*;
+
 import java.util.*;
 
 import java.io.BufferedWriter;
@@ -27,10 +29,11 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.TreeMap;
 import java.io.Serializable;
+
 import static gitlet.Utils.*;
+
 import java.io.File;
 import java.io.IOException;
-
 
 
 public class TestGitlet implements Serializable {
@@ -42,6 +45,20 @@ public class TestGitlet implements Serializable {
 //            writer.newLine();
 //        }
 
+
+    @Test
+    public void TestprintLog() {
+        Repository abc = new Repository();
+        Repository L = Repository.loadRepository();
+
+        L.addFile("abc.txt");
+        L.createCommit("adding abc.txt");
+
+//        Commit c = Commit.loadCommit(L.BRANCHES.get("HEAD"));
+
+        L.printLog();
+
+    }
 
     @Test
     public void TestCheckout() {
@@ -78,9 +95,7 @@ public class TestGitlet implements Serializable {
         System.out.println(L.BRANCHES.get("master"));
         System.out.println(L.BRANCHES.get("HEAD"));
         System.out.println(L.BRANCHES.get("current_branch"));
-    System.out.println(L.BRANCHES_ORIGIN.get("master"));
-
-
+        System.out.println(L.BRANCHES_ORIGIN.get("master"));
 
 
     }
@@ -145,7 +160,7 @@ public class TestGitlet implements Serializable {
 
     @Test
 
-    public void TestAddFile(){
+    public void TestAddFile() {
 //        Repository abc = new Repository();
 //        System.out.println(abc.MASTER);
         Repository.addFile("xyz.txt");
@@ -161,7 +176,6 @@ public class TestGitlet implements Serializable {
 //        addCommit();
 //
 //    }
-
 
 
 }

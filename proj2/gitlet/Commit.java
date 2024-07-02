@@ -1,4 +1,10 @@
 package gitlet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 
 import java.util.Set;
 import java.io.File;
@@ -44,7 +50,7 @@ public class Commit implements Serializable {
     public Commit(){
         super();
         this.ts = Instant.EPOCH;
-        this.message = "Initial commit";
+        this.message = "initial commit";
     }
 
 
@@ -55,7 +61,15 @@ public class Commit implements Serializable {
 //        tracked = new TreeMap<>();
 
     }
+    public String getTimestamp() {
+        // Thu Jan 1 00:00:00 1970 +0000
+        // Define the desired format
+        ZonedDateTime zonedDateTime = ts.atZone(ZoneId.of("UTC"));
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy Z");
+
+        return zonedDateTime.format(formatter);
+    }
     public String generateInitialId() {
 
         return generateId();
