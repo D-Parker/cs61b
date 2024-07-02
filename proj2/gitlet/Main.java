@@ -72,7 +72,7 @@ public class Main {
                     break;
                 }
                 if (args.length == 4) {
-                    r.checkout(args[3]);
+                    r.checkout(args[1], args[3]);
                     break;
                 }
                 break;
