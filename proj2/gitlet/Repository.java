@@ -124,14 +124,14 @@ public class Repository implements Serializable {
         for (String file : staging) {
 
             File staging_file = join(STAGING_DIR, file);
-            System.out.println(staging_file);
+//            System.out.println(staging_file);
 //            byte[] item_object = readContents(staging_file);
             String hash = getFileHash(staging_file);
-            System.out.println(hash);
+//            System.out.println(hash);
             c.tracked.put(file, hash);
 
             File blob_file = join(BLOBS_DIR, hash);
-            System.out.println(blob_file);
+//            System.out.println(blob_file);
             writeContents(blob_file, readContents(staging_file));
 
             staging_file.delete();

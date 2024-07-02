@@ -73,6 +73,7 @@ public class Main {
                     r.checkout(args[1], args[3]);
                     break;
                 }
+                break;
 
 
         }
