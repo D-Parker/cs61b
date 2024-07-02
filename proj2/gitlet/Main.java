@@ -58,6 +58,12 @@ public class Main {
             case "commit":
 
                 Repository repo = loadRepository();
+                repo.createCommit(secondArg);
+                break;
+            case "checkout":
+
+                Repository r = loadRepository();
+                r.checkout(args[2]);
         }
     }
 

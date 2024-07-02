@@ -52,18 +52,47 @@ public class Commit implements Serializable {
         super();
         this.ts = Instant.now();
         this.message = message;
+//        tracked = new TreeMap<>();
+
     }
 
     public String generateInitialId() {
-        return sha1(ts.toString(), message);
+
+        return generateId();
+//        return sha1(ts.toString(), message);
     }
     public String generateId() {
-        List<String> temp = new ArrayList<>();
-        temp.add(ts.toString());
-        temp.add(message);
-        temp.add(parent.toString());
-        temp.add(second_parent.toString());
-        temp.add(tracked.toString());
+//        List<String> temp = new List<>();
+        List<Object> temp = new ArrayList<>();
+
+        if(ts != null){
+            temp.add(ts.toString());
+        }
+        if(message != null){
+            temp.add(message);
+//            temp.add(message.toString());
+        }
+        if(parent != null){
+            temp.add(parent.toString());
+        }
+        if(second_parent != null){
+            temp.add(second_parent.toString());
+        }
+        if(tracked != null){
+            temp.add(tracked.toString());
+        }
+
+//        temp.add(message);
+//        temp.add(parent.toString());
+//        temp.add(second_parent.toString());
+//        temp.add(tracked.toString());
+//
+//        for (List<String> i : temp){
+//
+//            if (i==null){
+//                temp.remove(i);
+//            }
+
         return sha1(temp);
     }
 
@@ -125,30 +154,30 @@ public class Commit implements Serializable {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }
 
-    public void createTrackingMap() {
-
-        byte[] item_object;
-        File item_file;
-        String item_hash;
-        File tracking_file;
-
-        List<String> staging_files = getStagingFiles();
-
-        for (String item : staging_files) {
-            item_file = join(Repository.STAGING_DIR, item);
-            item_object = readContents(item_file);
-            item_hash = getFileHash(item_file);
-
-            // Set name of blob file
-            blob_file = join(Repository.BLOBS_DIR, item_hash);
-            // Add record to commit tree
-            tracked.put(item, item_hash);
-            // Write blob file to disk
-            writeContents(blob_file, item_object);
-            // Delete from staging folder
-            item_file.delete();
-        }
-    }
+//    public void createTrackingMap() {
+//
+//        byte[] item_object;
+//        File item_file;
+//        String item_hash;
+//        File tracking_file;
+//
+//        List<String> staging_files = getStagingFiles();
+//
+//        for (String item : staging_files) {
+//            item_file = join(Repository.STAGING_DIR, item);
+//            item_object = readContents(item_file);
+//            item_hash = getFileHash(item_file);
+//
+//            // Set name of blob file
+//            blob_file = join(Repository.BLOBS_DIR, item_hash);
+//            // Add record to commit tree
+//            tracked.put(item, item_hash);
+//            // Write blob file to disk
+//            writeContents(blob_file, item_object);
+//            // Delete from staging folder
+//            item_file.delete();
+//        }
+//    }
 }
 
 

@@ -44,6 +44,8 @@ public class Repository implements Serializable {
     /**
      * The .gitlet directory.
      */
+    public static final File CWD_DIR = join(CWD);
+
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
     public static final File STAGING_DIR = join(GITLET_DIR, "staging");
@@ -87,7 +89,7 @@ public class Repository implements Serializable {
         // Set master branch
         BRANCHES_ORIGIN.put("master", c.generateInitialId());
         BRANCHES.put("master", c.generateInitialId());
-        BRANCHES.put("current", "master");
+        BRANCHES.put("current_branch", "master");
         BRANCHES.put("HEAD", c.generateInitialId());
 
         c.saveInitialCommit();
@@ -101,6 +103,8 @@ public class Repository implements Serializable {
         c.parent = BRANCHES.get("HEAD");
         c.second_parent = BRANCHES.get("HEAD");
 
+        c.tracked = new TreeMap<>();
+
         Commit prev = Commit.loadCommit(c.parent);
 
         if (prev.tracked != null){
@@ -108,11 +112,10 @@ public class Repository implements Serializable {
         }
 
         List<String> staging = getStagingFiles();
-        List<String> staging = getStagingFiles();
 
         // Populate tracking map
         //        write all files to blobs folder
-        for (String file : staging){
+        for (String file : staging) {
             File staging_file = join(STAGING_DIR, file);
 //            byte[] item_object = readContents(staging_file);
             String hash = getFileHash(staging_file);
@@ -122,25 +125,31 @@ public class Repository implements Serializable {
             File blob_file = join(BLOBS_DIR, hash);
             writeContents(blob_file, readContents(staging_file));
         }
+        c.saveCommit();
 
+        String hash = c.generateId();
+        String current_branch = BRANCHES.get("current_branch");
+        BRANCHES.put(current_branch, hash);
+        BRANCHES.put("HEAD", hash);
 
-        for (Map.Entry<String, String> entry : c.tracked){
-           File blob_file = join(Repository.BLOBS_DIR, entry.getValue());
-           byte[] item_object = readContents();
-           writeContents(blob_file, item_object)
-
-
+        saveRepository();
         }
+//        for (Map.Entry<String, String> entry : c.tracked){
+//           File blob_file = join(Repository.BLOBS_DIR, entry.getValue());
+//           byte[] item_object = readContents();
+//           writeContents(blob_file, item_object);
 
 
-    }
 
 
     public String getFileHash(File file) {
         byte[] temp = readContents(file);
-        return Commit.getHash(temp);
+        return getHash(temp);
     }
 
+    public String getHash(Serializable obj) {
+        return sha1(obj);
+    }
     public List<String> getStagingFiles() {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }
@@ -152,18 +161,18 @@ public class Repository implements Serializable {
     }
 
     // for commits after the initial commit
-    public void createCommit(String message){
-
-        Commit c = new Commit(message);
-        // get commit hash and save commit
-
-        c.parent = BRANCHES.get("HEAD");
-
-        // fill in the tracked object
-
-        // save the commit with hash name
-        c.saveCommit();
-    }
+//    public void createCommit(String message){
+//
+//        Commit c = new Commit(message);
+//        // get commit hash and save commit
+//
+//        c.parent = BRANCHES.get("HEAD");
+//
+//        // fill in the tracked object
+//
+//        // save the commit with hash name
+//        c.saveCommit();
+//    }
 
     public boolean hasBranches(){
         return BRANCHES.size() > 0;
@@ -191,6 +200,19 @@ public class Repository implements Serializable {
     public static Repository loadRepository() {
         File temp = join(GITLET_DIR, "repository");
         return readObject(temp, Repository.class);
+    }
+
+    public void checkout(String file){
+
+        String recent_commit = BRANCHES.get("HEAD");
+        Commit c = Commit.loadCommit(recent_commit);
+        String blob = c.tracked.get(file);
+        File blob_file = join(BLOBS_DIR, blob);
+        byte[] blob_object = readContents(blob_file);
+        File cwd_file = join(CWD_DIR, file);
+
+        writeContents(cwd_file, blob_object);
+
     }
 
     // Writes the file to the staging folder
