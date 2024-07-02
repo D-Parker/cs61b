@@ -28,37 +28,40 @@ import java.util.*;
 import java.util.TreeMap;
 import java.io.Serializable;
 import static gitlet.Utils.*;
+import java.io.File;
+import java.io.IOException;
+
 
 
 public class TestGitlet implements Serializable {
 
-    public static void appendToFile(File file, String content) {
-        // Use FileWriter in append mode (true) and wrap it with BufferedWriter
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-            writer.write(content);
-            writer.newLine(); // Add a new line after the content
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void appendToFile(File file, String content) {
+//        // Use FileWriter in append mode (true) and wrap it with BufferedWriter
+//        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+//            writer.write(content);
+//            writer.newLine();
+//        }
+
 
     @Test
     public void TestCheckout() {
 
         // commit #1
-        Repository abc = new Repository();
+//        Repository abc = new Repository();
         Repository L = Repository.loadRepository();
 
-        File a1 = join(L.CWD_DIR, "a1");
-        a1.createNewFile();
-        File a2 = join(L.CWD_DIR, "a2");
-        a2.createNewFile();
-        L.addFile("a2");
+//        File a2 = join(L.CWD_DIR, "a2.txt");
+//        a2.createNewFile();
+//        L.addFile("abc.txt");
+//        L.createCommit("adding 3");
+
+//        L.checkout("6f9d9ad3696270c4601b1546c8bbc748e492d06c","abc.txt");
 
         // commit #2
-        L.createCommit("adding files blank a1 and a2");
-
-        appendToFile(a1, "First change");
+//        L.createCommit("adding file abc.txt");
+//        L.createCommit("adding file abc.txt with change 1");
+//
+//        appendToFile(a1, "First change");
 
 //        L.addFile("xyz.txt");
 //        L.createCommit("adding xyz.txt");
@@ -70,7 +73,12 @@ public class TestGitlet implements Serializable {
 //        String g = L.BRANCHES.get("HEAD");
 //        StdOut.print(g);
 //
-//        L.checkout("xyz.txt");
+//        L.checkout("abc.txt");
+
+        System.out.println(L.BRANCHES.get("master"));
+        System.out.println(L.BRANCHES.get("HEAD"));
+        System.out.println(L.BRANCHES.get("current_branch"));
+    System.out.println(L.BRANCHES_ORIGIN.get("master"));
 
 
 
