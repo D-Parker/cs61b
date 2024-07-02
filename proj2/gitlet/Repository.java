@@ -46,9 +46,15 @@ public class Repository implements Serializable {
      */
     public static final File CWD_DIR = join(CWD);
 
-    public static final File GITLET_DIR = join(CWD, ".gitlet");
+    public static final File GITLET_DIR = join(CWD_DIR, ".gitlet");
 
     public static final File STAGING_DIR = join(GITLET_DIR, "staging");
+
+
+
+//    public static final File STAGING_DIR = GITLET_DIR;
+
+//    public static final File STAGING_DIR =  BUFFER_DIR;
 
     public static final File BLOBS_DIR = join(GITLET_DIR, "blobs");
 
@@ -79,8 +85,8 @@ public class Repository implements Serializable {
         super();
 
         GITLET_DIR.mkdir();
-        COMMITS_DIR.mkdir();
         STAGING_DIR.mkdir();
+        COMMITS_DIR.mkdir();
         BLOBS_DIR.mkdir();
 
         Commit c = new Commit();
@@ -116,14 +122,19 @@ public class Repository implements Serializable {
         // Populate tracking map
         //        write all files to blobs folder
         for (String file : staging) {
+
             File staging_file = join(STAGING_DIR, file);
+            System.out.println(staging_file);
 //            byte[] item_object = readContents(staging_file);
             String hash = getFileHash(staging_file);
-
+            System.out.println(hash);
             c.tracked.put(file, hash);
 
             File blob_file = join(BLOBS_DIR, hash);
+            System.out.println(blob_file);
             writeContents(blob_file, readContents(staging_file));
+
+            staging_file.delete();
         }
         c.saveCommit();
 
@@ -203,16 +214,25 @@ public class Repository implements Serializable {
     }
 
     public void checkout(String file){
-
         String recent_commit = BRANCHES.get("HEAD");
-        Commit c = Commit.loadCommit(recent_commit);
+        checkout(recent_commit, file);
+//        String recent_commit = BRANCHES.get(commit_id);
+//        Commit c = Commit.loadCommit(recent_commit);
+//        String blob = c.tracked.get(file);
+//        File blob_file = join(BLOBS_DIR, blob);
+//        byte[] blob_object = readContents(blob_file);
+//        File cwd_file = join(CWD_DIR, file);
+//        writeContents(cwd_file, blob_object);
+    }
+
+    public void checkout(String commit_id, String file) {
+//        String recent_commit = BRANCHES.get(commit_id);
+        Commit c = Commit.loadCommit(commit_id);
         String blob = c.tracked.get(file);
         File blob_file = join(BLOBS_DIR, blob);
         byte[] blob_object = readContents(blob_file);
         File cwd_file = join(CWD_DIR, file);
-
         writeContents(cwd_file, blob_object);
-
     }
 
     // Writes the file to the staging folder

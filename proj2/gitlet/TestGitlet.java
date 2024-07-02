@@ -1,6 +1,9 @@
-package testing.student_tests;
+package gitlet;
 
+import edu.princeton.cs.algs4.StdOut;
 import org.junit.Test;
+
+import static gitlet.Utils.join;
 import static org.junit.Assert.*;
 
 import java.io.Serializable;
@@ -8,15 +11,68 @@ import java.util.TreeMap;
 import gitlet.*;
 import java.util.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.*;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.*;
+import java.util.TreeMap;
+import java.io.Serializable;
+import static gitlet.Utils.*;
+
+
 public class TestGitlet implements Serializable {
+
+    public static void appendToFile(File file, String content) {
+        // Use FileWriter in append mode (true) and wrap it with BufferedWriter
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            writer.write(content);
+            writer.newLine(); // Add a new line after the content
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void TestCheckout() {
+
+        // commit #1
         Repository abc = new Repository();
         Repository L = Repository.loadRepository();
 
-        L.addFile("xyz.txt");
-        L.createCommit("adding xyz.txt");
+        File a1 = join(L.CWD_DIR, "a1");
+        a1.createNewFile();
+        File a2 = join(L.CWD_DIR, "a2");
+        a2.createNewFile();
+        L.addFile("a2");
+
+        // commit #2
+        L.createCommit("adding files blank a1 and a2");
+
+        appendToFile(a1, "First change");
+
+//        L.addFile("xyz.txt");
+//        L.createCommit("adding xyz.txt");
+//        L.addFile("abc.txt");
+//        L.createCommit("adding abc.txt");
+//
+//        L.checkout("ebbf0e72a1cfcf61efa594af2bf56c7705462854","xyz.txt");
+
+//        String g = L.BRANCHES.get("HEAD");
+//        StdOut.print(g);
+//
+//        L.checkout("xyz.txt");
+
+
 
 
     }

@@ -63,7 +63,18 @@ public class Main {
             case "checkout":
 
                 Repository r = loadRepository();
-                r.checkout(args[2]);
+
+                if (args[1]=="--") {
+                    r.checkout(args[2]);
+                    break;
+                }
+
+                if (args[2]=="--") {
+                    r.checkout(args[1], args[3]);
+                    break;
+                }
+
+
         }
     }
 
