@@ -64,16 +64,15 @@ public class Main {
 
                 Repository r = loadRepository();
 
-                if (args[1]=="--") {
+                if (args.length == 3) {
                     r.checkout(args[2]);
                     break;
                 }
-
-                if (args[2]=="--") {
-                    r.checkout(args[1], args[3]);
+                if (args.length == 4) {
+                    r.checkout(args[3]);
                     break;
                 }
-                break;
+
 
 
         }
