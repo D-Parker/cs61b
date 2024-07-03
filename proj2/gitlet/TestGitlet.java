@@ -1,39 +1,15 @@
-//package testing.student_tests;
+////package testing.student_tests;
 //
-//import edu.princeton.cs.algs4.StdOut;
+//package gitlet;
+//
 //import org.junit.Test;
 //
-//import static gitlet.Utils.join;
+//// import static gitlet.Utils.join;
 //import static org.junit.Assert.*;
 //
 //import java.io.Serializable;
-//import java.util.TreeMap;
 //
-//import gitlet.*;
-//
-//import java.util.*;
-//
-//import java.io.BufferedWriter;
-//import java.io.FileWriter;
-//import java.io.IOException;
-//import java.io.*;
-//
-//import java.io.File;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
-//
-//import java.io.IOException;
-//import java.time.Instant;
-//import java.util.ArrayList;
-//import java.util.*;
-//import java.util.TreeMap;
-//import java.io.Serializable;
-//
-//import static gitlet.Utils.*;
-//
-//import java.io.File;
-//import java.io.IOException;
+////import static gitlet.Utils.*;
 //
 //
 //public class TestGitlet implements Serializable {
@@ -100,17 +76,17 @@
 //
 //    }
 //
-//    @Test
-//    public void TestloadRepository() {
-//        Repository abc = new Repository();
-//        abc = null;
-//        Repository L = Repository.loadRepository();
-//    }
-//
-//    @Test
-//    public void TestRepositoryConstructor() {
-//        Repository abc = new Repository();
-//    }
+////    @Test
+////    public void TestloadRepository() {
+////        Repository abc = new Repository();
+////        abc = null;
+////        Repository L = Repository.loadRepository();
+////    }
+////
+////    @Test
+////    public void TestRepositoryConstructor() {
+////        Repository abc = new Repository();
+////    }
 //
 ////    @Test
 ////
@@ -159,7 +135,6 @@
 ////    }
 //
 //    @Test
-//
 //    public void TestAddFile() {
 ////        Repository abc = new Repository();
 ////        System.out.println(abc.MASTER);
