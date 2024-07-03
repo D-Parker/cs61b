@@ -50,6 +50,7 @@ public class Repository implements Serializable {
 
     public static final File STAGING_DIR = join(GITLET_DIR, "staging");
 
+    public static final File STAGING_REMOVAL_DIR = join(GITLET_DIR, "staging_removal");
 
 
 //    public static final File STAGING_DIR = GITLET_DIR;
@@ -66,7 +67,7 @@ public class Repository implements Serializable {
     public TreeMap<String, String> BRANCHES = new TreeMap<>();
     public TreeMap<String, String> BRANCHES_ORIGIN = new TreeMap<>();
 
-    public List<String> CWD_FILES ;
+    public List<String> CWD_FILES;
 
     public TreeMap<String, String> STAGING_ADD = new TreeMap<>();
     public TreeMap<String, String> STAGING_REMOVE = new TreeMap<>();
@@ -86,6 +87,7 @@ public class Repository implements Serializable {
 
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
+        STAGING_REMOVAL_DIR.mkdir();
         COMMITS_DIR.mkdir();
         BLOBS_DIR.mkdir();
 
@@ -103,8 +105,35 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    public void removeFile(String file) {
+
+        File f;
+        Commit c;
+        String head_hash;
+        byte[] f_object;
+        // case: file is staged for addition
+        // remove file from staging folder
+        if (getStagingFiles().contains(file)) {
+            f = getFileFromString(STAGING_DIR, file);
+            f.delete();
+            return;
+        }
+        // case: file was tracked in most recent commit
+        // Stage for removal and remove file from working directory
+        head_hash = BRANCHES.get("HEAD");
+        c = Commit.loadCommit(head_hash);
+        if (c.tracked.containsKey(file)) {
+            f = getFileFromString(CWD_DIR, file);
+            addFileToDirectory(STAGING_REMOVAL_DIR, file);
+            f.delete();
+            return;
+        }
+        System.out.println("No reason to remove the file.");
+        return;
+    }
+
     // Create commits after the initial one.
-    public void createCommit(String message){
+    public void createCommit(String message) {
         Commit c = new Commit(message);
         c.parent = BRANCHES.get("HEAD");
         c.second_parent = BRANCHES.get("HEAD");
@@ -113,29 +142,30 @@ public class Repository implements Serializable {
 
         Commit prev = Commit.loadCommit(c.parent);
 
-        if (prev.tracked != null){
+        if (prev.tracked != null) {
             c.tracked.putAll(prev.tracked);
         }
 
         List<String> staging = getStagingFiles();
+        List<String> staging_removal = getStagingRemovalFiles();
 
         // Populate tracking map
-        //        write all files to blobs folder
+        //        write all files from Staging_add folder to blobs folder, update tracking for this commit
         for (String file : staging) {
-
             File staging_file = join(STAGING_DIR, file);
-//            System.out.println(staging_file);
-//            byte[] item_object = readContents(staging_file);
             String hash = getFileHash(staging_file);
-//            System.out.println(hash);
             c.tracked.put(file, hash);
-
             File blob_file = join(BLOBS_DIR, hash);
-//            System.out.println(blob_file);
             writeContents(blob_file, readContents(staging_file));
-
             staging_file.delete();
         }
+        // remove files in the staging_removal folder from the tracked tree in the current commit
+        for (String file : staging_removal) {
+            File staging_removal_file = join(STAGING_REMOVAL_DIR, file);
+            c.tracked.remove(file);
+            staging_removal_file.delete();
+        }
+
         c.saveCommit();
 
         String hash = c.generateId();
@@ -144,19 +174,13 @@ public class Repository implements Serializable {
         BRANCHES.put("HEAD", hash);
 
         saveRepository();
-        }
-//        for (Map.Entry<String, String> entry : c.tracked){
-//           File blob_file = join(Repository.BLOBS_DIR, entry.getValue());
-//           byte[] item_object = readContents();
-//           writeContents(blob_file, item_object);
+    }
 
-
-
-    public void printLog(){
+    public void printLog() {
 
         String curr = BRANCHES.get("HEAD");
 
-        while (curr != null){
+        while (curr != null) {
             Commit c = Commit.loadCommit(curr);
             System.out.println("===");
             System.out.println("commit " + curr);
@@ -168,6 +192,12 @@ public class Repository implements Serializable {
         }
     }
 
+    public File getFileFromString(File dir, String file) {
+        File result = join(dir, file);
+        if (result.exists()) {
+            return result;
+        } else return result;
+    }
 
     public String getFileHash(File file) {
         byte[] temp = readContents(file);
@@ -177,8 +207,13 @@ public class Repository implements Serializable {
     public String getHash(Serializable obj) {
         return sha1(obj);
     }
+
     public List<String> getStagingFiles() {
         return plainFilenamesIn(Repository.STAGING_DIR);
+    }
+
+    public List<String> getStagingRemovalFiles() {
+        return plainFilenamesIn(Repository.STAGING_REMOVAL_DIR);
     }
 
     public void saveCommit(Commit c) {
@@ -201,7 +236,7 @@ public class Repository implements Serializable {
 //        c.saveCommit();
 //    }
 
-    public boolean hasBranches(){
+    public boolean hasBranches() {
         return BRANCHES.size() > 0;
     }
 
@@ -215,7 +250,7 @@ public class Repository implements Serializable {
         return plainFilenamesIn(directory);
     }
 
-    public void updateBranch(String branch, String hash){
+    public void updateBranch(String branch, String hash) {
         this.BRANCHES.put(branch, hash);
     }
 
@@ -229,7 +264,7 @@ public class Repository implements Serializable {
         return readObject(temp, Repository.class);
     }
 
-    public void checkout(String file){
+    public void checkout(String file) {
         String recent_commit = BRANCHES.get("HEAD");
         checkout(recent_commit, file);
 //        String recent_commit = BRANCHES.get(commit_id);
@@ -252,27 +287,29 @@ public class Repository implements Serializable {
     }
 
     // Writes the file to the staging folder
-    public static void addFile(String filename) {
+    public void addFileToDirectory(File dir, String filename) {
 
-        File temp = join(CWD, filename);
+        File temp = join(CWD_DIR, filename);
 
         if (temp.exists() == false) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-
         byte[] read_in = readContents(temp);
-        File write_file = join(STAGING_DIR, filename);
+        File write_file = join(dir, filename);
 
         writeContents(write_file, read_in);
     }
 
-    public boolean isStagingEmpty(){
+    public boolean isStagingEmpty() {
         List<String> temp = plainFilenamesIn(Repository.BLOBS_DIR);
-        return temp.size()==0;
+        return temp.size() == 0;
     }
 
 }
+
+
+
 
 
 //    public static void makeCommit(String message) {
@@ -305,7 +342,7 @@ public class Repository implements Serializable {
 //        branch = serialize(BRANCHES);
 //        file = join(COMMITS_DIR, "branches");
 //        writeObject(file, branch);
-            ;
+//            ;
 
             // serialize and save branches to disk
 
