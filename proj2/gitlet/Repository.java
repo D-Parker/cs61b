@@ -122,18 +122,32 @@ public class Repository implements Serializable {
         // Stage for removal and remove file from working directory
         head_hash = BRANCHES.get("HEAD");
         c = Commit.loadCommit(head_hash);
+
+        f = getFileFromString(CWD_DIR, file);
         if (c.tracked.containsKey(file)) {
-            f = getFileFromString(CWD_DIR, file);
             addFileToDirectory(STAGING_REMOVAL_DIR, file);
             f.delete();
             return;
         }
         System.out.println("No reason to remove the file.");
         return;
-    }
+        }
+
 
     // Create commits after the initial one.
     public void createCommit(String message) {
+
+        if (message==null){
+            System.out.println("Please enter a commit message.");
+            return;
+        }
+
+        if (getStagingFiles()==null){
+            System.out.println("No changes added to the commit");
+            return;
+        }
+
+
         Commit c = new Commit(message);
         c.parent = BRANCHES.get("HEAD");
         c.second_parent = BRANCHES.get("HEAD");

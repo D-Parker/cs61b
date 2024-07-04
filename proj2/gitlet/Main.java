@@ -82,10 +82,10 @@ public class Main {
                 Repository x = loadRepository();
                 x.printLog();
                 break;
-//            case "rm":
-//                Repository y = loadRepository();
-//                y.removeFile(args[1]);
-//                break;
+            case "rm":
+                Repository y = loadRepository();
+                y.removeFile(args[1]);
+                break;
         }
     }
 
