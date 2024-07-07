@@ -254,6 +254,10 @@ public class Repository implements Serializable {
             System.out.println(b);
         }
         System.out.println();
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
+        System.out.println();
     }
 
 
