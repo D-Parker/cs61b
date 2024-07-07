@@ -229,16 +229,18 @@ public class Repository implements Serializable {
         System.out.println("=== Branches ===");
         String m = BRANCHES.get("master");
         List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
+        Collections.sort(STG);
         List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
+        Collections.sort(STG);
 
         String temp;
 
         for (String key: BRANCHES.keySet()){
             temp = BRANCHES.get(key);
             if (temp == m){
-                System.out.println("*" + temp);
+                System.out.println("*" + key);
             } else {
-                System.out.println(temp);
+                System.out.println(key);
             }
         }
         System.out.println();
@@ -251,6 +253,7 @@ public class Repository implements Serializable {
         for (String b: REM){
             System.out.println(b);
         }
+        System.out.println();
     }
 
 
