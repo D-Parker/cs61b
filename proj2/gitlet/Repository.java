@@ -225,6 +225,34 @@ public class Repository implements Serializable {
         return c.parent;
     }
 
+    public void status(){
+        System.out.println("=== Branches ===");
+        String m = BRANCHES.get("master");
+        List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
+        List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
+
+        String temp;
+
+        for (String key: BRANCHES.keySet()){
+            temp = BRANCHES.get(key);
+            if (temp == m){
+                System.out.println("*" + temp);
+            } else {
+                System.out.println(temp);
+            }
+        }
+        System.out.println();
+        System.out.println("=== Staged Files ===");
+        for (String a: STG){
+            System.out.println(a);
+        }
+        System.out.println();
+        System.out.println("=== Removed Files ===");
+        for (String b: REM){
+            System.out.println(b);
+        }
+    }
+
 
     public File getFileFromString(File dir, String file) {
         File result = join(dir, file);

@@ -86,6 +86,10 @@ public class Main {
                 Repository xyz = loadRepository();
                 xyz.find(args[1]);
                 break;
+            case "status":
+                Repository d = loadRepository();
+                d.status();
+                break;
             case "rm":
                 Repository y = loadRepository();
                 y.removeFile(args[1]);
