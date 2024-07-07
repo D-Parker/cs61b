@@ -79,6 +79,11 @@ public class Main {
                     r.checkout(args[1], args[3]);
                     break;
                 }
+                if (args.length == 2) {
+                    r.checkoutBranch(args[1]);
+                    break;
+                }
+
                 break;
             case "log":
                 Repository x = loadRepository();
@@ -100,6 +105,10 @@ public class Main {
                 Repository y = loadRepository();
                 y.removeFile(args[1]);
                 break;
+            case "branch":
+                Repository yy = loadRepository();
+                yy.branch(args[1]);
+
         }
     }
 

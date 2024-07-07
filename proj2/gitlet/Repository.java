@@ -210,12 +210,13 @@ public class Repository implements Serializable {
 
     public void find(String msg){
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
-        Commit c;
+//        Collections.sort(L);
+
         int counter = 0;
-        for (String curr: L ){
-            c = Commit.loadCommit(curr);
-            String z = c.message;
-            if (c.message == msg){
+        for (String curr : L ){
+           Commit g = Commit.loadCommit(curr);
+            String z = g.message;
+            if (z.equals(msg)){
                 System.out.println(curr);
                 counter +=1;
             }
@@ -233,6 +234,15 @@ public class Repository implements Serializable {
         System.out.println(c.message);
         System.out.println();
         return c.parent;
+    }
+
+    public void branch(String n){
+
+        if (BRANCHES.containsKey(n)){
+            System.out.println("A branch with that name already exists.");
+            System.exit(0);
+        }
+        BRANCHES.put(n, HEAD);
     }
 
     public void status(){
@@ -354,6 +364,11 @@ public class Repository implements Serializable {
 //        byte[] blob_object = readContents(blob_file);
 //        File cwd_file = join(CWD_DIR, file);
 //        writeContents(cwd_file, blob_object);
+    }
+
+    public void checkoutBranch(String branch) {
+        CURRENT_BRANCH = branch;
+        HEAD = BRANCHES.get(branch);
     }
 
     public void checkout(String commit_id, String file) {
