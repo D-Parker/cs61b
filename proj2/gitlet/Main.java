@@ -62,7 +62,7 @@ public class Main {
             case "add":
                 // TODO: handle the `add [filename]` command
                 Repository K = loadRepository();
-                K.addFileToDirectory(STAGING_DIR, secondArg);
+                K.addFileToStaging(secondArg);
                 break;
             // TODO: FILL THE REST IN
             case "commit":
@@ -108,7 +108,15 @@ public class Main {
             case "branch":
                 Repository yy = loadRepository();
                 yy.branch(args[1]);
-
+                break;
+            case "rm-branch":
+                Repository jj = loadRepository();
+                jj.removeBranch(args[1]);
+                break;
+//            case "reset":
+//                break;
+//            case "merge":
+//                break;
         }
     }
 
