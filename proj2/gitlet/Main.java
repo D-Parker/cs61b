@@ -50,6 +50,12 @@ public class Main {
                 // TODO: handle the `init` command
 
                 // need to create and save the repository
+                File rf = join(GITLET_DIR,"repository");
+                if (rf.exists()){
+                    System.out.println("A Gitlet version-control system already exists in the current directory");
+                    System.exit(0);
+                }
+
                 Repository temp = new Repository();
 
                 break;

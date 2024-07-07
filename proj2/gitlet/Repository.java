@@ -67,6 +67,9 @@ public class Repository implements Serializable {
     public TreeMap<String, String> BRANCHES = new TreeMap<>();
     public TreeMap<String, String> BRANCHES_ORIGIN = new TreeMap<>();
 
+    public String HEAD;
+    public String CURRENT_BRANCH;
+
     public List<String> CWD_FILES;
 
     public TreeMap<String, String> STAGING_ADD = new TreeMap<>();
@@ -97,8 +100,8 @@ public class Repository implements Serializable {
         // Set master branch
         BRANCHES_ORIGIN.put("master", c.generateInitialId());
         BRANCHES.put("master", c.generateInitialId());
-        BRANCHES.put("current_branch", "master");
-        BRANCHES.put("HEAD", c.generateInitialId());
+        HEAD = c.generateInitialId();
+        CURRENT_BRANCH = "master";
 
         c.saveInitialCommit();
 
@@ -120,7 +123,7 @@ public class Repository implements Serializable {
         }
         // case: file was tracked in most recent commit
         // Stage for removal and remove file from working directory
-        head_hash = BRANCHES.get("HEAD");
+        head_hash = HEAD;
         c = Commit.loadCommit(head_hash);
 
         f = getFileFromString(CWD_DIR, file);
@@ -149,8 +152,8 @@ public class Repository implements Serializable {
 
 
         Commit c = new Commit(message);
-        c.parent = BRANCHES.get("HEAD");
-        c.second_parent = BRANCHES.get("HEAD");
+        c.parent = HEAD;
+        c.second_parent = null;
 
         c.tracked = new TreeMap<>();
 
@@ -182,10 +185,11 @@ public class Repository implements Serializable {
 
         c.saveCommit();
 
-        String hash = c.generateId();
-        String current_branch = BRANCHES.get("current_branch");
-        BRANCHES.put(current_branch, hash);
-        BRANCHES.put("HEAD", hash);
+//        String hash = c.generateId();
+        HEAD = c.generateId();
+//        String current_branch = BRANCHES.get("current_branch");
+//        BRANCHES.put(current_branch, hash);
+//        BRANCHES.put("HEAD", hash);
 
         saveRepository();
     }
@@ -207,11 +211,17 @@ public class Repository implements Serializable {
     public void find(String msg){
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
         Commit c;
+        int counter = 0;
         for (String curr: L ){
             c = Commit.loadCommit(curr);
+            String z = c.message;
             if (c.message == msg){
                 System.out.println(curr);
+                counter +=1;
             }
+        }
+        if (counter==0){
+            System.out.println("Found no commit with that message");
         }
     }
 
@@ -227,7 +237,7 @@ public class Repository implements Serializable {
 
     public void status(){
         System.out.println("=== Branches ===");
-        String m = BRANCHES.get("master");
+        String m = BRANCHES.get("current_branch");
         List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
         Collections.sort(STG);
         List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
@@ -236,6 +246,8 @@ public class Repository implements Serializable {
         String temp;
 
         for (String key: BRANCHES.keySet()){
+            if (key=="HEAD"){continue;}
+            if (key=="current_branch"){continue;}
             temp = BRANCHES.get(key);
             if (temp == m){
                 System.out.println("*" + key);
