@@ -195,7 +195,7 @@ public class Repository implements Serializable {
     }
 
     public void printLog() {
-        String curr = BRANCHES.get("HEAD");
+        String curr = HEAD;
         while (curr != null) {
             curr = printLog(curr);
         }
@@ -237,7 +237,7 @@ public class Repository implements Serializable {
 
     public void status(){
         System.out.println("=== Branches ===");
-        String m = BRANCHES.get("current_branch");
+//        String m = CURRENT_BRANCH;
         List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
         Collections.sort(STG);
         List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
@@ -246,10 +246,9 @@ public class Repository implements Serializable {
         String temp;
 
         for (String key: BRANCHES.keySet()){
-            if (key=="HEAD"){continue;}
-            if (key=="current_branch"){continue;}
-            temp = BRANCHES.get(key);
-            if (temp == m){
+
+//            temp = BRANCHES.get(key);
+            if (key == CURRENT_BRANCH){
                 System.out.println("*" + key);
             } else {
                 System.out.println(key);
@@ -346,7 +345,7 @@ public class Repository implements Serializable {
     }
 
     public void checkout(String file) {
-        String recent_commit = BRANCHES.get("HEAD");
+        String recent_commit = HEAD;
         checkout(recent_commit, file);
 //        String recent_commit = BRANCHES.get(commit_id);
 //        Commit c = Commit.loadCommit(recent_commit);
