@@ -204,6 +204,16 @@ public class Repository implements Serializable {
         }
     }
 
+    public void find(String msg){
+        List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
+        Commit c;
+        for (String curr: L ){
+            c = Commit.loadCommit(curr);
+            if (c.message == msg){
+                System.out.println(curr);
+            }
+        }
+    }
 
     private String printLog(String curr){
         Commit c = Commit.loadCommit(curr);
@@ -214,8 +224,6 @@ public class Repository implements Serializable {
         System.out.println();
         return c.parent;
     }
-
-
 
 
     public File getFileFromString(File dir, String file) {

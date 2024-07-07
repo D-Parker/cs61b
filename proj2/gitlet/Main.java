@@ -60,14 +60,11 @@ public class Main {
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-
                 Repository repo = loadRepository();
                 repo.createCommit(secondArg);
                 break;
             case "checkout":
-
                 Repository r = loadRepository();
-
                 if (args.length == 3) {
                     r.checkout(args[2]);
                     break;
@@ -77,7 +74,6 @@ public class Main {
                     break;
                 }
                 break;
-
             case "log":
                 Repository x = loadRepository();
                 x.printLog();
@@ -85,6 +81,10 @@ public class Main {
             case "global-log":
                 Repository xy = loadRepository();
                 xy.printGlobalLog();
+                break;
+            case "find":
+                Repository xyz = loadRepository();
+                xyz.find(args[1]);
                 break;
             case "rm":
                 Repository y = loadRepository();
