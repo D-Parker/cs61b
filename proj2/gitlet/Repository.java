@@ -191,20 +191,32 @@ public class Repository implements Serializable {
     }
 
     public void printLog() {
-
         String curr = BRANCHES.get("HEAD");
-
         while (curr != null) {
-            Commit c = Commit.loadCommit(curr);
-            System.out.println("===");
-            System.out.println("commit " + curr);
-            System.out.println("Date: " + c.getTimestamp());
-            System.out.println(c.message);
-            System.out.println();
-
-            curr = c.parent;
+            curr = printLog(curr);
         }
     }
+
+    public void printGlobalLog(){
+        List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
+        for (String s: L ){
+            printLog(s);
+        }
+    }
+
+
+    private String printLog(String curr){
+        Commit c = Commit.loadCommit(curr);
+        System.out.println("===");
+        System.out.println("commit " + curr);
+        System.out.println("Date: " + c.getTimestamp());
+        System.out.println(c.message);
+        System.out.println();
+        return c.parent;
+    }
+
+
+
 
     public File getFileFromString(File dir, String file) {
         File result = join(dir, file);

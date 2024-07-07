@@ -82,6 +82,10 @@ public class Main {
                 Repository x = loadRepository();
                 x.printLog();
                 break;
+            case "global-log":
+                Repository xy = loadRepository();
+                xy.printGlobalLog();
+                break;
             case "rm":
                 Repository y = loadRepository();
                 y.removeFile(args[1]);
