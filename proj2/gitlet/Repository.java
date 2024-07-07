@@ -415,6 +415,16 @@ public class Repository implements Serializable {
     }
 
     public void checkoutBranch(String branch) {
+        Commit c = Commit.loadCommit(BRANCHES.get(branch));
+
+        for (String i : c.tracked.keySet()){
+            String blob = c.tracked.get(i);
+            File blob_file = join(BLOBS_DIR, blob);
+            byte[] blob_object = readContents(blob_file);
+            File cwd_file = join(CWD_DIR, i);
+            writeContents(cwd_file, blob_object);
+        }
+
         CURRENT_BRANCH = branch;
         HEAD = BRANCHES.get(branch);
     }
