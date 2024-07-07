@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.TreeMap;
 import java.io.Serializable;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -21,10 +22,9 @@ import static gitlet.Utils.*;
 /**
  * Represents a gitlet repository.
  *  TODO: It's a good idea to give a description here of what else this Class
-
+ * <p>
  *  does at a high level.
  *  A repository stores references to staging files and commits.
- *
  *
  * @author TODO
  */
@@ -134,18 +134,18 @@ public class Repository implements Serializable {
         }
         System.out.println("No reason to remove the file.");
         return;
-        }
+    }
 
 
     // Create commits after the initial one.
     public void createCommit(String message) {
 
-        if (message==null){
+        if (message == null) {
             System.out.println("Please enter a commit message.");
             return;
         }
 
-        if (getStagingFiles()==null){
+        if (getStagingFiles() == null) {
             System.out.println("No changes added to the commit");
             return;
         }
@@ -201,32 +201,32 @@ public class Repository implements Serializable {
         }
     }
 
-    public void printGlobalLog(){
+    public void printGlobalLog() {
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
-        for (String s: L ){
+        for (String s : L) {
             printLog(s);
         }
     }
 
-    public void find(String msg){
+    public void find(String msg) {
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
 //        Collections.sort(L);
 
         int counter = 0;
-        for (String curr : L ){
-           Commit g = Commit.loadCommit(curr);
+        for (String curr : L) {
+            Commit g = Commit.loadCommit(curr);
             String z = g.message;
-            if (z.equals(msg)){
+            if (z.equals(msg)) {
                 System.out.println(curr);
-                counter +=1;
+                counter += 1;
             }
         }
-        if (counter==0){
+        if (counter == 0) {
             System.out.println("Found no commit with that message");
         }
     }
 
-    private String printLog(String curr){
+    private String printLog(String curr) {
         Commit c = Commit.loadCommit(curr);
         System.out.println("===");
         System.out.println("commit " + curr);
@@ -236,16 +236,16 @@ public class Repository implements Serializable {
         return c.parent;
     }
 
-    public void branch(String n){
+    public void branch(String n) {
 
-        if (BRANCHES.containsKey(n)){
+        if (BRANCHES.containsKey(n)) {
             System.out.println("A branch with that name already exists.");
             System.exit(0);
         }
         BRANCHES.put(n, HEAD);
     }
 
-    public void status(){
+    public void status() {
         System.out.println("=== Branches ===");
 //        String m = CURRENT_BRANCH;
         List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
@@ -255,10 +255,10 @@ public class Repository implements Serializable {
 
         String temp;
 
-        for (String key: BRANCHES.keySet()){
+        for (String key : BRANCHES.keySet()) {
 
 //            temp = BRANCHES.get(key);
-            if (key == CURRENT_BRANCH){
+            if (key == CURRENT_BRANCH) {
                 System.out.println("*" + key);
             } else {
                 System.out.println(key);
@@ -266,12 +266,12 @@ public class Repository implements Serializable {
         }
         System.out.println();
         System.out.println("=== Staged Files ===");
-        for (String a: STG){
+        for (String a : STG) {
             System.out.println(a);
         }
         System.out.println();
         System.out.println("=== Removed Files ===");
-        for (String b: REM){
+        for (String b : REM) {
             System.out.println(b);
         }
         System.out.println();
@@ -381,19 +381,37 @@ public class Repository implements Serializable {
         writeContents(cwd_file, blob_object);
     }
 
+    public void addFileToDirectory(File dir, String file) {
+        File temp = join(dir, file);
+        byte[] contents = readContents(temp);
+        File write_file = join(dir, file);
+        writeContents(write_file, contents);
+    }
+
+    private byte[] readFileFromDirectory(File dir, String file){
+        return readContents(join(dir,file));
+    }
+
     // Writes the file to the staging folder
-    public void addFileToDirectory(File dir, String filename) {
+    public void addFileToDirectory(String filename) {
 
-        File temp = join(CWD_DIR, filename);
+        File rm_file = join(STAGING_REMOVAL_DIR, filename);
+        File cwd_file = join(CWD_DIR, filename);
 
-        if (temp.exists() == false) {
+        if (rm_file.exists()) {
+            byte[] c = readContents(rm_file);
+            writeContents(CWD_DIR, filename, c);
+            rm_file.delete();
+            return;
+        }
+
+        if (cwd_file.exists() == false) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-        byte[] read_in = readContents(temp);
-        File write_file = join(dir, filename);
 
-        writeContents(write_file, read_in);
+        byte[] read_in = readContents(cwd_file);
+        addFileToDirectory(STAGING_DIR, filename, read_in);
     }
 
     public boolean isStagingEmpty() {
@@ -402,9 +420,6 @@ public class Repository implements Serializable {
     }
 
 }
-
-
-
 
 
 //    public static void makeCommit(String message) {
@@ -422,7 +437,7 @@ public class Repository implements Serializable {
 //        }
 
 //        temp.commitFiles();
-        //
+//
 //        String commit_hash = sha1(temp);
 //
 //        byte[] branch;
@@ -439,7 +454,7 @@ public class Repository implements Serializable {
 //        writeObject(file, branch);
 //            ;
 
-            // serialize and save branches to disk
+// serialize and save branches to disk
 
 
 //        public void addCommit(String abc){
@@ -449,10 +464,7 @@ public class Repository implements Serializable {
 //                BRANCHES.put("current_branch", null);
 //                return;
 //            }
-            // createCommit() with the files in staging
-
-
-
+// createCommit() with the files in staging
 
 
 //        public void new addBranch(String key, String value){
