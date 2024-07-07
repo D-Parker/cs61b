@@ -257,6 +257,7 @@ public class Repository implements Serializable {
 
 //        String hash = c.generateId();
         HEAD = c.generateId();
+        BRANCHES.put(CURRENT_BRANCH, HEAD);
 //        String current_branch = BRANCHES.get("current_branch");
 //        BRANCHES.put(current_branch, hash);
 //        BRANCHES.put("HEAD", hash);
@@ -312,6 +313,7 @@ public class Repository implements Serializable {
             System.out.println("A branch with that name already exists.");
             System.exit(0);
         }
+
         BRANCHES.put(n, HEAD);
     }
 
