@@ -144,6 +144,9 @@ public class Commit implements Serializable {
 
     public static Commit loadCommit(String hash) {
         File file = join(Repository.COMMITS_DIR, hash);
+        if (!file.exists()){
+            return null;
+        }
         return readObject(file, Commit.class);
     }
 

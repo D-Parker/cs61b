@@ -108,6 +108,49 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+
+//    public void isFileTracked() {
+//    }
+
+    public void reset(String commit_id) {
+        Commit given = Commit.loadCommit(commit_id);
+        if (given == null) {
+            System.out.println("No commit with that id exists");
+            System.exit(0);
+        }
+
+        Commit current = Commit.loadCommit(BRANCHES.get(CURRENT_BRANCH));
+
+        // Moves current branch's head to the given commit node
+        BRANCHES.put(CURRENT_BRANCH, commit_id);
+
+        List<String> cwd_files = getListOfDirectoryFiles(CWD_DIR);
+
+        // Check for untracked files in the current commit
+        for (String file : cwd_files){
+            if (!current.tracked.containsKey(file)) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first");
+                System.exit(0);
+            }
+        }
+
+        // checkout all of the files in the given branch
+        for (String file : given.tracked.keySet()) {
+            checkout(commit_id, file);
+        }
+        // remove all tracked files that are not in the given commit
+        for (String file : current.tracked.keySet()) {
+            if (!given.tracked.containsKey(file)) {
+                removeFile(file);
+            }
+        }
+
+
+
+
+    }
+
+
     public void removeBranch(String branch) {
 
         if (BRANCHES.containsKey(branch) == false) {

@@ -113,8 +113,10 @@ public class Main {
                 Repository jj = loadRepository();
                 jj.removeBranch(args[1]);
                 break;
-//            case "reset":
-//                break;
+            case "reset":
+                Repository jk = loadRepository();
+                jk.reset(args[1]);
+                break;
 //            case "merge":
 //                break;
         }
