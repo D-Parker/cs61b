@@ -215,7 +215,10 @@ public class Repository implements Serializable {
 //            return;
         }
 
-        if (getStagingFiles() == null) {
+        List<String> staging = getStagingFiles();
+        List<String> staging_removal = getStagingRemovalFiles();
+
+        if (staging.size()==0 && staging_removal.size()==0) {
             errorMessage("No changes added to the commit.");
 //            System.out.println("No changes added to the commit.");
 //            return;
@@ -234,8 +237,7 @@ public class Repository implements Serializable {
             c.tracked.putAll(prev.tracked);
         }
 
-        List<String> staging = getStagingFiles();
-        List<String> staging_removal = getStagingRemovalFiles();
+
 
         // Populate tracking map
         //        write all files from Staging_add folder to blobs folder, update tracking for this commit
@@ -579,6 +581,42 @@ public class Repository implements Serializable {
         File cwd_file = join(CWD_DIR, file_name);
         writeContents(cwd_file, blob_object);
     }
+
+//    public void merge(String branch){
+//
+//        String current_id = HEAD;
+//        String branch_id = BRANCHES.get(branch);
+//
+//        Commit c = Commit.loadCommit(current_id);
+//        Commit f = Commit.loadCommit(branch_id);
+//
+//        List<String> L = ArrayList<String>;
+//
+//        List<String> G = ArrayList<String>;
+//
+//        while(c.parent != null){
+//            L.add(c.parent);
+//            c = Commit.loadCommit(c.parent);
+//        }
+//        while(f.parent != null){
+//            G.add(f.parent);
+//            f = Commit.loadCommit(f.parent);
+//        }
+//        String splitpoint = null;
+//        for (String i : L){
+//            if (G.contains(i)){
+//                splitpoint = i;
+//            }
+//        }
+//        if (branch_id == splitpoint){
+//            errorMessage("Given branch is an ancestor of the current branch");
+//        }
+//
+//
+//
+//
+////        findSplitPoint
+//    }
 
 
 }
