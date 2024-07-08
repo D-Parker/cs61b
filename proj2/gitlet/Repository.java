@@ -209,7 +209,7 @@ public class Repository implements Serializable {
     // Create commits after the initial one.
     public void createCommit(String message) {
 
-        if (message == null) {
+        if (message.equals("")) {
             errorMessage("Please enter a commit message.");
 //            System.out.println("Please enter a commit message.");
 //            return;
