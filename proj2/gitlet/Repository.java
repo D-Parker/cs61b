@@ -349,12 +349,12 @@ public class Repository implements Serializable {
         Collections.sort(STG);
         List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
         Collections.sort(STG);
+        List<String> CWD = getListOfDirectoryFiles(CWD_DIR);
+        Collections.sort(CWD);
 
-        String temp;
+
 
         for (String key : BRANCHES.keySet()) {
-
-//            temp = BRANCHES.get(key);
             if (key == CURRENT_BRANCH) {
                 System.out.println("*" + key);
             } else {
@@ -362,10 +362,18 @@ public class Repository implements Serializable {
             }
         }
         System.out.println();
+        // If the file is in Staging, but has been deleted from CWD using Unix rm,
+        // then move to staging removal and remove file from staging_add.
         System.out.println("=== Staged Files ===");
         for (String a : STG) {
-            System.out.println(a);
+            if (!CWD.contains(a)){
+                fileCopy(a, STAGING_DIR, STAGING_REMOVAL_DIR);
+                join(STAGING_DIR, a).delete();
+            } else {
+                System.out.println(a);
+            }
         }
+
         System.out.println();
         System.out.println("=== Removed Files ===");
         for (String b : REM) {
