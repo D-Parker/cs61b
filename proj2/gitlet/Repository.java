@@ -165,6 +165,7 @@ public class Repository implements Serializable {
         }
 
         BRANCHES.remove(branch);
+        saveRepository();
     }
 
     public boolean isFileInDirectory(File dir, String file) {
@@ -216,6 +217,7 @@ public class Repository implements Serializable {
         }
 
         // Next are cases when file is tracked in the current commit
+
         // If file is in CWD and staging_addition, remove from staging
         // If file is in CWD but not in staging_addition, stage for removal
         // If file is not in CWD but is in staging addition, stage for removal and remove from staging_add
@@ -236,20 +238,19 @@ public class Repository implements Serializable {
         }
 
 
-        if (isFileInDirectory(CWD_DIR, file) == false){
-            if (isFileInDirectory(STAGING_DIR, file) == true){
+        if (isFileInDirectory(CWD_DIR, file) == false) {
+            if (isFileInDirectory(STAGING_DIR, file) == true) {
                 fileCopy(file, STAGING_DIR, STAGING_REMOVAL_DIR);
                 f = join(STAGING_DIR, file);
                 f.delete();
                 return;
             } else {
-               hash = getTrackedFileHash(c, file);
-               b = readFileFromDirectory(BLOBS_DIR, hash);
-               write_file = join(STAGING_REMOVAL_DIR, file);
-               writeContents(write_file, b);
-             }
+                hash = getTrackedFileHash(c, file);
+                b = readFileFromDirectory(BLOBS_DIR, hash);
+                write_file = join(STAGING_REMOVAL_DIR, file);
+                writeContents(write_file, b);
+            }
         }
-
 
 
         // Case 1: if file is currently staged for addition and is in CWD, remove from stage_addition.
@@ -437,15 +438,11 @@ public class Repository implements Serializable {
     }
 
     public void branch(String n) {
-
         if (BRANCHES.containsKey(n)) {
-
             errorMessage("A branch with that name already exists.");
-//            System.out.println("A branch with that name already exists.");
-//            System.exit(0);
         }
-
         BRANCHES.put(n, HEAD);
+        saveRepository();
     }
 
     public void status() {
@@ -539,6 +536,7 @@ public class Repository implements Serializable {
 
     public void updateBranch(String branch, String hash) {
         this.BRANCHES.put(branch, hash);
+        saveRepository();
     }
 
 
@@ -587,35 +585,33 @@ public class Repository implements Serializable {
             return;
         }
 
-//        File rm_file = join(STAGING_REMOVAL_DIR, filename);
-//        File cwd_file = join(CWD_DIR, filename);
-
-//        if (rm_file.exists()) {
-//            byte[] c = readContents(rm_file);
-//            writeContents(CWD_DIR, filename, c);
-//            rm_file.delete();
-//            return;
-//        }
-
-        if (isFileInDirectory(CWD_DIR, filename) ==true) {
+        // Add file to staging
+        if (isFileInDirectory(CWD_DIR, filename) == true) {
             fileCopy(filename, CWD_DIR, STAGING_DIR);
         }
 
         if (!isFileInDirectory(CWD_DIR, filename)) {
             errorMessage("File does not exist.");
-//            System.out.println("File does not exist.");
-//            System.exit(0);
         }
-        File staging_file = join(STAGING_DIR, filename);
-        String hash = getFileHash(staging_file);
-        File blob = join(BLOBS_DIR, hash);
+        // Get current commit
+        Commit c = Commit.loadCommit(HEAD);
 
-        if (blob.exists()) {
+        String blob_hash = c.tracked.get(filename);
+
+
+        // Get hash code for the staged file
+        File staging_file = join(STAGING_DIR, filename);
+        String staging_hash = getFileHash(staging_file);
+//        File blob = join(BLOBS_DIR, hash);
+
+        // If an identical copy of this file is already being tracked, remove it from staging.
+        if (staging_hash.equals(blob_hash)) {
+//        if (blob.exists()) {
             staging_file.delete();
             return;
         }
 
-        fileCopy(filename, CWD_DIR, STAGING_DIR);
+//        fileCopy(filename, CWD_DIR, STAGING_DIR);
 
 //        byte[] read_in_cwd_file = readContents(cwd_file);
 
@@ -659,6 +655,7 @@ public class Repository implements Serializable {
         String commit_id = BRANCHES.get(branch);
         reset(commit_id);
         CURRENT_BRANCH = branch;
+        saveRepository();
     }
 
     public void reset(String commit_id) {
@@ -689,6 +686,7 @@ public class Repository implements Serializable {
         }
 
         HEAD = commit_id;
+        saveRepository();
     }
 
     private void deleteAllFilesInDirectory(File dir) {
