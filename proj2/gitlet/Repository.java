@@ -109,7 +109,6 @@ public class Repository implements Serializable {
     }
 
 
-
 //    public void reset(String commit_id) {
 //        Commit given = Commit.loadCommit(commit_id);
 //        if (given == null) {
@@ -176,15 +175,45 @@ public class Repository implements Serializable {
 
     public void removeFile(String file) {
 
+        // Get current commit
+        Commit c = Commit.loadCommit(HEAD);
 
-        Commit c;
-        String head_hash;
-        byte[] f_object;
+        // The file to be removed
+        File f;
+
+        // is file in CWD, staging_add, staging_rem, current commit?
+//        isFileInDirectory(CWD_DIR, file);
+//        isFileInDirectory(STAGING_DIR, file);
+//        isFileInDirectory(STAGING_REMOVAL_DIR, file);
+//        Boolean isFileTracked = c.tracked.containsKey(file);
+
+        // Case 1: if file is currently staged for addition, unstage the file
+        if (isFileInDirectory(STAGING_DIR, file) == true) {
+            f = join(STAGING_DIR, file);
+            f.delete();
+        }
+
+        // Case 2: if file is tracked in the current commit and is in CWD, stage it for removal and remove file from CWD.
+        // If the file is not tracked in the current commit, do not remove.
+        Boolean isFileTracked = c.tracked.containsKey(file);
+        if (isFileTracked == true) {
+            if (isFileInDirectory(CWD_DIR, file)==true){
+                fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
+                f = join(CWD_DIR, file);
+                f.delete();
+            }
+        } else {
+            errorMessage("No reason to remove the file.");
+        }
+
+//        String head_hash;
+//        byte[] f_object;
+
         // case: file is staged for addition
         // remove file from staging folder
 
 
-        File f = join(STAGING_DIR,file);
+//        File f = join(STAGING_DIR, file);
 //        if (f.exists()==true){
 //            f.delete();
 //        }
@@ -196,34 +225,34 @@ public class Repository implements Serializable {
 //        }
         // case: file was tracked in most recent commit
         // Stage for removal and remove file from working directory
-        head_hash = HEAD;
-        c = Commit.loadCommit(head_hash);
+//        head_hash = HEAD;
+//        c = Commit.loadCommit(head_hash);
 
-        List<String> sf = getStagingFiles();
+//        List<String> sf = getStagingFiles();
+//        List<String> rf = getStagingRemovalFiles();
 
-        if (sf.contains(file)==false && c.tracked.containsKey(file)==false) {
-            errorMessage("No reason to remove the file.");
-        }
-
-        if (sf.contains(file)==true){
-            join(STAGING_DIR, file).delete();
-        }
+//        if (sf.contains(file) == false && c.tracked.containsKey(file) == false) {
+//            errorMessage("No reason to remove the file.");
+//        }
+//
+//        if (sf.contains(file) == true) {
+//            join(STAGING_DIR, file).delete();
+//        }
 
 
 //        f = getFileFromString(CWD_DIR, file);
-        f = join(CWD_DIR, file);
-        if (c.tracked.containsKey(file)==true) {
-            fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
-//            addFileToDirectory(file, STAGING_REMOVAL_DIR);
-            f.delete();
-            return;
-        }
-            // case: unstaged, untracked file
+//        f = join(CWD_DIR, file);
+//        if (c.tracked.containsKey(file) == true && f.exists() == true) {
+//            fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
+////            addFileToDirectory(file, STAGING_REMOVAL_DIR);
+//            f.delete();
+//            return;
+//        }
+        // case: unstaged, untracked file
 
-        }
+    }
 //        System.out.println("No reason to remove the file.");
 //        return;
-
 
 
     // Create commits after the initial one.
@@ -238,7 +267,7 @@ public class Repository implements Serializable {
         List<String> staging = getStagingFiles();
         List<String> staging_removal = getStagingRemovalFiles();
 
-        if (staging.size()==0 && staging_removal.size()==0) {
+        if (staging.size() == 0 && staging_removal.size() == 0) {
             errorMessage("No changes added to the commit.");
 //            System.out.println("No changes added to the commit.");
 //            return;
@@ -256,7 +285,6 @@ public class Repository implements Serializable {
         if (prev.tracked != null) {
             c.tracked.putAll(prev.tracked);
         }
-
 
 
         // Populate tracking map
@@ -353,7 +381,6 @@ public class Repository implements Serializable {
         Collections.sort(CWD);
 
 
-
         for (String key : BRANCHES.keySet()) {
             if (key == CURRENT_BRANCH) {
                 System.out.println("*" + key);
@@ -366,7 +393,7 @@ public class Repository implements Serializable {
         // then move to staging removal and remove file from staging_add.
         System.out.println("=== Staged Files ===");
         for (String a : STG) {
-            if (!CWD.contains(a)){
+            if (!CWD.contains(a)) {
                 fileCopy(a, STAGING_DIR, STAGING_REMOVAL_DIR);
                 join(STAGING_DIR, a).delete();
             } else {
@@ -500,7 +527,7 @@ public class Repository implements Serializable {
         String hash = getFileHash(join(CWD_DIR, filename));
         File blob = join(BLOBS_DIR, hash);
 
-        if (blob.exists()){
+        if (blob.exists()) {
             return;
         }
 
@@ -518,11 +545,11 @@ public class Repository implements Serializable {
         return temp.size() == 0;
     }
 
-    public void checkout (String file_name){
+    public void checkout(String file_name) {
         checkout(HEAD, file_name);
     }
 
-    public void checkout (String commit_id, String file_name){
+    public void checkout(String commit_id, String file_name) {
         Commit c = Commit.loadCommit(commit_id);
         if (c == null) {
             errorMessage("No commit with that id exists");
@@ -537,7 +564,7 @@ public class Repository implements Serializable {
         writeBlobToCWD(blob, file_name);
     }
 
-    public void checkoutBranch (String branch){
+    public void checkoutBranch(String branch) {
         if (!BRANCHES.containsKey(branch)) {
             errorMessage("No such branch exists.");
         }
@@ -550,7 +577,7 @@ public class Repository implements Serializable {
         CURRENT_BRANCH = branch;
     }
 
-    public void reset (String commit_id){
+    public void reset(String commit_id) {
 
         Commit c = Commit.loadCommit(commit_id);
         if (c == null) {
@@ -580,7 +607,7 @@ public class Repository implements Serializable {
         HEAD = commit_id;
     }
 
-    private void deleteAllFilesInDirectory (File dir){
+    private void deleteAllFilesInDirectory(File dir) {
         List<String> directory_files = plainFilenamesIn(dir);
         for (String file_name : directory_files) {
             File temp = join(dir, file_name);
@@ -589,21 +616,21 @@ public class Repository implements Serializable {
     }
 
 
-    public boolean isFileTracked (String commit_id, String file_name){
+    public boolean isFileTracked(String commit_id, String file_name) {
         Commit c = Commit.loadCommit(commit_id);
         return c.tracked.containsKey(file_name);
     }
 
-    public void errorMessage (String msg){
+    public void errorMessage(String msg) {
         System.out.println(msg);
         System.exit(0);
     }
 
-    private String getTrackedFileHash (Commit c, String file_name){
+    private String getTrackedFileHash(Commit c, String file_name) {
         return c.tracked.get(file_name);
     }
 
-    private void writeBlobToCWD (String blob, String file_name){
+    private void writeBlobToCWD(String blob, String file_name) {
         File blob_file = join(BLOBS_DIR, blob);
         byte[] blob_object = readContents(blob_file);
         File cwd_file = join(CWD_DIR, file_name);
