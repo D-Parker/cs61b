@@ -580,6 +580,7 @@ public class Repository implements Serializable {
 
     // Writes the file to the staging folder
     public void addFileToStaging(String filename) {
+
         if (isFileInDirectory(STAGING_REMOVAL_DIR, filename)) {
             fileCopy(filename, STAGING_REMOVAL_DIR, CWD_DIR);
             join(STAGING_REMOVAL_DIR, filename).delete();
@@ -596,16 +597,21 @@ public class Repository implements Serializable {
 //            return;
 //        }
 
+        if (isFileInDirectory(CWD_DIR, filename) ==true) {
+            fileCopy(filename, CWD_DIR, STAGING_DIR);
+        }
+
         if (!isFileInDirectory(CWD_DIR, filename)) {
             errorMessage("File does not exist.");
 //            System.out.println("File does not exist.");
 //            System.exit(0);
         }
-
-        String hash = getFileHash(join(CWD_DIR, filename));
+        File staging_file = join(STAGING_DIR, filename);
+        String hash = getFileHash(staging_file);
         File blob = join(BLOBS_DIR, hash);
 
         if (blob.exists()) {
+            staging_file.delete();
             return;
         }
 
