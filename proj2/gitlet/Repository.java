@@ -176,34 +176,54 @@ public class Repository implements Serializable {
 
     public void removeFile(String file) {
 
-        File f;
+
         Commit c;
         String head_hash;
         byte[] f_object;
         // case: file is staged for addition
         // remove file from staging folder
-        if (getStagingFiles().contains(file)) {
-            f = getFileFromString(STAGING_DIR, file);
-            f.delete();
-            return;
-        }
+
+
+        File f = join(STAGING_DIR,file);
+//        if (f.exists()==true){
+//            f.delete();
+//        }
+//        if (getStagingFiles().contains(file)) {
+//            f = join(STAGING_DIR, file);
+////            getFileFromString(STAGING_DIR, file);
+//            f.delete();
+//            return;
+//        }
         // case: file was tracked in most recent commit
         // Stage for removal and remove file from working directory
         head_hash = HEAD;
         c = Commit.loadCommit(head_hash);
 
-        f = getFileFromString(CWD_DIR, file);
-        if (c.tracked.containsKey(file)) {
+        List<String> sf = getStagingFiles();
+
+        if (sf.contains(file)==false && c.tracked.containsKey(file)==false) {
+            errorMessage("No reason to remove the file.");
+        }
+
+        if (sf.contains(file)==true){
+            join(STAGING_DIR, file).delete();
+        }
+
+
+//        f = getFileFromString(CWD_DIR, file);
+        f = join(CWD_DIR, file);
+        if (c.tracked.containsKey(file)==true) {
             fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
 //            addFileToDirectory(file, STAGING_REMOVAL_DIR);
             f.delete();
             return;
         }
-        // case: unstaged, untracked file
-        errorMessage("No reason to remove the file.");
+            // case: unstaged, untracked file
+
+        }
 //        System.out.println("No reason to remove the file.");
 //        return;
-    }
+
 
 
     // Create commits after the initial one.

@@ -51,6 +51,7 @@ public class Commit implements Serializable {
         super();
         this.ts = Instant.EPOCH;
         this.message = "initial commit";
+        this.tracked = new TreeMap<>();
     }
 
 
