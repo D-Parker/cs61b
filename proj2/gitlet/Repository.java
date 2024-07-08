@@ -416,7 +416,6 @@ public class Repository implements Serializable {
 
     public void checkoutBranch(String branch) {
         Commit c = Commit.loadCommit(BRANCHES.get(branch));
-
         for (String i : c.tracked.keySet()){
             String blob = c.tracked.get(i);
             File blob_file = join(BLOBS_DIR, blob);
@@ -424,11 +423,9 @@ public class Repository implements Serializable {
             File cwd_file = join(CWD_DIR, i);
             writeContents(cwd_file, blob_object);
         }
-
         CURRENT_BRANCH = branch;
         HEAD = BRANCHES.get(branch);
     }
-
     public void checkout(String commit_id, String file) {
         Commit c = Commit.loadCommit(commit_id);
         String blob = c.tracked.get(file);
@@ -438,12 +435,6 @@ public class Repository implements Serializable {
         writeContents(cwd_file, blob_object);
     }
 
-//    public void addFileToDirectory(Byte[] file_object, File dir) {
-////        File temp = join(dir, file);
-//        byte[] contents = readContents(temp);
-//        File write_file = join(dir, file);
-//        writeContents(write_file, contents);
-//    }
 
     private byte[] readFileFromDirectory(File dir, String file) {
         return readContents(join(dir, file));
