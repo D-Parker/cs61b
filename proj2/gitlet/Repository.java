@@ -109,46 +109,40 @@ public class Repository implements Serializable {
     }
 
 
-//    public void isFileTracked() {
+
+//    public void reset(String commit_id) {
+//        Commit given = Commit.loadCommit(commit_id);
+//        if (given == null) {
+//            System.out.println("No commit with that id exists");
+//            System.exit(0);
+//        }
+//
+//        Commit current = Commit.loadCommit(BRANCHES.get(CURRENT_BRANCH));
+//
+//        // Moves current branch's head to the given commit node
+//        BRANCHES.put(CURRENT_BRANCH, commit_id);
+//
+//        List<String> cwd_files = getListOfDirectoryFiles(CWD_DIR);
+//
+//        // Check for untracked files in the current commit
+//        for (String file : cwd_files){
+//            if (!current.tracked.containsKey(file)) {
+//                System.out.println("There is an untracked file in the way; delete it, or add and commit it first");
+//                System.exit(0);
+//            }
+//        }
+//
+//        // checkout all of the files in the given branch
+//        for (String file : given.tracked.keySet()) {
+//            checkout(commit_id, file);
+//        }
+//        // remove all tracked files that are not in the given commit
+//        for (String file : current.tracked.keySet()) {
+//            if (!given.tracked.containsKey(file)) {
+//                removeFile(file);
+//            }
+//        }
 //    }
-
-    public void reset(String commit_id) {
-        Commit given = Commit.loadCommit(commit_id);
-        if (given == null) {
-            System.out.println("No commit with that id exists");
-            System.exit(0);
-        }
-
-        Commit current = Commit.loadCommit(BRANCHES.get(CURRENT_BRANCH));
-
-        // Moves current branch's head to the given commit node
-        BRANCHES.put(CURRENT_BRANCH, commit_id);
-
-        List<String> cwd_files = getListOfDirectoryFiles(CWD_DIR);
-
-        // Check for untracked files in the current commit
-        for (String file : cwd_files){
-            if (!current.tracked.containsKey(file)) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first");
-                System.exit(0);
-            }
-        }
-
-        // checkout all of the files in the given branch
-        for (String file : given.tracked.keySet()) {
-            checkout(commit_id, file);
-        }
-        // remove all tracked files that are not in the given commit
-        for (String file : current.tracked.keySet()) {
-            if (!given.tracked.containsKey(file)) {
-                removeFile(file);
-            }
-        }
-
-
-
-
-    }
 
 
     public void removeBranch(String branch) {
@@ -409,31 +403,31 @@ public class Repository implements Serializable {
         return readObject(temp, Repository.class);
     }
 
-    public void checkout(String file) {
-        String recent_commit = HEAD;
-        checkout(recent_commit, file);
-    }
+//    public void checkout(String file) {
+//        String recent_commit = HEAD;
+//        checkout(recent_commit, file);
+//    }
 
-    public void checkoutBranch(String branch) {
-        Commit c = Commit.loadCommit(BRANCHES.get(branch));
-        for (String i : c.tracked.keySet()){
-            String blob = c.tracked.get(i);
-            File blob_file = join(BLOBS_DIR, blob);
-            byte[] blob_object = readContents(blob_file);
-            File cwd_file = join(CWD_DIR, i);
-            writeContents(cwd_file, blob_object);
-        }
-        CURRENT_BRANCH = branch;
-        HEAD = BRANCHES.get(branch);
-    }
-    public void checkout(String commit_id, String file) {
-        Commit c = Commit.loadCommit(commit_id);
-        String blob = c.tracked.get(file);
-        File blob_file = join(BLOBS_DIR, blob);
-        byte[] blob_object = readContents(blob_file);
-        File cwd_file = join(CWD_DIR, file);
-        writeContents(cwd_file, blob_object);
-    }
+//    public void checkoutBranch(String branch) {
+//        Commit c = Commit.loadCommit(BRANCHES.get(branch));
+//        for (String i : c.tracked.keySet()){
+//            String blob = c.tracked.get(i);
+//            File blob_file = join(BLOBS_DIR, blob);
+//            byte[] blob_object = readContents(blob_file);
+//            File cwd_file = join(CWD_DIR, i);
+//            writeContents(cwd_file, blob_object);
+//        }
+//        CURRENT_BRANCH = branch;
+//        HEAD = BRANCHES.get(branch);
+//    }
+//    public void checkout(String commit_id, String file) {
+//        Commit c = Commit.loadCommit(commit_id);
+//        String blob = c.tracked.get(file);
+//        File blob_file = join(BLOBS_DIR, blob);
+//        byte[] blob_object = readContents(blob_file);
+//        File cwd_file = join(CWD_DIR, file);
+//        writeContents(cwd_file, blob_object);
+//    }
 
 
     private byte[] readFileFromDirectory(File dir, String file) {
@@ -476,5 +470,98 @@ public class Repository implements Serializable {
         List<String> temp = plainFilenamesIn(Repository.BLOBS_DIR);
         return temp.size() == 0;
     }
+
+    public void checkout (String file_name){
+        checkout(HEAD, file_name);
+    }
+
+    public void checkout (String commit_id, String file_name){
+        Commit c = Commit.loadCommit(commit_id);
+        if (c == null) {
+            errorMessage("No commit with that id exists");
+        }
+
+        String blob = getTrackedFileHash(c, file_name);
+
+        if (blob == null) {
+            errorMessage("File does not exist in that commit");
+        }
+
+        writeBlobToCWD(blob, file_name);
+    }
+
+    public void checkoutBranch (String branch){
+        if (!BRANCHES.containsKey(branch)) {
+            errorMessage("No such branch exists.");
+        }
+        if (branch == CURRENT_BRANCH) {
+            errorMessage("No need to checkout the current branch.");
+        }
+
+        String commit_id = BRANCHES.get(branch);
+        reset(commit_id);
+        CURRENT_BRANCH = branch;
+    }
+
+    public void reset (String commit_id){
+
+        Commit c = Commit.loadCommit(commit_id);
+        if (c == null) {
+            errorMessage("No commit with that id exists");
+        }
+
+        List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
+
+        for (String file_name : cwd_files) {
+            if (isFileTracked(HEAD, file_name) == false) {
+                if (isFileTracked(commit_id, file_name) == true) {
+                    errorMessage("There is an untracked file in the way; delete it, or add and commit it first");
+                }
+            }
+        }
+
+        deleteAllFilesInDirectory(Repository.STAGING_DIR);
+        deleteAllFilesInDirectory(Repository.STAGING_REMOVAL_DIR);
+
+
+//        Commit c = Commit.loadCommit(commit_id);
+
+        for (String file_name : c.tracked.keySet()) {
+            checkout(commit_id, file_name);
+        }
+
+        HEAD = commit_id;
+    }
+
+    private void deleteAllFilesInDirectory (File dir){
+        List<String> directory_files = plainFilenamesIn(dir);
+        for (String file_name : directory_files) {
+            File temp = join(dir, file_name);
+            temp.delete();
+        }
+    }
+
+
+    public boolean isFileTracked (String commit_id, String file_name){
+        Commit c = Commit.loadCommit(commit_id);
+        return c.tracked.containsKey(file_name);
+    }
+
+    private void errorMessage (String msg){
+        System.out.println(msg);
+        System.exit(0);
+    }
+
+    private String getTrackedFileHash (Commit c, String file_name){
+        return c.tracked.get(file_name);
+    }
+
+    private void writeBlobToCWD (String blob, String file_name){
+        File blob_file = join(BLOBS_DIR, blob);
+        byte[] blob_object = readContents(blob_file);
+        File cwd_file = join(CWD_DIR, file_name);
+        writeContents(cwd_file, blob_object);
+    }
+
 
 }
