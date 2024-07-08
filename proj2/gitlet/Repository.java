@@ -148,12 +148,15 @@ public class Repository implements Serializable {
     public void removeBranch(String branch) {
 
         if (BRANCHES.containsKey(branch) == false) {
-            System.out.println("A branch with that name does not exist.");
-            System.exit(0);
+
+            errorMessage("A branch with that name does not exist.");
+//            System.out.println();
+//            System.exit(0);
         }
         if (branch.equals(CURRENT_BRANCH)) {
-            System.out.println("Cannot remove the current branch.");
-            System.exit(0);
+            errorMessage("Cannot remove the current branch.");
+//            System.out.println("Cannot remove the current branch.");
+//            System.exit(0);
         }
 
         BRANCHES.remove(branch);
@@ -196,8 +199,10 @@ public class Repository implements Serializable {
             f.delete();
             return;
         }
-        System.out.println("No reason to remove the file.");
-        return;
+        // case: unstaged, untracked file
+        errorMessage("No reason to remove the file.");
+//        System.out.println("No reason to remove the file.");
+//        return;
     }
 
 
@@ -205,13 +210,15 @@ public class Repository implements Serializable {
     public void createCommit(String message) {
 
         if (message == null) {
-            System.out.println("Please enter a commit message.");
-            return;
+            errorMessage("Please enter a commit message.");
+//            System.out.println("Please enter a commit message.");
+//            return;
         }
 
         if (getStagingFiles() == null) {
-            System.out.println("No changes added to the commit");
-            return;
+            errorMessage("No changes added to the commit.");
+//            System.out.println("No changes added to the commit.");
+//            return;
         }
 
 
@@ -304,8 +311,10 @@ public class Repository implements Serializable {
     public void branch(String n) {
 
         if (BRANCHES.containsKey(n)) {
-            System.out.println("A branch with that name already exists.");
-            System.exit(0);
+
+            errorMessage("A branch with that name already exists.");
+//            System.out.println("A branch with that name already exists.");
+//            System.exit(0);
         }
 
         BRANCHES.put(n, HEAD);
@@ -453,8 +462,16 @@ public class Repository implements Serializable {
 //        }
 
         if (!isFileInDirectory(CWD_DIR, filename)) {
-            System.out.println("File does not exist.");
-            System.exit(0);
+            errorMessage("File does not exist.");
+//            System.out.println("File does not exist.");
+//            System.exit(0);
+        }
+
+        String hash = getFileHash(join(CWD_DIR, filename));
+        File blob = join(BLOBS_DIR, hash);
+
+        if (blob.exists()){
+            return;
         }
 
         fileCopy(filename, CWD_DIR, STAGING_DIR);
@@ -547,7 +564,7 @@ public class Repository implements Serializable {
         return c.tracked.containsKey(file_name);
     }
 
-    private void errorMessage (String msg){
+    public void errorMessage (String msg){
         System.out.println(msg);
         System.exit(0);
     }
