@@ -17,6 +17,12 @@ import java.io.Serializable;
 
 import static gitlet.Utils.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
+
+
 // TODO: any imports you need here
 
 /**
@@ -187,17 +193,79 @@ public class Repository implements Serializable {
 //        isFileInDirectory(STAGING_REMOVAL_DIR, file);
 //        Boolean isFileTracked = c.tracked.containsKey(file);
 
-        // Case 1: if file is currently staged for addition, unstage the file
-        if (isFileInDirectory(STAGING_DIR, file) == true) {
-            f = join(STAGING_DIR, file);
-            f.delete();
+        Boolean isFileTracked = c.tracked.containsKey(file);
+
+
+        // If file isn't tracked in current commit but is staged for addition, remove from staging and return.
+        // If file isn't tracked and is not staged for addition, do nothing.
+        if (isFileTracked == false) {
+            if (isFileInDirectory(STAGING_DIR, file) == true) {
+                f = join(STAGING_DIR, file);
+                f.delete();
+                return;
+            } else {
+                errorMessage("No reason to remove the file.");
+            }
         }
+
+        // Next are cases when file is tracked in the current commit
+        // If file is in CWD and staging_addition, remove from staging
+        // If file is in CWD but not in staging_addition, stage for removal
+        // If file is not in CWD but is in staging addition, stage for removal and remove from staging_add
+        // If file is not in CWD and is not in staging addition ?? how to stage for removal?
+        //      Get the blob from the recent commit and put it in stage for removal
+
+        if (isFileInDirectory(CWD_DIR, file) == true) {
+            if (isFileInDirectory(STAGING_DIR, file) == true) {
+                f = join(STAGING_DIR, file);
+                f.delete();
+                return;
+            } else {
+                fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
+                f = join(STAGING_DIR, file);
+                f.delete();
+                return;
+            }
+        }
+
+        if (isFileInDirectory(CWD_DIR, file) == false){
+            if (isFileInDirectory(STAGING_DIR, file) == true){
+                fileCopy(file, STAGING_DIR, STAGING_REMOVAL_DIR);
+                f = join(STAGING_DIR, file);
+                f.delete();
+                return;
+            } else {
+                f = join(STAGING_REMOVAL_DIR, file);
+                File temp_file = new File(STAGING_REMOVAL_DIR, file);
+             }
+        }
+
+
+
+        // Case 1: if file is currently staged for addition and is in CWD, remove from stage_addition.
+        // If it is staged for addition but has been deleted from CWD, stage for removal.
+        // stage it for removal (copy file from stage_add to stage_remove.
+        // Then unstage it from stage_addition.
+        if (isFileInDirectory(STAGING_DIR, file) == true) {
+            if (isFileInDirectory(CWD_DIR, file) == true) {
+                f = join(STAGING_DIR, file);
+                f.delete();
+                return;
+            } else if (isFileInDirectory(CWD_DIR, file) == false) {
+                fileCopy(file, STAGING_DIR, STAGING_REMOVAL_DIR);
+                f = join(STAGING_DIR, file);
+                f.delete();
+                return;
+            }
+        }
+
+        // If a file is in STAGING_REMOVAL, then it will removed from tracking in the next commit.
 
         // Case 2: if file is tracked in the current commit and is in CWD, stage it for removal and remove file from CWD.
         // If the file is not tracked in the current commit, do not remove.
-        Boolean isFileTracked = c.tracked.containsKey(file);
+
         if (isFileTracked == true) {
-            if (isFileInDirectory(CWD_DIR, file)==true){
+            if (isFileInDirectory(CWD_DIR, file) == true) {
                 fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
                 f = join(CWD_DIR, file);
                 f.delete();
