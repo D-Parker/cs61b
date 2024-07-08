@@ -187,6 +187,13 @@ public class Repository implements Serializable {
         // The file to be removed
         File f;
 
+        // Hash if needed to retrieve blob
+        String hash;
+
+        byte[] b;
+
+        File write_file;
+
         // is file in CWD, staging_add, staging_rem, current commit?
 //        isFileInDirectory(CWD_DIR, file);
 //        isFileInDirectory(STAGING_DIR, file);
@@ -222,11 +229,12 @@ public class Repository implements Serializable {
                 return;
             } else {
                 fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
-                f = join(STAGING_DIR, file);
+                f = join(CWD_DIR, file);
                 f.delete();
                 return;
             }
         }
+
 
         if (isFileInDirectory(CWD_DIR, file) == false){
             if (isFileInDirectory(STAGING_DIR, file) == true){
@@ -235,8 +243,10 @@ public class Repository implements Serializable {
                 f.delete();
                 return;
             } else {
-                f = join(STAGING_REMOVAL_DIR, file);
-                File temp_file = new File(STAGING_REMOVAL_DIR, file);
+               hash = getTrackedFileHash(c, file);
+               b = readFileFromDirectory(BLOBS_DIR, hash);
+               write_file = join(STAGING_REMOVAL_DIR, file);
+               writeContents(write_file, b);
              }
         }
 
@@ -245,34 +255,34 @@ public class Repository implements Serializable {
         // Case 1: if file is currently staged for addition and is in CWD, remove from stage_addition.
         // If it is staged for addition but has been deleted from CWD, stage for removal.
         // stage it for removal (copy file from stage_add to stage_remove.
-        // Then unstage it from stage_addition.
-        if (isFileInDirectory(STAGING_DIR, file) == true) {
-            if (isFileInDirectory(CWD_DIR, file) == true) {
-                f = join(STAGING_DIR, file);
-                f.delete();
-                return;
-            } else if (isFileInDirectory(CWD_DIR, file) == false) {
-                fileCopy(file, STAGING_DIR, STAGING_REMOVAL_DIR);
-                f = join(STAGING_DIR, file);
-                f.delete();
-                return;
-            }
-        }
+//        // Then unstage it from stage_addition.
+//        if (isFileInDirectory(STAGING_DIR, file) == true) {
+//            if (isFileInDirectory(CWD_DIR, file) == true) {
+//                f = join(STAGING_DIR, file);
+//                f.delete();
+//                return;
+//            } else if (isFileInDirectory(CWD_DIR, file) == false) {
+//                fileCopy(file, STAGING_DIR, STAGING_REMOVAL_DIR);
+//                f = join(STAGING_DIR, file);
+//                f.delete();
+//                return;
+//            }
+//        }
 
         // If a file is in STAGING_REMOVAL, then it will removed from tracking in the next commit.
 
         // Case 2: if file is tracked in the current commit and is in CWD, stage it for removal and remove file from CWD.
         // If the file is not tracked in the current commit, do not remove.
 
-        if (isFileTracked == true) {
-            if (isFileInDirectory(CWD_DIR, file) == true) {
-                fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
-                f = join(CWD_DIR, file);
-                f.delete();
-            }
-        } else {
-            errorMessage("No reason to remove the file.");
-        }
+//        if (isFileTracked == true) {
+//            if (isFileInDirectory(CWD_DIR, file) == true) {
+//                fileCopy(file, CWD_DIR, STAGING_REMOVAL_DIR);
+//                f = join(CWD_DIR, file);
+//                f.delete();
+//            }
+//        } else {
+//            errorMessage("No reason to remove the file.");
+//        }
 
 //        String head_hash;
 //        byte[] f_object;
