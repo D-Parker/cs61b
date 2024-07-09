@@ -457,7 +457,7 @@ public class Repository implements Serializable {
 
 
         for (String key : BRANCHES.keySet()) {
-            if (key == CURRENT_BRANCH) {
+            if (key.equals(CURRENT_BRANCH)) {
                 System.out.println("*" + key);
             } else {
                 System.out.println(key);
