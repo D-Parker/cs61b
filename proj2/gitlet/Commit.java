@@ -96,19 +96,11 @@ public class Commit implements Serializable {
         if(tracked != null){
             temp.add(tracked.toString());
         }
-
-//        temp.add(message);
-//        temp.add(parent.toString());
-//        temp.add(second_parent.toString());
-//        temp.add(tracked.toString());
-//
-//        for (List<String> i : temp){
-//
-//            if (i==null){
-//                temp.remove(i);
-//            }
-
-        return sha1(temp);
+        String result = sha1(temp);
+//        if (result.length() < 40){
+//            result = result.substring(0,7);
+//        }
+        return result;
     }
 
 

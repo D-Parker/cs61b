@@ -560,6 +560,23 @@ public class Repository implements Serializable {
     }
 
     public void checkout(String commit_id, String file_name) {
+
+        List<String> L = plainFilenamesIn(COMMITS_DIR);
+
+        Integer len = commit_id.length();
+
+        for (String i : L) {
+            if (i.substring(0, len).equals(commit_id) ){
+                commit_id = i;
+                break;
+            }
+        }
+
+        if (commit_id.length() < 40) {
+
+
+        }
+
         Commit c = Commit.loadCommit(commit_id);
         if (c == null) {
             errorMessage("No commit with that id exists.");
@@ -578,7 +595,7 @@ public class Repository implements Serializable {
         if (!BRANCHES.containsKey(branch)) {
             errorMessage("No such branch exists.");
         }
-        if (branch.equals(CURRENT_BRANCH) ) {
+        if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("No need to checkout the current branch.");
         }
 
@@ -590,7 +607,15 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
-    public void reset(String commit_id){
+    public void reset(String commit_id) {
+        List<String> L = plainFilenamesIn(COMMITS_DIR);
+        Integer len = commit_id.length();
+        for (String i : L) {
+            if (i.substring(0, len).equals(commit_id) ){
+                commit_id = i;
+                break;
+            }
+        }
         resetHelper(commit_id);
         BRANCHES.put(CURRENT_BRANCH, commit_id);
         HEAD = commit_id;
@@ -611,7 +636,7 @@ public class Repository implements Serializable {
             if (!isFileTracked(HEAD, file_name) && isFileTracked(commit_id, file_name)) {
                 errorMessage("There is an untracked file in the way; delete it, or add and commit it first");
             }
-            if ( isFileTracked(HEAD, file_name) && !isFileTracked(commit_id, file_name) ) {
+            if (isFileTracked(HEAD, file_name) && !isFileTracked(commit_id, file_name)) {
                 f = join(CWD_DIR, file_name);
                 f.delete();
             }
