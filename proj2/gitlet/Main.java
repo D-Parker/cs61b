@@ -72,10 +72,18 @@ public class Main {
             case "checkout":
                 Repository r = loadRepository();
                 if (args.length == 3) {
+                    if (!args[1].equals("--")) {
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
                     r.checkout(args[2]);
 
                 }
                 if (args.length == 4) {
+                    if (!args[2].equals("--")) {
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
                     r.checkout(args[1], args[3]);
 
                 }
@@ -265,14 +273,11 @@ public class Main {
             throw new RuntimeException(
                     String.format("Invalid number of arguments for: %s.", cmd));
         }
-
-//            if (cmd == "commit" && BLOBS_DIR. != 2) {
-//                throw new RuntimeException(
-//                        String.format("Invalid number of arguments for: %s.", cmd));
-//        }
-
     }
-
+//    private static void errorMessage(String txt) {
+//        System.out.println(txt);
+//        System.exit(0);
+//    }
 }
 
 

@@ -114,42 +114,6 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
-
-//    public void reset(String commit_id) {
-//        Commit given = Commit.loadCommit(commit_id);
-//        if (given == null) {
-//            System.out.println("No commit with that id exists");
-//            System.exit(0);
-//        }
-//
-//        Commit current = Commit.loadCommit(BRANCHES.get(CURRENT_BRANCH));
-//
-//        // Moves current branch's head to the given commit node
-//        BRANCHES.put(CURRENT_BRANCH, commit_id);
-//
-//        List<String> cwd_files = getListOfDirectoryFiles(CWD_DIR);
-//
-//        // Check for untracked files in the current commit
-//        for (String file : cwd_files){
-//            if (!current.tracked.containsKey(file)) {
-//                System.out.println("There is an untracked file in the way; delete it, or add and commit it first");
-//                System.exit(0);
-//            }
-//        }
-//
-//        // checkout all of the files in the given branch
-//        for (String file : given.tracked.keySet()) {
-//            checkout(commit_id, file);
-//        }
-//        // remove all tracked files that are not in the given commit
-//        for (String file : current.tracked.keySet()) {
-//            if (!given.tracked.containsKey(file)) {
-//                removeFile(file);
-//            }
-//        }
-//    }
-
-
     public void removeBranch(String branch) {
 
         if (BRANCHES.containsKey(branch) == false) {
@@ -545,33 +509,6 @@ public class Repository implements Serializable {
         return readObject(temp, Repository.class);
     }
 
-//    public void checkout(String file) {
-//        String recent_commit = HEAD;
-//        checkout(recent_commit, file);
-//    }
-
-//    public void checkoutBranch(String branch) {
-//        Commit c = Commit.loadCommit(BRANCHES.get(branch));
-//        for (String i : c.tracked.keySet()){
-//            String blob = c.tracked.get(i);
-//            File blob_file = join(BLOBS_DIR, blob);
-//            byte[] blob_object = readContents(blob_file);
-//            File cwd_file = join(CWD_DIR, i);
-//            writeContents(cwd_file, blob_object);
-//        }
-//        CURRENT_BRANCH = branch;
-//        HEAD = BRANCHES.get(branch);
-//    }
-//    public void checkout(String commit_id, String file) {
-//        Commit c = Commit.loadCommit(commit_id);
-//        String blob = c.tracked.get(file);
-//        File blob_file = join(BLOBS_DIR, blob);
-//        byte[] blob_object = readContents(blob_file);
-//        File cwd_file = join(CWD_DIR, file);
-//        writeContents(cwd_file, blob_object);
-//    }
-
-
     private byte[] readFileFromDirectory(File dir, String file) {
         return readContents(join(dir, file));
     }
@@ -611,13 +548,6 @@ public class Repository implements Serializable {
             return;
         }
 
-//        fileCopy(filename, CWD_DIR, STAGING_DIR);
-
-//        byte[] read_in_cwd_file = readContents(cwd_file);
-
-//        writeContents(join(STAGING_DIR, filename), read_in_cwd_file);
-
-//        addFileToDirectory(read_in_cwd_file, STAGING_DIR);
     }
 
     public boolean isStagingEmpty() {
@@ -632,13 +562,13 @@ public class Repository implements Serializable {
     public void checkout(String commit_id, String file_name) {
         Commit c = Commit.loadCommit(commit_id);
         if (c == null) {
-            errorMessage("No commit with that id exists");
+            errorMessage("No commit with that id exists.");
         }
 
         String blob = getTrackedFileHash(c, file_name);
 
         if (blob == null) {
-            errorMessage("File does not exist in that commit");
+            errorMessage("File does not exist in that commit.");
         }
 
         writeBlobToCWD(blob, file_name);
@@ -648,7 +578,7 @@ public class Repository implements Serializable {
         if (!BRANCHES.containsKey(branch)) {
             errorMessage("No such branch exists.");
         }
-        if (branch == CURRENT_BRANCH) {
+        if (branch.equals(CURRENT_BRANCH) ) {
             errorMessage("No need to checkout the current branch.");
         }
 
