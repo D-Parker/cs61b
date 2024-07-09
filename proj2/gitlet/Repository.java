@@ -652,41 +652,47 @@ public class Repository implements Serializable {
             errorMessage("No need to checkout the current branch.");
         }
 
-        String commit_id = BRANCHES.get(branch);
-        reset(commit_id);
+        resetHelper(BRANCHES.get(branch));
+
+        // switch current_branch and update HEAD
         CURRENT_BRANCH = branch;
+        HEAD = BRANCHES.get(CURRENT_BRANCH);
         saveRepository();
     }
 
-    public void reset(String commit_id) {
+    public void reset(String commit_id){
+        resetHelper(commit_id);
+        BRANCHES.put(CURRENT_BRANCH, commit_id);
+        HEAD = commit_id;
+        saveRepository();
+    }
 
+    private void resetHelper(String commit_id) {
         Commit c = Commit.loadCommit(commit_id);
+        File f;
         if (c == null) {
             errorMessage("No commit with that id exists");
         }
-
         List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
+        // If a working file is untracked in the current commit, and tracked in the reset commit, show error.
+        // If the working file is tracked in the current commit, but not in the reset commit, delete it.
 
         for (String file_name : cwd_files) {
-            if (isFileTracked(HEAD, file_name) == false) {
-                if (isFileTracked(commit_id, file_name) == true) {
-                    errorMessage("There is an untracked file in the way; delete it, or add and commit it first");
-                }
+            if (!isFileTracked(HEAD, file_name) && isFileTracked(commit_id, file_name)) {
+                errorMessage("There is an untracked file in the way; delete it, or add and commit it first");
+            }
+            if ( isFileTracked(HEAD, file_name) && !isFileTracked(commit_id, file_name) ) {
+                f = join(CWD_DIR, file_name);
+                f.delete();
             }
         }
 
-        deleteAllFilesInDirectory(Repository.STAGING_DIR);
-        deleteAllFilesInDirectory(Repository.STAGING_REMOVAL_DIR);
-
-
-//        Commit c = Commit.loadCommit(commit_id);
+        deleteAllFilesInDirectory(STAGING_DIR);
+        deleteAllFilesInDirectory(STAGING_REMOVAL_DIR);
 
         for (String file_name : c.tracked.keySet()) {
             checkout(commit_id, file_name);
         }
-
-        HEAD = commit_id;
-        saveRepository();
     }
 
     private void deleteAllFilesInDirectory(File dir) {
