@@ -136,3 +136,4 @@ public class Commit implements Serializable {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }
 
+}

@@ -25,7 +25,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO: what if args is empty?
-        
+
         validateNumArgs(args);
         // return if args are empty
         // what if there is already a repository?
