@@ -618,6 +618,10 @@ public class Repository implements Serializable {
 
     public void merge(String branch) {
 
+        if (branch.equals(CURRENT_BRANCH)){
+            errorMessage("Cannot merge a branch with itself.");
+        }
+
         String split_id = getSplitPoint(branch);
 
         Integer conflict_count = 0;
