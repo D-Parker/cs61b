@@ -229,7 +229,7 @@ public class Repository implements Serializable {
         c.parent = HEAD;
         c.second_parent = null;
         if (branch != null) {
-            c.second_parent=BRANCHES.get(branch);
+            c.second_parent = BRANCHES.get(branch);
         }
         c.tracked = new TreeMap<>();
 
@@ -263,7 +263,7 @@ public class Repository implements Serializable {
         HEAD = c.generateId();
         BRANCHES.put(CURRENT_BRANCH, HEAD);
 
-        if (branch!=null){
+        if (branch != null) {
             BRANCHES.put(branch, HEAD);
         }
 
@@ -312,14 +312,14 @@ public class Repository implements Serializable {
         System.out.println("commit " + curr);
         String temp1 = null;
         String temp2 = null;
-        if (c.parent != null){
-            temp1 = c.parent.substring(0,7);
+        if (c.parent != null) {
+            temp1 = c.parent.substring(0, 7);
         }
-        if (c.second_parent!=null && c.second_parent!=""){
-            temp2 = c.second_parent.substring(0,7);
+        if (c.second_parent != null && c.second_parent != "") {
+            temp2 = c.second_parent.substring(0, 7);
         }
-        if (c.parent!=null && c.second_parent !=null){
-            System.out.println( "Merge: " + temp1 + " " + temp2);
+        if (c.parent != null && c.second_parent != null) {
+            System.out.println("Merge: " + temp1 + " " + temp2);
         }
         System.out.println("Date: " + c.getTimestamp());
         System.out.println(c.message);
@@ -337,7 +337,7 @@ public class Repository implements Serializable {
 
     public void status() {
 
-        if(!GITLET_DIR.exists()){
+        if (!GITLET_DIR.exists()) {
             errorMessage("Not in an initialized Gitlet directory.");
         }
 
@@ -437,7 +437,7 @@ public class Repository implements Serializable {
 
     public static Repository loadRepository() {
         File temp = join(GITLET_DIR, "repository");
-        if (!temp.exists() ){
+        if (!temp.exists()) {
             System.out.println("Not in an initialized Gitlet directory.");
             System.exit(0);
         }
@@ -713,7 +713,7 @@ public class Repository implements Serializable {
                 processConflict(i, c, g);
                 continue;
             }
-            if (s==null && g != null && c != null && !c.equals(g) ) {
+            if (s == null && g != null && c != null && !c.equals(g)) {
                 conflict_flag = true;
                 processConflict(i, c, g);
                 continue;
