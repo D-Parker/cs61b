@@ -626,10 +626,17 @@ public class Repository implements Serializable {
             String c = current.tracked.get(i);
             String g = given.tracked.get(i);
 
-            // ignore if current element equals given element.
-            if (c.equals(g)) {
+
+// null case first
+            if (c == null && g == null) {
                 continue;
             }
+
+            // ignore if current element equals given element.
+            if (c != null && g != null && c.equals(g)) {
+                continue;
+            }
+
 
             // do deletes first
             // Deleted in current, unchanged in given - implicit stage for removal - do nothing
@@ -639,7 +646,7 @@ public class Repository implements Serializable {
 //                continue;
 //            }
             // unchanged in current, deleted in given - stage for removal - current commit
-            if (c.equals(s) && g.equals(null)) {
+            if (c.equals(s) && g == null) {
                 removeFile(i);
                 continue;
             }
@@ -660,7 +667,7 @@ public class Repository implements Serializable {
 //            }
 
             // case #5 - new file since split, file is only in given
-            if (s.equals(null) && c.equals(null) && !g.equals(null)) {
+            if (s == null && c == null && g != null) {
                 checkout(given_id, i);
                 addFileToStaging(i);
                 continue;
@@ -682,7 +689,7 @@ public class Repository implements Serializable {
         String message = "Merged " + branch + " into " + CURRENT_BRANCH;
         createCommit(message, branch);
 
-        if (conflict_flag){
+        if (conflict_flag) {
             System.out.println("Encountered a merge conflict");
         }
     }
