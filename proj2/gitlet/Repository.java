@@ -336,6 +336,11 @@ public class Repository implements Serializable {
     }
 
     public void status() {
+
+        if(!GITLET_DIR.exists()){
+            errorMessage("Not in an initialized Gitlet directory.");
+        }
+
         System.out.println("=== Branches ===");
 //        String m = CURRENT_BRANCH;
         List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
@@ -432,6 +437,11 @@ public class Repository implements Serializable {
 
     public static Repository loadRepository() {
         File temp = join(GITLET_DIR, "repository");
+        if (!temp.exists() ){
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
+
         return readObject(temp, Repository.class);
     }
 
