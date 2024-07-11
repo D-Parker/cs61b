@@ -618,8 +618,12 @@ public class Repository implements Serializable {
 
     public void merge(String branch) {
 
-        if (branch.equals(CURRENT_BRANCH)){
+        if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("Cannot merge a branch with itself.");
+        }
+
+        if ( (plainFilenamesIn(STAGING_DIR)==null) | (plainFilenamesIn(STAGING_REMOVAL_DIR)==null) ){
+            errorMessage("You have uncommitted changes");
         }
 
         String split_id = getSplitPoint(branch);
@@ -684,6 +688,28 @@ public class Repository implements Serializable {
                 continue;
             }
 
+            // deleted in current, unchanged in given
+            // do something
+
+            // deleted in current, changed in given
+            // this is a conflict because both branches changed?
+            if (c == null && g != null && s != null && !g.equals(s)) {
+                conflict_count += 1;
+                processConflict(i, c, g);
+                continue;
+            }
+
+            // changed in current, deleted in given
+            // this is a conflict because both branches changed?
+            // case 35
+            if (c != null && g == null && s != null && !c.equals(s)) {
+                conflict_count += 1;
+                processConflict(i, c, g);
+                continue;
+            }
+
+
+
             // case #1 - given changes vs split, current stays the same vs split. checkout given and stage for addition
             if (g != null && c != null && !g.equals(s) && c.equals(s)) {
                 checkout(given_id, i);
@@ -715,12 +741,12 @@ public class Repository implements Serializable {
 
             // Case of conflict
             if (s != null && g != null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)) {
-                conflict_count +=1;
+                conflict_count += 1;
                 processConflict(i, c, g);
                 continue;
             }
             if (s == null && g != null && c != null && !c.equals(g)) {
-                conflict_count +=1 ;
+                conflict_count += 1;
                 processConflict(i, c, g);
                 continue;
             }
@@ -734,9 +760,34 @@ public class Repository implements Serializable {
     }
 
     private void processConflict(String filename, String current, String given) {
-        String c = readContentsAsString(join(BLOBS_DIR, current));
-        String g = readContentsAsString(join(BLOBS_DIR, given));
-        String result = "<<<<<<< HEAD\n" + c + "=======\n" + g + ">>>>>>>";
+
+        String result = "<<<<<<< HEAD\n";
+        String c;
+        String g;
+
+        if (current!=null){
+            c = readContentsAsString(join(BLOBS_DIR, current));
+            result=result.concat(c);
+        }
+
+        result = result.concat("=======\n" );
+
+        if (given!=null){
+            g = readContentsAsString(join(BLOBS_DIR, given));
+            result=result.concat(g);
+        }
+
+        result=result.concat(">>>>>>>");
+
+//        String result = "<<<<<<< HEAD\n" + c + "=======\n" + g + ">>>>>>>";
+
+//        if (current==null){
+//             result = "<<<<<<< HEAD" +  "=======" + g + ">>>>>>>";
+//        }
+//
+//        if (given==null){
+//             result = "<<<<<<< HEAD" + c + "=======" + ">>>>>>>";
+//        }
         writeContents(join(CWD_DIR, filename), result);
         addFileToStaging(filename);
     }
