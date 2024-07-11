@@ -679,7 +679,7 @@ public class Repository implements Serializable {
 //            }
             // unchanged in current, deleted in given - stage for removal - current commit
             if (c != null && c.equals(s) && g == null) {
-                conflict_count+=1;
+//                conflict_count+=1;
                 removeFile(i);
                 continue;
             }
@@ -701,7 +701,7 @@ public class Repository implements Serializable {
 
             // case #5 - new file since split, file is only in given
             if (s == null && c == null && g != null) {
-                conflict_count+=1;
+//                conflict_count+=1;
                 checkout(given_id, i);
                 addFileToStaging(i);
                 continue;
