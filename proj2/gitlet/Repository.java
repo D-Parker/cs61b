@@ -218,7 +218,6 @@ public class Repository implements Serializable {
     }
 
 
-
     // Create commits after the initial one.
     public void createCommit(String message) {
 
@@ -487,7 +486,7 @@ public class Repository implements Serializable {
         Integer len = commit_id.length();
 
         for (String i : L) {
-            if (i.substring(0, len).equals(commit_id) ){
+            if (i.substring(0, len).equals(commit_id)) {
                 commit_id = i;
                 break;
             }
@@ -532,7 +531,7 @@ public class Repository implements Serializable {
         List<String> L = plainFilenamesIn(COMMITS_DIR);
         Integer len = commit_id.length();
         for (String i : L) {
-            if (i.substring(0, len).equals(commit_id) ){
+            if (i.substring(0, len).equals(commit_id)) {
                 commit_id = i;
                 break;
             }
@@ -601,41 +600,148 @@ public class Repository implements Serializable {
         writeContents(cwd_file, blob_object);
     }
 
-//    public void merge(String branch){
-//
-//        String current_id = HEAD;
-//        String branch_id = BRANCHES.get(branch);
-//
-//        Commit c = Commit.loadCommit(current_id);
-//        Commit f = Commit.loadCommit(branch_id);
-//
-//        List<String> L = ArrayList<String>;
-//
-//        List<String> G = ArrayList<String>;
-//
-//        while(c.parent != null){
-//            L.add(c.parent);
-//            c = Commit.loadCommit(c.parent);
+    public void merge(String branch) {
+
+        String split_id = getSplitPoint(branch);
+
+        String current_id = HEAD;
+        String given_id = BRANCHES.get(branch);
+
+        Commit splitpoint = Commit.loadCommit(split_id);
+        Commit current = Commit.loadCommit(current_id);
+        Commit given = Commit.loadCommit(given_id);
+
+//        // checkout all of the files in the given commit
+//        for (String i : given.tracked.keySet()) {
+//            checkout(given_id, i);
 //        }
-//        while(f.parent != null){
-//            G.add(f.parent);
-//            f = Commit.loadCommit(f.parent);
+//        // checkout all of the files in the current commit
+//        for (String i : current.tracked.keySet()) {
+//            checkout(current_id, i);
 //        }
-//        String splitpoint = null;
-//        for (String i : L){
-//            if (G.contains(i)){
-//                splitpoint = i;
+
+        Set<Integer> combinedKeys = new TreeSet<>(current.tracked.keySet());
+        combinedKeys.addAll(given.tracked.keySet());
+        List<Integer> combinedKeysList = new ArrayList<>(combinedKeys);
+
+
+//        // get list of all files in CWD, which should be current + given + untracked
+//        List<String> cwd_files = plainFilenamesIn(CWD_DIR);
+
+        // iterate through the cwd_files list
+
+        for (String i : combinedKeysList) {
+
+            String s = splitpoint.tracked.get(i);
+            String c = current.tracked.get(i);
+            String g = given.tracked.get(i);
+
+            // ignore if current element equals given element.
+            if (c.equals(g)) {
+                continue;
+            }
+
+            // do deletes first
+            // Deleted in current, unchanged in given - implicit stage for removal - do nothing
+//            if(c.equals(null) && g.equals(s)){
+////                checkout(g,i);
+////                addFileToStaging(i);
+//                continue;
 //            }
-//        }
-//        if (branch_id == splitpoint){
-//            errorMessage("Given branch is an ancestor of the current branch");
-//        }
-//
-//
-//
-//
-////        findSplitPoint
-//    }
+            // unchanged in current, deleted in given - stage for removal - current commit
+            if (c.equals(s) && g.equals(null)) {
+                removeFile(i);
+                continue;
+            }
+
+            // case #1 - given changes vs split, current stays the same vs split. checkout given and stage for addition
+            if (!g.equals(s) && c.equals(s)) {
+                checkout(given_id, i);
+                addFileToStaging(i);
+                continue;
+            }
+
+            // case #1 - current changes vs split, given stays the same vs split. checkout current and stage for addition
+            // no need to do anything
+//            if(!c.equals(s) && g.equals(s)){
+//                checkout(i);
+//                addFileToStaging(i);
+//                continue;
+//            }
+
+            // case #5 - new file since split, file is only in given
+            if (s.equals(null) && c.equals(null) && !g.equals(null)) {
+                checkout(given_id, i);
+                addFileToStaging(i);
+                continue;
+            }
+            // case #5 - new file since split, file is only in current - do nothing
+//            if(s.equals(null) && !c.equals(null) && g.equals(null)){
+//                checkout(given_id, i);
+//                addFileToStaging(i);
+//                continue;
+//            }
+
+            // Case of conflict
+            if (!c.equals(s) && !g.equals(s) && !c.equals(g)) {
+                processConflict(i, c, g);
+                continue;
+            }
+        }
+        createCommit("Merged " + branch + " into " + CURRENT_BRANCH);
+    }
+
+    private void processConflict(String filename, String current, String given) {
+        String c = readContentsAsString(join(BLOBS_DIR, current));
+        String g = readContentsAsString(join(BLOBS_DIR, given));
+        String result = "<<<<<<< HEAD" + c + "=======" + g;
+        writeContents(join(CWD_DIR, filename), result);
+        addFileToStaging(filename);
+    }
+
+    private String getSplitPoint(String branch) {
+
+        String current_id = HEAD;
+        String given_id = BRANCHES.get(branch);
+
+        if (current_id.equals(given_id)) {
+            errorMessage("Given branch is an ancestor of the current branch");
+        }
+
+        String result;
+
+        Commit current = Commit.loadCommit(current_id);
+        Commit given = Commit.loadCommit(given_id);
+
+        if (given.parent.equals(current_id)) {
+            checkoutBranch(branch);
+            errorMessage("Current branch fast-forwarded");
+        }
+
+        List<String> current_parents = new ArrayList<>();
+        List<String> given_parents = new ArrayList<>();
+
+        current_parents.add(current_id);
+        given_parents.add(given_id);
+
+        // populate the lists
+        while (current.parent != null) {
+            current_parents.add(current.parent);
+            current = Commit.loadCommit(current.parent);
+        }
+        while (given.parent != null) {
+            given_parents.add(given.parent);
+            given = Commit.loadCommit(given.parent);
+        }
+
+        // iterate through given_parents to find matching id in current_parents
+        for (String i : given_parents) {
+            if (current_parents.contains(i)) {
+                return i;
+            }
+        }
+        return null;
+    }
 
 
 }

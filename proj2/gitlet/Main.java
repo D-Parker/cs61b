@@ -118,10 +118,10 @@ public class Main {
                 Repository jk = loadRepository();
                 jk.reset(args[1]);
                 break;
-//            case "merge":
-//                Repository jkl = loadRepository();
-//                jkl.merge(args[1]);
-//                break;
+            case "merge":
+                Repository jkl = loadRepository();
+                jkl.merge(args[1]);
+                break;
             default:
                 System.out.println("No command with that name exists.");
                 System.exit(0);
