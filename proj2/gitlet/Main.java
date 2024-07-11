@@ -129,7 +129,6 @@ public class Main {
         }
     }
 
-
     public static void validateNumArgs(String[] args) {
 
         if (args.length == 0) {

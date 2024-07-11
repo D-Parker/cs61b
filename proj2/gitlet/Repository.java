@@ -227,8 +227,10 @@ public class Repository implements Serializable {
 
         Commit c = new Commit(message);
         c.parent = HEAD;
-        c.second_parent = branch;
-
+        c.second_parent = null;
+        if (branch != null) {
+            c.second_parent=BRANCHES.get(branch);
+        }
         c.tracked = new TreeMap<>();
 
         Commit prev = Commit.loadCommit(c.parent);
@@ -260,6 +262,11 @@ public class Repository implements Serializable {
 //        String hash = c.generateId();
         HEAD = c.generateId();
         BRANCHES.put(CURRENT_BRANCH, HEAD);
+
+        if (branch!=null){
+            BRANCHES.put(branch, HEAD);
+        }
+
 //        String current_branch = BRANCHES.get("current_branch");
 //        BRANCHES.put(current_branch, hash);
 //        BRANCHES.put("HEAD", hash);
@@ -303,6 +310,17 @@ public class Repository implements Serializable {
         Commit c = Commit.loadCommit(curr);
         System.out.println("===");
         System.out.println("commit " + curr);
+        String temp1 = null;
+        String temp2 = null;
+        if (c.parent != null){
+            temp1 = c.parent.substring(0,7);
+        }
+        if (c.second_parent!=null && c.second_parent!=""){
+            temp2 = c.second_parent.substring(0,7);
+        }
+        if (c.parent!=null && c.second_parent !=null){
+            System.out.println( "Merge: " + temp1 + " " + temp2);
+        }
         System.out.println("Date: " + c.getTimestamp());
         System.out.println(c.message);
         System.out.println();
@@ -646,13 +664,13 @@ public class Repository implements Serializable {
 //                continue;
 //            }
             // unchanged in current, deleted in given - stage for removal - current commit
-            if (c.equals(s) && g == null) {
+            if (c != null && c.equals(s) && g == null) {
                 removeFile(i);
                 continue;
             }
 
             // case #1 - given changes vs split, current stays the same vs split. checkout given and stage for addition
-            if (!g.equals(s) && c.equals(s)) {
+            if (g != null && c != null && !g.equals(s) && c.equals(s)) {
                 checkout(given_id, i);
                 addFileToStaging(i);
                 continue;
@@ -680,24 +698,29 @@ public class Repository implements Serializable {
 //            }
 
             // Case of conflict
-            if (!c.equals(s) && !g.equals(s) && !c.equals(g)) {
+            if (s != null && g != null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)) {
+                conflict_flag = true;
+                processConflict(i, c, g);
+                continue;
+            }
+            if (s==null && g != null && c != null && !c.equals(g) ) {
                 conflict_flag = true;
                 processConflict(i, c, g);
                 continue;
             }
         }
-        String message = "Merged " + branch + " into " + CURRENT_BRANCH;
+        String message = "Merged " + branch + " into " + CURRENT_BRANCH + ".";
         createCommit(message, branch);
 
         if (conflict_flag) {
-            System.out.println("Encountered a merge conflict");
+            System.out.println("Encountered a merge conflict.");
         }
     }
 
     private void processConflict(String filename, String current, String given) {
         String c = readContentsAsString(join(BLOBS_DIR, current));
         String g = readContentsAsString(join(BLOBS_DIR, given));
-        String result = "<<<<<<< HEAD" + c + "=======" + g;
+        String result = "<<<<<<< HEAD\n" + c + "=======\n" + g + ">>>>>>>";
         writeContents(join(CWD_DIR, filename), result);
         addFileToStaging(filename);
     }
