@@ -60,7 +60,7 @@ public class Main {
             // TODO: FILL THE REST IN
             case "commit":
                 Repository repo = loadRepository();
-                repo.createCommit(secondArg);
+                repo.createCommit(secondArg, null);
                 break;
             case "checkout":
                 Repository r = loadRepository();

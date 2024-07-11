@@ -1,26 +1,14 @@
 package gitlet;
 
 
-import java.io.*;
-
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import java.io.IOException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.TreeMap;
 import java.io.Serializable;
 
 import static gitlet.Utils.*;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.IOException;
 
 
 // TODO: any imports you need here
@@ -219,7 +207,7 @@ public class Repository implements Serializable {
 
 
     // Create commits after the initial one.
-    public void createCommit(String message) {
+    public void createCommit(String message, String branch) {
 
         if (message.equals("")) {
             errorMessage("Please enter a commit message.");
@@ -239,7 +227,7 @@ public class Repository implements Serializable {
 
         Commit c = new Commit(message);
         c.parent = HEAD;
-        c.second_parent = null;
+        c.second_parent = branch;
 
         c.tracked = new TreeMap<>();
 
@@ -604,6 +592,8 @@ public class Repository implements Serializable {
 
         String split_id = getSplitPoint(branch);
 
+        boolean conflict_flag = false;
+
         String current_id = HEAD;
         String given_id = BRANCHES.get(branch);
 
@@ -620,9 +610,9 @@ public class Repository implements Serializable {
 //            checkout(current_id, i);
 //        }
 
-        Set<Integer> combinedKeys = new TreeSet<>(current.tracked.keySet());
+        Set<String> combinedKeys = new TreeSet<>(current.tracked.keySet());
         combinedKeys.addAll(given.tracked.keySet());
-        List<Integer> combinedKeysList = new ArrayList<>(combinedKeys);
+        List<String> combinedKeysList = new ArrayList<>(combinedKeys);
 
 
 //        // get list of all files in CWD, which should be current + given + untracked
@@ -684,11 +674,17 @@ public class Repository implements Serializable {
 
             // Case of conflict
             if (!c.equals(s) && !g.equals(s) && !c.equals(g)) {
+                conflict_flag = true;
                 processConflict(i, c, g);
                 continue;
             }
         }
-        createCommit("Merged " + branch + " into " + CURRENT_BRANCH);
+        String message = "Merged " + branch + " into " + CURRENT_BRANCH;
+        createCommit(message, branch);
+
+        if (conflict_flag){
+            System.out.println("Encountered a merge conflict");
+        }
     }
 
     private void processConflict(String filename, String current, String given) {
