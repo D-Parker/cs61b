@@ -777,7 +777,7 @@ public class Repository implements Serializable {
             result=result.concat(g);
         }
 
-        result=result.concat(">>>>>>>");
+        result=result.concat(">>>>>>>\n");
 
 //        String result = "<<<<<<< HEAD\n" + c + "=======\n" + g + ">>>>>>>";
 
