@@ -620,7 +620,7 @@ public class Repository implements Serializable {
 
         String split_id = getSplitPoint(branch);
 
-        boolean conflict_flag = false;
+        Integer conflict_count = 0;
 
         String current_id = HEAD;
         String given_id = BRANCHES.get(branch);
@@ -675,6 +675,7 @@ public class Repository implements Serializable {
 //            }
             // unchanged in current, deleted in given - stage for removal - current commit
             if (c != null && c.equals(s) && g == null) {
+                conflict_count+=1;
                 removeFile(i);
                 continue;
             }
@@ -696,6 +697,7 @@ public class Repository implements Serializable {
 
             // case #5 - new file since split, file is only in given
             if (s == null && c == null && g != null) {
+                conflict_count+=1;
                 checkout(given_id, i);
                 addFileToStaging(i);
                 continue;
@@ -709,12 +711,12 @@ public class Repository implements Serializable {
 
             // Case of conflict
             if (s != null && g != null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)) {
-                conflict_flag = true;
+                conflict_count +=1;
                 processConflict(i, c, g);
                 continue;
             }
             if (s == null && g != null && c != null && !c.equals(g)) {
-                conflict_flag = true;
+                conflict_count +=1 ;
                 processConflict(i, c, g);
                 continue;
             }
@@ -722,7 +724,7 @@ public class Repository implements Serializable {
         String message = "Merged " + branch + " into " + CURRENT_BRANCH + ".";
         createCommit(message, branch);
 
-        if (conflict_flag) {
+        if (conflict_count > 0) {
             System.out.println("Encountered a merge conflict.");
         }
     }
