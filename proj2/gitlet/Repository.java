@@ -618,13 +618,32 @@ public class Repository implements Serializable {
 
     public void merge(String branch) {
 
+//        resetHelper(HEAD);
+
         if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("Cannot merge a branch with itself.");
         }
 
-        if ( (plainFilenamesIn(STAGING_DIR)==null) | (plainFilenamesIn(STAGING_REMOVAL_DIR)==null) ){
-            errorMessage("You have uncommitted changes");
+        List<String> stg_test = plainFilenamesIn(STAGING_DIR);
+        List<String> stg_removal = plainFilenamesIn(STAGING_REMOVAL_DIR);
+
+        if ( plainFilenamesIn(STAGING_DIR).size()>0){
+            errorMessage("You have uncommitted changes.");
         }
+
+        if (plainFilenamesIn(STAGING_REMOVAL_DIR).size()>0){
+            errorMessage("You have uncommitted changes.");
+        }
+
+        if (!BRANCHES.containsKey(branch)){
+            errorMessage("A branch with that name does not exist.");
+        }
+
+        List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
+        // If a working file is untracked in the current commit, and tracked in the reset commit, show error.
+        // If the working file is tracked in the current commit, but not in the reset commit, delete it.
+
+
 
         String split_id = getSplitPoint(branch);
 
@@ -632,6 +651,18 @@ public class Repository implements Serializable {
 
         String current_id = HEAD;
         String given_id = BRANCHES.get(branch);
+
+        boolean test1;
+        boolean test2;
+
+        for (String file_name : cwd_files) {
+            test1 =isFileTracked(HEAD, file_name);
+            test2 =isFileTracked(given_id, file_name);
+
+            if (!isFileTracked(HEAD, file_name) && isFileTracked(given_id, file_name)) {
+                errorMessage("There is an untracked file in the way; delete it, or add and commit it first.");
+            }
+        }
 
         Commit splitpoint = Commit.loadCommit(split_id);
         Commit current = Commit.loadCommit(current_id);
