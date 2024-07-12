@@ -828,19 +828,19 @@ public class Repository implements Serializable {
         String current_id = HEAD;
         String given_id = BRANCHES.get(branch);
 
-        if (current_id.equals(given_id)) {
-            errorMessage("Given branch is an ancestor of the current branch");
-        }
+//        if (current_id.equals(given_id)) {
+//            errorMessage("Given branch is an ancestor of the current branch");
+//        }
 
-        String result;
+        String result=null;
 
         Commit current = Commit.loadCommit(current_id);
         Commit given = Commit.loadCommit(given_id);
 
-        if (given.parent.equals(current_id)) {
-            checkoutBranch(branch);
-            errorMessage("Current branch fast-forwarded");
-        }
+//        if (given.parent.equals(current_id)) {
+//            checkoutBranch(branch);
+//            errorMessage("Current branch fast-forwarded");
+//        }
 
         List<String> current_parents = new ArrayList<>();
         List<String> given_parents = new ArrayList<>();
@@ -851,20 +851,36 @@ public class Repository implements Serializable {
         // populate the lists
         while (current.parent != null) {
             current_parents.add(current.parent);
+
+            if (current.second_parent!=null){
+                current_parents.add(current.second_parent);
+            }
             current = Commit.loadCommit(current.parent);
         }
         while (given.parent != null) {
             given_parents.add(given.parent);
+            if (given.second_parent!=null){
+                given_parents.add(given.second_parent);
+            }
             given = Commit.loadCommit(given.parent);
         }
 
         // iterate through given_parents to find matching id in current_parents
         for (String i : given_parents) {
             if (current_parents.contains(i)) {
-                return i;
+                result = i;
+                break;
             }
         }
-        return null;
+        if (given_id.equals(result) ){
+            errorMessage("Given branch is an ancestor of the current branch");
+        }
+        if (current_id.equals(result)){
+            checkoutBranch(branch);
+            errorMessage("Current branch fast-forwarded");
+        }
+
+        return result;
     }
 
 
