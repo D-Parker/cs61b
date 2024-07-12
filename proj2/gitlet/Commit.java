@@ -1,4 +1,5 @@
 package gitlet;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -44,10 +45,10 @@ public class Commit implements Serializable {
     public String message;
     public String parent;
     public String second_parent;
-    public TreeMap<String, String> tracked ;
+    public TreeMap<String, String> tracked;
 
     // constructor for init command only
-    public Commit(){
+    public Commit() {
         super();
         this.ts = Instant.EPOCH;
         this.message = "initial commit";
@@ -55,13 +56,14 @@ public class Commit implements Serializable {
     }
 
 
-    public Commit(String message){
+    public Commit(String message) {
         super();
         this.ts = Instant.now();
         this.message = message;
 //        tracked = new TreeMap<>();
 
     }
+
     public String getTimestamp() {
         // Thu Jan 1 00:00:00 1970 +0000
         // Define the desired format
@@ -71,29 +73,31 @@ public class Commit implements Serializable {
 
         return zonedDateTime.format(formatter);
     }
+
     public String generateInitialId() {
 
         return generateId();
 //        return sha1(ts.toString(), message);
     }
+
     public String generateId() {
 //        List<String> temp = new List<>();
         List<Object> temp = new ArrayList<>();
 
-        if(ts != null){
+        if (ts != null) {
             temp.add(ts.toString());
         }
-        if(message != null){
+        if (message != null) {
             temp.add(message);
 //            temp.add(message.toString());
         }
-        if(parent != null){
+        if (parent != null) {
             temp.add(parent.toString());
         }
-        if(second_parent != null){
+        if (second_parent != null) {
             temp.add(second_parent.toString());
         }
-        if(tracked != null){
+        if (tracked != null) {
             temp.add(tracked.toString());
         }
         String result = sha1(temp);
@@ -114,7 +118,7 @@ public class Commit implements Serializable {
 
     public static Commit loadCommit(String hash) {
         File file = join(Repository.COMMITS_DIR, hash);
-        if (!file.exists()){
+        if (!file.exists()) {
             return null;
         }
         return readObject(file, Commit.class);
@@ -137,3 +141,9 @@ public class Commit implements Serializable {
     }
 
 }
+
+
+
+
+
+

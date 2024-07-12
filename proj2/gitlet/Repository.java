@@ -627,22 +627,21 @@ public class Repository implements Serializable {
         List<String> stg_test = plainFilenamesIn(STAGING_DIR);
         List<String> stg_removal = plainFilenamesIn(STAGING_REMOVAL_DIR);
 
-        if ( plainFilenamesIn(STAGING_DIR).size()>0){
+        if (plainFilenamesIn(STAGING_DIR).size() > 0) {
             errorMessage("You have uncommitted changes.");
         }
 
-        if (plainFilenamesIn(STAGING_REMOVAL_DIR).size()>0){
+        if (plainFilenamesIn(STAGING_REMOVAL_DIR).size() > 0) {
             errorMessage("You have uncommitted changes.");
         }
 
-        if (!BRANCHES.containsKey(branch)){
+        if (!BRANCHES.containsKey(branch)) {
             errorMessage("A branch with that name does not exist.");
         }
 
         List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
         // If a working file is untracked in the current commit, and tracked in the reset commit, show error.
         // If the working file is tracked in the current commit, but not in the reset commit, delete it.
-
 
 
         String split_id = getSplitPoint(branch);
@@ -656,8 +655,8 @@ public class Repository implements Serializable {
         boolean test2;
 
         for (String file_name : cwd_files) {
-            test1 =isFileTracked(HEAD, file_name);
-            test2 =isFileTracked(given_id, file_name);
+            test1 = isFileTracked(HEAD, file_name);
+            test2 = isFileTracked(given_id, file_name);
 
             if (!isFileTracked(HEAD, file_name) && isFileTracked(given_id, file_name)) {
                 errorMessage("There is an untracked file in the way; delete it, or add and commit it first.");
@@ -740,7 +739,6 @@ public class Repository implements Serializable {
             }
 
 
-
             // case #1 - given changes vs split, current stays the same vs split. checkout given and stage for addition
             if (g != null && c != null && !g.equals(s) && c.equals(s)) {
                 checkout(given_id, i);
@@ -796,19 +794,19 @@ public class Repository implements Serializable {
         String c;
         String g;
 
-        if (current!=null){
+        if (current != null) {
             c = readContentsAsString(join(BLOBS_DIR, current));
-            result=result.concat(c);
+            result = result.concat(c);
         }
 
-        result = result.concat("=======\n" );
+        result = result.concat("=======\n");
 
-        if (given!=null){
+        if (given != null) {
             g = readContentsAsString(join(BLOBS_DIR, given));
-            result=result.concat(g);
+            result = result.concat(g);
         }
 
-        result=result.concat(">>>>>>>\n");
+        result = result.concat(">>>>>>>\n");
 
 //        String result = "<<<<<<< HEAD\n" + c + "=======\n" + g + ">>>>>>>";
 
@@ -832,7 +830,7 @@ public class Repository implements Serializable {
 //            errorMessage("Given branch is an ancestor of the current branch");
 //        }
 
-        String result=null;
+        String result = null;
 
         Commit current = Commit.loadCommit(current_id);
         Commit given = Commit.loadCommit(given_id);
@@ -852,14 +850,14 @@ public class Repository implements Serializable {
         while (current.parent != null) {
             current_parents.add(current.parent);
 
-            if (current.second_parent!=null){
+            if (current.second_parent != null) {
                 current_parents.add(current.second_parent);
             }
             current = Commit.loadCommit(current.parent);
         }
         while (given.parent != null) {
             given_parents.add(given.parent);
-            if (given.second_parent!=null){
+            if (given.second_parent != null) {
                 given_parents.add(given.second_parent);
             }
             given = Commit.loadCommit(given.parent);
@@ -872,10 +870,10 @@ public class Repository implements Serializable {
                 break;
             }
         }
-        if (given_id.equals(result) ){
+        if (given_id.equals(result)) {
             errorMessage("Given branch is an ancestor of the current branch");
         }
-        if (current_id.equals(result)){
+        if (current_id.equals(result)) {
             checkoutBranch(branch);
             errorMessage("Current branch fast-forwarded");
         }
