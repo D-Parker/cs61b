@@ -113,10 +113,10 @@ public class Repository implements Serializable {
      * @param destination The destination directory.
      */
     public void fileCopy(String file, File origin, File destination) {
-        File origin_file = join(origin, file);
-        File destination_file = join(destination, file);
-        byte[] origin_contents = readContents(origin_file);
-        writeContents(destination_file, origin_contents);
+        File originFile = join(origin, file);
+        File destinationFile = join(destination, file);
+        byte[] originContents = readContents(originFile);
+        writeContents(destinationFile, originContents);
     }
 
     /**
@@ -129,7 +129,7 @@ public class Repository implements Serializable {
         File f;
         String hash;
         byte[] b;
-        File write_file;
+        File writeFile;
         Boolean isFileTracked = c.tracked.containsKey(file);
 
         if (!isFileTracked) {
@@ -163,8 +163,8 @@ public class Repository implements Serializable {
             } else {
                 hash = getTrackedFileHash(c, file);
                 b = readFileFromDirectory(BLOBS_DIR, hash);
-                write_file = join(STAGING_REMOVAL_DIR, file);
-                writeContents(write_file, b);
+                writeFile = join(STAGING_REMOVAL_DIR, file);
+                writeContents(writeFile, b);
             }
         }
     }
@@ -181,17 +181,17 @@ public class Repository implements Serializable {
         }
 
         List<String> staging = getStagingFiles();
-        List<String> staging_removal = getStagingRemovalFiles();
+        List<String> stagingRemoval = getStagingRemovalFiles();
 
-        if (staging.size() == 0 && staging_removal.size() == 0) {
+        if (staging.size() == 0 && stagingRemoval.size() == 0) {
             errorMessage("No changes added to the commit.");
         }
 
         Commit c = new Commit(message);
         c.parent = HEAD;
-        c.second_parent = null;
+        c.secondParent = null;
         if (branch != null) {
-            c.second_parent = BRANCHES.get(branch);
+            c.secondParent = BRANCHES.get(branch);
         }
         c.tracked = new TreeMap<>();
 
@@ -202,18 +202,18 @@ public class Repository implements Serializable {
         }
 
         for (String file : staging) {
-            File staging_file = join(STAGING_DIR, file);
-            String hash = getFileHash(staging_file);
+            File stagingFile = join(STAGING_DIR, file);
+            String hash = getFileHash(stagingFile);
             c.tracked.put(file, hash);
-            File blob_file = join(BLOBS_DIR, hash);
-            writeContents(blob_file, readContents(staging_file));
-            staging_file.delete();
+            File blobFile = join(BLOBS_DIR, hash);
+            writeContents(blobFile, readContents(stagingFile));
+            stagingFile.delete();
         }
 
-        for (String file : staging_removal) {
-            File staging_removal_file = join(STAGING_REMOVAL_DIR, file);
+        for (String file : stagingRemoval) {
+            File stagingRemovalFile = join(STAGING_REMOVAL_DIR, file);
             c.tracked.remove(file);
-            staging_removal_file.delete();
+            stagingRemovalFile.delete();
         }
 
         c.saveCommit();
@@ -284,10 +284,10 @@ public class Repository implements Serializable {
         if (c.parent != null) {
             temp1 = c.parent.substring(0, 7);
         }
-        if (c.second_parent != null && c.second_parent != "") {
-            temp2 = c.second_parent.substring(0, 7);
+        if (c.secondParent != null && !c.secondParent.equals("")) {
+            temp2 = c.secondParent.substring(0, 7);
         }
-        if (c.parent != null && c.second_parent != null) {
+        if (c.parent != null && c.secondParent != null) {
             System.out.println("Merge: " + temp1 + " " + temp2);
         }
         System.out.println("Date: " + c.getTimestamp());
@@ -319,10 +319,10 @@ public class Repository implements Serializable {
 
         System.out.println("=== Branches ===");
 
-        List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
-        Collections.sort(STG);
-        List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
-        Collections.sort(STG);
+        List<String> stg = getListOfDirectoryFiles(STAGING_DIR);
+        Collections.sort(stg);
+        List<String> rem = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
+        Collections.sort(stg);
         List<String> CWD = getListOfDirectoryFiles(CWD_DIR);
         Collections.sort(CWD);
 
@@ -336,7 +336,7 @@ public class Repository implements Serializable {
         System.out.println();
 
         System.out.println("=== Staged Files ===");
-        for (String a : STG) {
+        for (String a : stg) {
             if (!CWD.contains(a)) {
                 fileCopy(a, STAGING_DIR, STAGING_REMOVAL_DIR);
                 join(STAGING_DIR, a).delete();
@@ -347,7 +347,7 @@ public class Repository implements Serializable {
 
         System.out.println();
         System.out.println("=== Removed Files ===");
-        for (String b : REM) {
+        for (String b : rem) {
             System.out.println(b);
         }
         System.out.println();
@@ -418,8 +418,8 @@ public class Repository implements Serializable {
      * @param c The commit to save.
      */
     public void saveCommit(Commit c) {
-        File write_file = join(Repository.COMMITS_DIR, "Commit_abc");
-        writeObject(write_file, this);
+        File writeFile = join(Repository.COMMITS_DIR, "Commit_abc");
+        writeObject(writeFile, this);
     }
 
     /**
@@ -435,8 +435,8 @@ public class Repository implements Serializable {
      * Saves the current repository to disk.
      */
     public void saveRepository() {
-        File write_file = join(GITLET_DIR, "repository");
-        writeObject(write_file, this);
+        File writeFile = join(GITLET_DIR, "repository");
+        writeObject(writeFile, this);
     }
 
     /**
@@ -493,13 +493,13 @@ public class Repository implements Serializable {
 
         Commit c = Commit.loadCommit(HEAD);
 
-        String blob_hash = c.tracked.get(filename);
+        String blobHash = c.tracked.get(filename);
 
-        File staging_file = join(STAGING_DIR, filename);
-        String staging_hash = getFileHash(staging_file);
+        File stagingFile = join(STAGING_DIR, filename);
+        String stagingHash = getFileHash(stagingFile);
 
-        if (staging_hash.equals(blob_hash)) {
-            staging_file.delete();
+        if (stagingHash.equals(blobHash)) {
+            stagingFile.delete();
         }
     }
 
@@ -516,42 +516,42 @@ public class Repository implements Serializable {
     /**
      * Checks out a file from the current commit.
      *
-     * @param file_name The name of the file to check out.
+     * @param fileName The name of the file to check out.
      */
-    public void checkout(String file_name) {
-        checkout(HEAD, file_name);
+    public void checkout(String fileName) {
+        checkout(HEAD, fileName);
     }
 
     /**
      * Checks out a file from a specific commit.
      *
-     * @param commit_id The ID of the commit to check out the file from.
-     * @param file_name The name of the file to check out.
+     * @param commitId The ID of the commit to check out the file from.
+     * @param fileName The name of the file to check out.
      */
-    public void checkout(String commit_id, String file_name) {
+    public void checkout(String commitId, String fileName) {
         List<String> L = plainFilenamesIn(COMMITS_DIR);
-        Integer len = commit_id.length();
+        Integer len = commitId.length();
         for (String i : L) {
-            if (i.substring(0, len).equals(commit_id)) {
-                commit_id = i;
+            if (i.substring(0, len).equals(commitId)) {
+                commitId = i;
                 break;
             }
         }
-        if (commit_id.length() < 40) {
+        if (commitId.length() < 40) {
 
         }
 
-        Commit c = Commit.loadCommit(commit_id);
+        Commit c = Commit.loadCommit(commitId);
         if (c == null) {
             errorMessage("No commit with that id exists.");
         }
 
-        String blob = getTrackedFileHash(c, file_name);
+        String blob = getTrackedFileHash(c, fileName);
         if (blob == null) {
             errorMessage("File does not exist in that commit.");
         }
 
-        writeBlobToCWD(blob, file_name);
+        writeBlobToCWD(blob, fileName);
     }
 
     /**
@@ -577,42 +577,42 @@ public class Repository implements Serializable {
     /**
      * Resets the current branch to the specified commit.
      *
-     * @param commit_id The ID of the commit to reset to.
+     * @param commitId The ID of the commit to reset to.
      */
-    public void reset(String commit_id) {
+    public void reset(String commitId) {
         List<String> L = plainFilenamesIn(COMMITS_DIR);
-        Integer len = commit_id.length();
+        Integer len = commitId.length();
         for (String i : L) {
-            if (i.substring(0, len).equals(commit_id)) {
-                commit_id = i;
+            if (i.substring(0, len).equals(commitId)) {
+                commitId = i;
                 break;
             }
         }
-        resetHelper(commit_id);
-        BRANCHES.put(CURRENT_BRANCH, commit_id);
-        HEAD = commit_id;
+        resetHelper(commitId);
+        BRANCHES.put(CURRENT_BRANCH, commitId);
+        HEAD = commitId;
         saveRepository();
     }
 
     /**
      * Helper method to reset the repository state to a specified commit.
      *
-     * @param commit_id The ID of the commit to reset to.
+     * @param commitId The ID of the commit to reset to.
      */
-    private void resetHelper(String commit_id) {
-        Commit c = Commit.loadCommit(commit_id);
+    private void resetHelper(String commitId) {
+        Commit c = Commit.loadCommit(commitId);
         File f;
         if (c == null) {
             errorMessage("No commit with that id exists");
         }
-        List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
+        List<String> cwdFiles = plainFilenamesIn(Repository.CWD_DIR);
 
-        for (String file_name : cwd_files) {
-            if (!isFileTracked(HEAD, file_name) && isFileTracked(commit_id, file_name)) {
+        for (String fileName : cwdFiles) {
+            if (!isFileTracked(HEAD, fileName) && isFileTracked(commitId, fileName)) {
                 errorMessage("There is an untracked file in the way; delete it, or add and commit it first");
             }
-            if (isFileTracked(HEAD, file_name) && !isFileTracked(commit_id, file_name)) {
-                f = join(CWD_DIR, file_name);
+            if (isFileTracked(HEAD, fileName) && !isFileTracked(commitId, fileName)) {
+                f = join(CWD_DIR, fileName);
                 f.delete();
             }
         }
@@ -620,8 +620,8 @@ public class Repository implements Serializable {
         deleteAllFilesInDirectory(STAGING_DIR);
         deleteAllFilesInDirectory(STAGING_REMOVAL_DIR);
 
-        for (String file_name : c.tracked.keySet()) {
-            checkout(commit_id, file_name);
+        for (String fileName : c.tracked.keySet()) {
+            checkout(commitId, fileName);
         }
     }
 
@@ -632,8 +632,8 @@ public class Repository implements Serializable {
      */
     private void deleteAllFilesInDirectory(File dir) {
         List<String> directory_files = plainFilenamesIn(dir);
-        for (String file_name : directory_files) {
-            File temp = join(dir, file_name);
+        for (String fileName : directory_files) {
+            File temp = join(dir, fileName);
             temp.delete();
         }
     }
@@ -641,13 +641,13 @@ public class Repository implements Serializable {
     /**
      * Checks if a file is tracked in a specific commit.
      *
-     * @param commit_id The ID of the commit.
-     * @param file_name The name of the file.
+     * @param commitId The ID of the commit.
+     * @param fileName The name of the file.
      * @return true if the file is tracked, false otherwise.
      */
-    public boolean isFileTracked(String commit_id, String file_name) {
-        Commit c = Commit.loadCommit(commit_id);
-        return c.tracked.containsKey(file_name);
+    public boolean isFileTracked(String commitId, String fileName) {
+        Commit c = Commit.loadCommit(commitId);
+        return c.tracked.containsKey(fileName);
     }
 
     /**
@@ -664,24 +664,24 @@ public class Repository implements Serializable {
      * Retrieves the hash of a tracked file in a commit.
      *
      * @param c         The commit.
-     * @param file_name The name of the file.
+     * @param fileName The name of the file.
      * @return The hash of the tracked file.
      */
-    private String getTrackedFileHash(Commit c, String file_name) {
-        return c.tracked.get(file_name);
+    private String getTrackedFileHash(Commit c, String fileName) {
+        return c.tracked.get(fileName);
     }
 
     /**
      * Writes a blob to the current working directory.
      *
      * @param blob      The blob hash.
-     * @param file_name The name of the file.
+     * @param fileName The name of the file.
      */
-    private void writeBlobToCWD(String blob, String file_name) {
-        File blob_file = join(BLOBS_DIR, blob);
-        byte[] blob_object = readContents(blob_file);
-        File cwd_file = join(CWD_DIR, file_name);
-        writeContents(cwd_file, blob_object);
+    private void writeBlobToCWD(String blob, String fileName) {
+        File blobFile = join(BLOBS_DIR, blob);
+        byte[] blobObject = readContents(blobFile);
+        File cwdFile = join(CWD_DIR, fileName);
+        writeContents(cwdFile, blobObject);
     }
 
     /**
@@ -696,8 +696,8 @@ public class Repository implements Serializable {
             errorMessage("Cannot merge a branch with itself.");
         }
 
-        List<String> stg_test = plainFilenamesIn(STAGING_DIR);
-        List<String> stg_removal = plainFilenamesIn(STAGING_REMOVAL_DIR);
+        List<String> stgTest = plainFilenamesIn(STAGING_DIR);
+        List<String> stgRemoval = plainFilenamesIn(STAGING_REMOVAL_DIR);
 
         if (plainFilenamesIn(STAGING_DIR).size() > 0) {
             errorMessage("You have uncommitted changes.");
@@ -711,30 +711,30 @@ public class Repository implements Serializable {
             errorMessage("A branch with that name does not exist.");
         }
 
-        List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
+        List<String> cwdFiles = plainFilenamesIn(Repository.CWD_DIR);
 
-        String split_id = getSplitPoint(branch);
+        String splitId = getSplitPoint(branch);
 
-        Integer conflict_count = 0;
+        Integer conflictCount = 0;
 
-        String current_id = HEAD;
-        String given_id = BRANCHES.get(branch);
+        String currentId = HEAD;
+        String givenId = BRANCHES.get(branch);
 
         boolean test1;
         boolean test2;
 
-        for (String file_name : cwd_files) {
-            test1 = isFileTracked(HEAD, file_name);
-            test2 = isFileTracked(given_id, file_name);
+        for (String fileName : cwdFiles) {
+            test1 = isFileTracked(HEAD, fileName);
+            test2 = isFileTracked(givenId, fileName);
 
-            if (!isFileTracked(HEAD, file_name) && isFileTracked(given_id, file_name)) {
+            if (!isFileTracked(HEAD, fileName) && isFileTracked(givenId, fileName)) {
                 errorMessage("There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
 
-        Commit splitpoint = Commit.loadCommit(split_id);
-        Commit current = Commit.loadCommit(current_id);
-        Commit given = Commit.loadCommit(given_id);
+        Commit splitpoint = Commit.loadCommit(splitId);
+        Commit current = Commit.loadCommit(currentId);
+        Commit given = Commit.loadCommit(givenId);
 
         Set<String> combinedKeys = new TreeSet<>(current.tracked.keySet());
         combinedKeys.addAll(given.tracked.keySet());
@@ -759,36 +759,36 @@ public class Repository implements Serializable {
             }
 
             if (c == null && g != null && s != null && !g.equals(s)) {
-                conflict_count += 1;
+                conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
             }
 
             if (c != null && g == null && s != null && !c.equals(s)) {
-                conflict_count += 1;
+                conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
             }
 
             if (g != null && c != null && !g.equals(s) && c.equals(s)) {
-                checkout(given_id, i);
+                checkout(givenId, i);
                 addFileToStaging(i);
                 continue;
             }
 
             if (s == null && c == null && g != null) {
-                checkout(given_id, i);
+                checkout(givenId, i);
                 addFileToStaging(i);
                 continue;
             }
 
             if (s != null && g != null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)) {
-                conflict_count += 1;
+                conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
             }
             if (s == null && g != null && c != null && !c.equals(g)) {
-                conflict_count += 1;
+                conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
             }
@@ -796,7 +796,7 @@ public class Repository implements Serializable {
         String message = "Merged " + branch + " into " + CURRENT_BRANCH + ".";
         createCommit(message, branch);
 
-        if (conflict_count > 0) {
+        if (conflictCount > 0) {
             System.out.println("Encountered a merge conflict.");
         }
     }
@@ -839,46 +839,46 @@ public class Repository implements Serializable {
      * @throws IllegalArgumentException if the given branch is an ancestor of the current branch.
      */
     private String getSplitPoint(String branch) {
-        String current_id = HEAD;
-        String given_id = BRANCHES.get(branch);
+        String currentId = HEAD;
+        String givenId = BRANCHES.get(branch);
 
         String result = null;
 
-        Commit current = Commit.loadCommit(current_id);
-        Commit given = Commit.loadCommit(given_id);
+        Commit current = Commit.loadCommit(currentId);
+        Commit given = Commit.loadCommit(givenId);
 
-        List<String> current_parents = new ArrayList<>();
-        List<String> given_parents = new ArrayList<>();
+        List<String> currentParents = new ArrayList<>();
+        List<String> givenParents = new ArrayList<>();
 
-        current_parents.add(current_id);
-        given_parents.add(given_id);
+        currentParents.add(currentId);
+        givenParents.add(givenId);
 
         while (current.parent != null) {
-            current_parents.add(current.parent);
+            currentParents.add(current.parent);
 
-            if (current.second_parent != null) {
-                current_parents.add(current.second_parent);
+            if (current.secondParent != null) {
+                currentParents.add(current.secondParent);
             }
             current = Commit.loadCommit(current.parent);
         }
         while (given.parent != null) {
-            given_parents.add(given.parent);
-            if (given.second_parent != null) {
-                given_parents.add(given.second_parent);
+            givenParents.add(given.parent);
+            if (given.secondParent != null) {
+                givenParents.add(given.secondParent);
             }
             given = Commit.loadCommit(given.parent);
         }
 
-        for (String i : given_parents) {
-            if (current_parents.contains(i)) {
+        for (String i : givenParents) {
+            if (currentParents.contains(i)) {
                 result = i;
                 break;
             }
         }
-        if (given_id.equals(result)) {
+        if (givenId.equals(result)) {
             errorMessage("Given branch is an ancestor of the current branch");
         }
-        if (current_id.equals(result)) {
+        if (currentId.equals(result)) {
             checkoutBranch(branch);
             errorMessage("Current branch fast-forwarded");
         }

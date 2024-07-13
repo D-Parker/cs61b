@@ -1,17 +1,9 @@
 package gitlet;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -35,6 +27,15 @@ class Utils {
     static final int UID_LENGTH = 40;
 
     /* SHA-1 HASH VALUES. */
+    /**
+     * Filter out all but plain files.
+     */
+    private static final FilenameFilter PLAIN_FILES = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            return new File(dir, name).isFile();
+        }
+    };
 
     /**
      * Returns the SHA-1 hash of the concatenation of VALS, which may
@@ -62,6 +63,8 @@ class Utils {
         }
     }
 
+    /* FILE DELETION */
+
     /**
      * Returns the SHA-1 hash of the concatenation of the strings in
      * VALS.
@@ -69,8 +72,6 @@ class Utils {
     static String sha1(List<Object> vals) {
         return sha1(vals.toArray(new Object[vals.size()]));
     }
-
-    /* FILE DELETION */
 
     /**
      * Deletes FILE if it exists and is not a directory.  Returns true
@@ -137,11 +138,9 @@ class Utils {
     static void writeContents(File file, Object... contents) {
         try {
             if (file.isDirectory()) {
-                throw
-                        new IllegalArgumentException("cannot overwrite directory");
+                throw new IllegalArgumentException("cannot overwrite directory");
             }
-            BufferedOutputStream str =
-                    new BufferedOutputStream(Files.newOutputStream(file.toPath()));
+            BufferedOutputStream str = new BufferedOutputStream(Files.newOutputStream(file.toPath()));
             for (Object obj : contents) {
                 if (obj instanceof byte[]) {
                     str.write((byte[]) obj);
@@ -161,13 +160,11 @@ class Utils {
      */
     static <T extends Serializable> T readObject(File file, Class<T> expectedClass) {
         try {
-            ObjectInputStream in =
-                    new ObjectInputStream(new FileInputStream(file));
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
             T result = expectedClass.cast(in.readObject());
             in.close();
             return result;
-        } catch (IOException | ClassCastException
-                 | ClassNotFoundException excp) {
+        } catch (IOException | ClassCastException | ClassNotFoundException excp) {
             throw new IllegalArgumentException(excp.getMessage());
         }
     }
@@ -178,19 +175,6 @@ class Utils {
     static void writeObject(File file, Serializable obj) {
         writeContents(file, serialize(obj));
     }
-
-
-
-    /**
-     * Filter out all but plain files.
-     */
-    private static final FilenameFilter PLAIN_FILES =
-            new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return new File(dir, name).isFile();
-                }
-            };
 
     /**
      * Returns a list of the names of all plain files in the directory DIR, in
@@ -220,7 +204,7 @@ class Utils {
 
     /**
      * Return the concatentation of FIRST and OTHERS into a File designator,
-     * analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     * analogous to the get
      * method.
      */
     static File join(String first, String... others) {
@@ -229,13 +213,12 @@ class Utils {
 
     /**
      * Return the concatentation of FIRST and OTHERS into a File designator,
-     * analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     * analogous to the get
      * method.
      */
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();
     }
-
 
     /* SERIALIZATION UTILITIES */
 

@@ -14,15 +14,10 @@ import static gitlet.Utils.*;
 
 /**
  * Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
  *
- * @author TODO
  */
 public class Commit implements Serializable {
     /**
-     * TODO: add instance variables here.
-     * <p>
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided one example for `message`.
@@ -34,11 +29,11 @@ public class Commit implements Serializable {
      * Tracked is a treemap of the files tracked by the Commit and the versions of these files.
      */
 
-    public Instant ts;
-    public String message;
-    public String parent;
-    public String second_parent;
-    public TreeMap<String, String> tracked;
+     Instant ts;
+     String message;
+     String parent;
+     String secondParent;
+     TreeMap<String, String> tracked;
 
     /**
      * This method is a Commit constructor that does just the initial commit in a repository.
@@ -117,8 +112,8 @@ public class Commit implements Serializable {
         if (parent != null) {
             temp.add(parent);
         }
-        if (second_parent != null) {
-            temp.add(second_parent);
+        if (secondParent != null) {
+            temp.add(secondParent);
         }
         if (tracked != null) {
             temp.add(tracked.toString());
@@ -132,16 +127,16 @@ public class Commit implements Serializable {
      * Saves the initial commit to disk.
      */
     public void saveInitialCommit() {
-        File write_file = join(Repository.COMMITS_DIR, this.generateInitialId());
-        writeObject(write_file, this);
+        File writeFile = join(Repository.COMMITS_DIR, this.generateInitialId());
+        writeObject(writeFile, this);
     }
 
     /**
      * Saves subsequent commits to disk.
      */
     public void saveCommit() {
-        File write_file = join(Repository.COMMITS_DIR, this.generateId());
-        writeObject(write_file, this);
+        File writeFile = join(Repository.COMMITS_DIR, this.generateId());
+        writeObject(writeFile, this);
     }
 
     /**
