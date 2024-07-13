@@ -1,32 +1,17 @@
 package gitlet;
 
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 
 import static gitlet.Utils.*;
 
-
-// TODO: any imports you need here
-
 /**
  * Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
  * <p>
- *  does at a high level.
- *  A repository stores references to staging files and commits.
- *
- * @author TODO
+ * A repository stores references to staging files and commits.
  */
 public class Repository implements Serializable {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
 
     /**
      * The current working directory.
@@ -36,31 +21,25 @@ public class Repository implements Serializable {
      * The .gitlet directory.
      */
     public static final File CWD_DIR = join(CWD);
-
     public static final File GITLET_DIR = join(CWD_DIR, ".gitlet");
-
     public static final File STAGING_DIR = join(GITLET_DIR, "staging");
-
     public static final File STAGING_REMOVAL_DIR = join(GITLET_DIR, "staging_removal");
-
-
     public static final File BLOBS_DIR = join(GITLET_DIR, "blobs");
-
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
     public TreeMap<String, String> BRANCHES = new TreeMap<>();
     public TreeMap<String, String> BRANCHES_ORIGIN = new TreeMap<>();
-
     public String HEAD;
     public String CURRENT_BRANCH;
-
     public List<String> CWD_FILES;
-
     public TreeMap<String, String> STAGING_ADD = new TreeMap<>();
     public TreeMap<String, String> STAGING_REMOVE = new TreeMap<>();
-
     public TreeMap<String, String> BLOBS = new TreeMap<>();
 
+    /**
+     * Constructor for the Repository class.
+     * Initializes the repository and creates the initial commit.
+     */
     public Repository() {
         super();
 
@@ -82,6 +61,11 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    /**
+     * Loads the repository from disk.
+     *
+     * @return the loaded repository.
+     */
     public static Repository loadRepository() {
         File temp = join(GITLET_DIR, "repository");
         if (!temp.exists()) {
@@ -92,8 +76,12 @@ public class Repository implements Serializable {
         return readObject(temp, Repository.class);
     }
 
+    /**
+     * Removes the specified branch.
+     *
+     * @param branch The name of the branch to remove.
+     */
     public void removeBranch(String branch) {
-
         if (!BRANCHES.containsKey(branch)) {
             errorMessage("A branch with that name does not exist.");
         }
@@ -105,11 +93,25 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    /**
+     * Checks if a file exists in the specified directory.
+     *
+     * @param dir  The directory to check.
+     * @param file The name of the file.
+     * @return true if the file exists, false otherwise.
+     */
     public boolean isFileInDirectory(File dir, String file) {
         File filename = join(dir, file);
         return filename.exists();
     }
 
+    /**
+     * Copies a file from one directory to another.
+     *
+     * @param file        The name of the file to copy.
+     * @param origin      The origin directory.
+     * @param destination The destination directory.
+     */
     public void fileCopy(String file, File origin, File destination) {
         File origin_file = join(origin, file);
         File destination_file = join(destination, file);
@@ -118,12 +120,11 @@ public class Repository implements Serializable {
     }
 
     /**
-     * This stages a file for removal, or removes it from staged for addition.
+     * Stages a file for removal or removes it from staging for addition.
      *
      * @param file The name of the file to be staged for removal.
      */
     public void removeFile(String file) {
-
         Commit c = Commit.loadCommit(HEAD);
         File f;
         String hash;
@@ -169,13 +170,12 @@ public class Repository implements Serializable {
     }
 
     /**
-     * This calls the Commit
+     * Creates a new commit with the specified message and branch.
      *
-     * @param message Log message for the Commit.
-     * @param branch  Branch that Commit will use as a second parent in case it was called by merge.
+     * @param message Log message for the commit.
+     * @param branch  Branch that commit will use as a second parent in case it was called by merge.
      */
     public void createCommit(String message, String branch) {
-
         if (message.equals("")) {
             errorMessage("Please enter a commit message.");
         }
@@ -228,6 +228,9 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    /**
+     * Prints the log of commits from the current branch.
+     */
     public void printLog() {
         String curr = HEAD;
         while (curr != null) {
@@ -235,6 +238,9 @@ public class Repository implements Serializable {
         }
     }
 
+    /**
+     * Prints the global log of all commits.
+     */
     public void printGlobalLog() {
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
         for (String s : L) {
@@ -242,9 +248,13 @@ public class Repository implements Serializable {
         }
     }
 
+    /**
+     * Finds and prints commits with the specified message.
+     *
+     * @param msg The commit message to search for.
+     */
     public void find(String msg) {
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
-
         int counter = 0;
         for (String curr : L) {
             Commit g = Commit.loadCommit(curr);
@@ -259,6 +269,12 @@ public class Repository implements Serializable {
         }
     }
 
+    /**
+     * Prints the log for the specified commit ID.
+     *
+     * @param curr The commit ID.
+     * @return The parent commit ID.
+     */
     private String printLog(String curr) {
         Commit c = Commit.loadCommit(curr);
         System.out.println("===");
@@ -280,6 +296,11 @@ public class Repository implements Serializable {
         return c.parent;
     }
 
+    /**
+     * Creates a new branch with the specified name.
+     *
+     * @param n The name of the branch.
+     */
     public void branch(String n) {
         if (BRANCHES.containsKey(n)) {
             errorMessage("A branch with that name already exists.");
@@ -288,8 +309,10 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    /**
+     * Prints the status of the repository.
+     */
     public void status() {
-
         if (!GITLET_DIR.exists()) {
             errorMessage("Not in an initialized Gitlet directory.");
         }
@@ -302,7 +325,6 @@ public class Repository implements Serializable {
         Collections.sort(STG);
         List<String> CWD = getListOfDirectoryFiles(CWD_DIR);
         Collections.sort(CWD);
-
 
         for (String key : BRANCHES.keySet()) {
             if (key.equals(CURRENT_BRANCH)) {
@@ -335,6 +357,13 @@ public class Repository implements Serializable {
         System.out.println();
     }
 
+    /**
+     * Retrieves a file from the specified directory.
+     *
+     * @param dir  The directory.
+     * @param file The name of the file.
+     * @return The file.
+     */
     public File getFileFromString(File dir, String file) {
         File result = join(dir, file);
         if (result.exists()) {
@@ -344,53 +373,110 @@ public class Repository implements Serializable {
         }
     }
 
+    /**
+     * Computes the hash of a file.
+     *
+     * @param file The file.
+     * @return The hash of the file.
+     */
     public String getFileHash(File file) {
         byte[] temp = readContents(file);
         return getHash(temp);
     }
 
+    /**
+     * Computes the hash of an object.
+     *
+     * @param obj The object.
+     * @return The hash of the object.
+     */
     public String getHash(Serializable obj) {
         return sha1(obj);
     }
 
+    /**
+     * Retrieves the list of staging files.
+     *
+     * @return The list of staging files.
+     */
     public List<String> getStagingFiles() {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }
 
+    /**
+     * Retrieves the list of staging removal files.
+     *
+     * @return The list of staging removal files.
+     */
     public List<String> getStagingRemovalFiles() {
         return plainFilenamesIn(Repository.STAGING_REMOVAL_DIR);
     }
 
+    /**
+     * Saves a commit to disk.
+     *
+     * @param c The commit to save.
+     */
     public void saveCommit(Commit c) {
         File write_file = join(Repository.COMMITS_DIR, "Commit_abc");
         writeObject(write_file, this);
     }
 
+    /**
+     * Checks if the repository has branches.
+     *
+     * @return true if the repository has branches, false otherwise.
+     */
     public boolean hasBranches() {
         return BRANCHES.size() > 0;
     }
 
-    // Save current repository to disk
+    /**
+     * Saves the current repository to disk.
+     */
     public void saveRepository() {
         File write_file = join(GITLET_DIR, "repository");
         writeObject(write_file, this);
     }
 
+    /**
+     * Retrieves the list of files in a directory.
+     *
+     * @param directory The directory.
+     * @return The list of files.
+     */
     public List<String> getListOfDirectoryFiles(File directory) {
         return plainFilenamesIn(directory);
     }
 
+    /**
+     * Updates the branch with the specified hash.
+     *
+     * @param branch The branch to update.
+     * @param hash   The hash to update the branch with.
+     */
     public void updateBranch(String branch, String hash) {
         this.BRANCHES.put(branch, hash);
         saveRepository();
     }
 
+    /**
+     * Reads a file from a directory.
+     *
+     * @param dir  The directory.
+     * @param file The name of the file.
+     * @return The file contents as a byte array.
+     */
     private byte[] readFileFromDirectory(File dir, String file) {
         return readContents(join(dir, file));
     }
 
+    /**
+     * Adds a file to staging.
+     *
+     * @param filename The name of the file to stage.
+     */
     public void addFileToStaging(String filename) {
-
         if (isFileInDirectory(STAGING_REMOVAL_DIR, filename)) {
             fileCopy(filename, STAGING_REMOVAL_DIR, CWD_DIR);
             join(STAGING_REMOVAL_DIR, filename).delete();
@@ -415,33 +501,43 @@ public class Repository implements Serializable {
         if (staging_hash.equals(blob_hash)) {
             staging_file.delete();
         }
-
     }
 
+    /**
+     * Checks if the staging area is empty.
+     *
+     * @return true if the staging area is empty, false otherwise.
+     */
     public boolean isStagingEmpty() {
         List<String> temp = plainFilenamesIn(Repository.BLOBS_DIR);
         return temp.size() == 0;
     }
 
+    /**
+     * Checks out a file from the current commit.
+     *
+     * @param file_name The name of the file to check out.
+     */
     public void checkout(String file_name) {
         checkout(HEAD, file_name);
     }
 
+    /**
+     * Checks out a file from a specific commit.
+     *
+     * @param commit_id The ID of the commit to check out the file from.
+     * @param file_name The name of the file to check out.
+     */
     public void checkout(String commit_id, String file_name) {
-
         List<String> L = plainFilenamesIn(COMMITS_DIR);
-
         Integer len = commit_id.length();
-
         for (String i : L) {
             if (i.substring(0, len).equals(commit_id)) {
                 commit_id = i;
                 break;
             }
         }
-
         if (commit_id.length() < 40) {
-
 
         }
 
@@ -451,7 +547,6 @@ public class Repository implements Serializable {
         }
 
         String blob = getTrackedFileHash(c, file_name);
-
         if (blob == null) {
             errorMessage("File does not exist in that commit.");
         }
@@ -459,6 +554,11 @@ public class Repository implements Serializable {
         writeBlobToCWD(blob, file_name);
     }
 
+    /**
+     * Checks out a branch.
+     *
+     * @param branch The branch to check out.
+     */
     public void checkoutBranch(String branch) {
         if (!BRANCHES.containsKey(branch)) {
             errorMessage("No such branch exists.");
@@ -474,6 +574,11 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    /**
+     * Resets the current branch to the specified commit.
+     *
+     * @param commit_id The ID of the commit to reset to.
+     */
     public void reset(String commit_id) {
         List<String> L = plainFilenamesIn(COMMITS_DIR);
         Integer len = commit_id.length();
@@ -489,6 +594,11 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    /**
+     * Helper method to reset the repository state to a specified commit.
+     *
+     * @param commit_id The ID of the commit to reset to.
+     */
     private void resetHelper(String commit_id) {
         Commit c = Commit.loadCommit(commit_id);
         File f;
@@ -515,6 +625,11 @@ public class Repository implements Serializable {
         }
     }
 
+    /**
+     * Deletes all files in a directory.
+     *
+     * @param dir The directory.
+     */
     private void deleteAllFilesInDirectory(File dir) {
         List<String> directory_files = plainFilenamesIn(dir);
         for (String file_name : directory_files) {
@@ -523,22 +638,45 @@ public class Repository implements Serializable {
         }
     }
 
-
+    /**
+     * Checks if a file is tracked in a specific commit.
+     *
+     * @param commit_id The ID of the commit.
+     * @param file_name The name of the file.
+     * @return true if the file is tracked, false otherwise.
+     */
     public boolean isFileTracked(String commit_id, String file_name) {
         Commit c = Commit.loadCommit(commit_id);
         return c.tracked.containsKey(file_name);
     }
 
+    /**
+     * Prints an error message and exits the program.
+     *
+     * @param msg The error message to print.
+     */
     public void errorMessage(String msg) {
         System.out.println(msg);
         System.exit(0);
     }
 
+    /**
+     * Retrieves the hash of a tracked file in a commit.
+     *
+     * @param c         The commit.
+     * @param file_name The name of the file.
+     * @return The hash of the tracked file.
+     */
     private String getTrackedFileHash(Commit c, String file_name) {
         return c.tracked.get(file_name);
     }
 
-
+    /**
+     * Writes a blob to the current working directory.
+     *
+     * @param blob      The blob hash.
+     * @param file_name The name of the file.
+     */
     private void writeBlobToCWD(String blob, String file_name) {
         File blob_file = join(BLOBS_DIR, blob);
         byte[] blob_object = readContents(blob_file);
@@ -554,7 +692,6 @@ public class Repository implements Serializable {
      *                                  or if the branch does not exist.
      */
     public void merge(String branch) {
-
         if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("Cannot merge a branch with itself.");
         }
@@ -604,7 +741,6 @@ public class Repository implements Serializable {
         List<String> combinedKeysList = new ArrayList<>(combinedKeys);
 
         for (String i : combinedKeysList) {
-
             String s = splitpoint.tracked.get(i);
             String c = current.tracked.get(i);
             String g = given.tracked.get(i);
@@ -673,7 +809,6 @@ public class Repository implements Serializable {
      * @param given    The given version's blob ID of the file.
      */
     private void processConflict(String filename, String current, String given) {
-
         String result = "<<<<<<< HEAD\n";
         String c;
         String g;
@@ -699,12 +834,11 @@ public class Repository implements Serializable {
     /**
      * Determines the split point between the current branch and a given branch.
      *
-     * @param branch the name of the branch to compare with the current branch
-     * @return the commit ID of the split point between the current and given branch
-     * @throws IllegalArgumentException if the given branch is an ancestor of the current branch
+     * @param branch The name of the branch to compare with the current branch.
+     * @return The commit ID of the split point between the current and given branch.
+     * @throws IllegalArgumentException if the given branch is an ancestor of the current branch.
      */
     private String getSplitPoint(String branch) {
-
         String current_id = HEAD;
         String given_id = BRANCHES.get(branch);
 
@@ -751,6 +885,4 @@ public class Repository implements Serializable {
 
         return result;
     }
-
-
 }

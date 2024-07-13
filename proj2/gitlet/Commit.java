@@ -34,7 +34,6 @@ public class Commit implements Serializable {
      * Tracked is a treemap of the files tracked by the Commit and the versions of these files.
      */
 
-    // instance variables
     public Instant ts;
     public String message;
     public String parent;
@@ -60,8 +59,6 @@ public class Commit implements Serializable {
         super();
         this.ts = Instant.now();
         this.message = message;
-//        tracked = new TreeMap<>();
-
     }
 
     /**
@@ -109,7 +106,6 @@ public class Commit implements Serializable {
      * @return The hashcode for the subsequent commits.
      */
     public String generateId() {
-//        List<String> temp = new List<>();
         List<Object> temp = new ArrayList<>();
 
         if (ts != null) {
@@ -117,7 +113,6 @@ public class Commit implements Serializable {
         }
         if (message != null) {
             temp.add(message);
-//            temp.add(message.toString());
         }
         if (parent != null) {
             temp.add(parent);
@@ -185,7 +180,6 @@ public class Commit implements Serializable {
     public List<String> getStagingFiles() {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }
-
 }
 
 

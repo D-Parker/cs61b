@@ -119,28 +119,29 @@ public class Main {
         }
     }
 
+    /**
+     * Validates the number of arguments passed to a Gitlet command.
+     *
+     * @param args The array of arguments passed to the command.
+     */
     public static void validateNumArgs(String[] args) {
-
         if (args.length == 0) {
             System.out.println("Please enter a command.");
             System.exit(0);
         }
         String cmd = args[0];
-        if (cmd == "init" && args.length != 1) {
-            throw new RuntimeException(
-                    String.format("Invalid number of arguments for: %s.", cmd));
+        if (cmd.equals("init") && args.length != 1) {
+            throw new RuntimeException(String.format("Invalid number of arguments for: %s.", cmd));
         }
-        if (cmd == "init" && GITLET_DIR.exists()) {
+        if (cmd.equals("init") && GITLET_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory");
             System.exit(0);
         }
-        if (cmd == "add" && args.length != 2) {
-            throw new RuntimeException(
-                    String.format("Invalid number of arguments for: %s.", cmd));
+        if (cmd.equals("add") && args.length != 2) {
+            throw new RuntimeException(String.format("Invalid number of arguments for: %s.", cmd));
         }
-        if (cmd == "commit" && args.length != 2) {
-            throw new RuntimeException(
-                    String.format("Invalid number of arguments for: %s.", cmd));
+        if (cmd.equals("commit") && args.length != 2) {
+            throw new RuntimeException(String.format("Invalid number of arguments for: %s.", cmd));
         }
     }
 }
