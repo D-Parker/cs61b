@@ -1,28 +1,16 @@
 package gitlet;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.ZoneId;
-
-import java.util.Set;
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
-// TODO: any imports you need here
-import static gitlet.Utils.*;
-//import static gitlet.Repository.*;
-import java.util.Date; // TODO: You'll likely use this in this class
-import java.util.List;
-import java.util.TreeMap;
-import java.util.Collection;
-import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.TreeMap;
+
+import static gitlet.Utils.*;
 
 /**
  * Represents a gitlet commit object.
@@ -38,6 +26,12 @@ public class Commit implements Serializable {
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided one example for `message`.
+     *
+     * ts is the timestamp when the Commit is made.
+     * Message is the Commit message.
+     * Parent is the hash code of the parent commit
+     * Second is the hash code of the second parent if there was a merge.
+     * Tracked is a treemap of the files tracked by the Commit and the versions of these files.
      */
 
     // instance variables
@@ -47,7 +41,9 @@ public class Commit implements Serializable {
     public String second_parent;
     public TreeMap<String, String> tracked;
 
-    // constructor for init command only
+    /**
+     * This method is a Commit constructor that does just the initial commit in a repository.
+     */
     public Commit() {
         super();
         this.ts = Instant.EPOCH;
@@ -55,7 +51,11 @@ public class Commit implements Serializable {
         this.tracked = new TreeMap<>();
     }
 
-
+    /**
+     * This is the constructor for methods following the initial one.
+     *
+     * @param message The message associated with the commit.
+     */
     public Commit(String message) {
         super();
         this.ts = Instant.now();
@@ -64,9 +64,28 @@ public class Commit implements Serializable {
 
     }
 
+    /**
+     * Loads a Commit from disk into memory.
+     *
+     * @param hash The hash code for the commit
+     * @return The Commit object.
+     */
+    public static Commit loadCommit(String hash) {
+        File file = join(Repository.COMMITS_DIR, hash);
+        if (!file.exists()) {
+            return null;
+        }
+        return readObject(file, Commit.class);
+    }
+
+    /**
+     * This returns the current timestamp in this format: Thu Jan 1 00:00:00 1970 +0000.
+     *
+     * @return The formatted timestamp.
+     */
     public String getTimestamp() {
-        // Thu Jan 1 00:00:00 1970 +0000
-        // Define the desired format
+
+
         ZonedDateTime zonedDateTime = ts.atZone(ZoneId.of("UTC"));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy Z");
@@ -74,12 +93,21 @@ public class Commit implements Serializable {
         return zonedDateTime.format(formatter);
     }
 
+    /**
+     * This returns a 40-character hashcode.
+     *
+     * @return The hashcode for the initial commit.
+     */
     public String generateInitialId() {
 
         return generateId();
-//        return sha1(ts.toString(), message);
     }
 
+    /**
+     * This returns a 40-character hashcode.
+     *
+     * @return The hashcode for the subsequent commits.
+     */
     public String generateId() {
 //        List<String> temp = new List<>();
         List<Object> temp = new ArrayList<>();
@@ -92,10 +120,10 @@ public class Commit implements Serializable {
 //            temp.add(message.toString());
         }
         if (parent != null) {
-            temp.add(parent.toString());
+            temp.add(parent);
         }
         if (second_parent != null) {
-            temp.add(second_parent.toString());
+            temp.add(second_parent);
         }
         if (tracked != null) {
             temp.add(tracked.toString());
@@ -105,37 +133,55 @@ public class Commit implements Serializable {
         return result;
     }
 
-
+    /**
+     * Saves the initial commit to disk.
+     */
     public void saveInitialCommit() {
         File write_file = join(Repository.COMMITS_DIR, this.generateInitialId());
         writeObject(write_file, this);
     }
 
+    /**
+     * Saves subsequent commits to disk.
+     */
     public void saveCommit() {
         File write_file = join(Repository.COMMITS_DIR, this.generateId());
         writeObject(write_file, this);
     }
 
-    public static Commit loadCommit(String hash) {
-        File file = join(Repository.COMMITS_DIR, hash);
-        if (!file.exists()) {
-            return null;
-        }
-        return readObject(file, Commit.class);
-    }
-
+    /**
+     * Gets hash code for object.
+     *
+     * @param obj The object that the hash is being generated from.
+     * @return The 40-char hash code
+     */
     public String getHash(Serializable obj) {
         return sha1(obj);
     }
 
+    /**
+     * Wrapper to get hash from a commit.
+     *
+     * @return Returns 40-char hash code.
+     */
     public String getCommitHash() {
         return getHash(this);
     }
 
+    /**
+     * Gets list of all blob files.
+     *
+     * @return List of all files in the blob directory.
+     */
     public List<String> getBlobFiles() {
         return plainFilenamesIn(Repository.BLOBS_DIR);
     }
 
+    /**
+     * Gets the namees of all files in the staging directory.
+     *
+     * @return List of files in the directory.
+     */
     public List<String> getStagingFiles() {
         return plainFilenamesIn(Repository.STAGING_DIR);
     }

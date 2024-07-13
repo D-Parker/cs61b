@@ -1,16 +1,10 @@
 package gitlet;
 
-import java.time.Instant;
-import java.util.ResourceBundle;
-
-import static gitlet.Repository.*;
-import static gitlet.Commit.*;
-import static gitlet.Utils.*;
-
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import static gitlet.Repository.GITLET_DIR;
+import static gitlet.Repository.loadRepository;
+import static gitlet.Utils.join;
 
 
 /**
@@ -27,10 +21,6 @@ public class Main {
         // TODO: what if args is empty?
 
         validateNumArgs(args);
-        // return if args are empty
-        // what if there is already a repository?
-//        System.out.println(System.getProperty("user.dir"));
-//        /Users/danielparker/Documents/cs61b/skeleton-sp21/proj2/gitlet
 
         String cmd = args[0];
         String secondArg = null;

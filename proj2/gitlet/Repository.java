@@ -2,11 +2,8 @@ package gitlet;
 
 
 import java.io.File;
-
-import java.util.ArrayList;
-import java.util.*;
-import java.util.TreeMap;
 import java.io.Serializable;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -47,17 +44,10 @@ public class Repository implements Serializable {
     public static final File STAGING_REMOVAL_DIR = join(GITLET_DIR, "staging_removal");
 
 
-//    public static final File STAGING_DIR = GITLET_DIR;
-
-//    public static final File STAGING_DIR =  BUFFER_DIR;
-
     public static final File BLOBS_DIR = join(GITLET_DIR, "blobs");
 
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
 
-//    public static String MASTER = "abc123";
-
-    // <branch_name, commit hash >
     public TreeMap<String, String> BRANCHES = new TreeMap<>();
     public TreeMap<String, String> BRANCHES_ORIGIN = new TreeMap<>();
 
@@ -71,14 +61,6 @@ public class Repository implements Serializable {
 
     public TreeMap<String, String> BLOBS = new TreeMap<>();
 
-    // get strings from all the filenames in staging
-    // iterate through the strings
-
-//    public static Commit current_branch;
-
-    /* TODO: fill in the rest of this class. */
-
-    // This constructor is run just once to initialize the repository
     public Repository() {
         super();
 
@@ -89,9 +71,7 @@ public class Repository implements Serializable {
         BLOBS_DIR.mkdir();
 
         Commit c = new Commit();
-        // generate commit hash
 
-        // Set master branch
         BRANCHES_ORIGIN.put("master", c.generateInitialId());
         BRANCHES.put("master", c.generateInitialId());
         HEAD = c.generateInitialId();
@@ -102,18 +82,23 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
+    public static Repository loadRepository() {
+        File temp = join(GITLET_DIR, "repository");
+        if (!temp.exists()) {
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
+
+        return readObject(temp, Repository.class);
+    }
+
     public void removeBranch(String branch) {
 
-        if (BRANCHES.containsKey(branch) == false) {
-
+        if (!BRANCHES.containsKey(branch)) {
             errorMessage("A branch with that name does not exist.");
-//            System.out.println();
-//            System.exit(0);
         }
         if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("Cannot remove the current branch.");
-//            System.out.println("Cannot remove the current branch.");
-//            System.exit(0);
         }
 
         BRANCHES.remove(branch);
@@ -132,34 +117,22 @@ public class Repository implements Serializable {
         writeContents(destination_file, origin_contents);
     }
 
+    /**
+     * This stages a file for removal, or removes it from staged for addition.
+     *
+     * @param file The name of the file to be staged for removal.
+     */
     public void removeFile(String file) {
 
-        // Get current commit
         Commit c = Commit.loadCommit(HEAD);
-
-        // The file to be removed
         File f;
-
-        // Hash if needed to retrieve blob
         String hash;
-
         byte[] b;
-
         File write_file;
-
-        // is file in CWD, staging_add, staging_rem, current commit?
-//        isFileInDirectory(CWD_DIR, file);
-//        isFileInDirectory(STAGING_DIR, file);
-//        isFileInDirectory(STAGING_REMOVAL_DIR, file);
-//        Boolean isFileTracked = c.tracked.containsKey(file);
-
         Boolean isFileTracked = c.tracked.containsKey(file);
 
-
-        // If file isn't tracked in current commit but is staged for addition, remove from staging and return.
-        // If file isn't tracked and is not staged for addition, do nothing.
-        if (isFileTracked == false) {
-            if (isFileInDirectory(STAGING_DIR, file) == true) {
+        if (!isFileTracked) {
+            if (isFileInDirectory(STAGING_DIR, file)) {
                 f = join(STAGING_DIR, file);
                 f.delete();
                 return;
@@ -168,16 +141,8 @@ public class Repository implements Serializable {
             }
         }
 
-        // Next are cases when file is tracked in the current commit
-
-        // If file is in CWD and staging_addition, remove from staging
-        // If file is in CWD but not in staging_addition, stage for removal
-        // If file is not in CWD but is in staging addition, stage for removal and remove from staging_add
-        // If file is not in CWD and is not in staging addition ?? how to stage for removal?
-        //      Get the blob from the recent commit and put it in stage for removal
-
-        if (isFileInDirectory(CWD_DIR, file) == true) {
-            if (isFileInDirectory(STAGING_DIR, file) == true) {
+        if (isFileInDirectory(CWD_DIR, file)) {
+            if (isFileInDirectory(STAGING_DIR, file)) {
                 f = join(STAGING_DIR, file);
                 f.delete();
                 return;
@@ -189,13 +154,11 @@ public class Repository implements Serializable {
             }
         }
 
-
-        if (isFileInDirectory(CWD_DIR, file) == false) {
-            if (isFileInDirectory(STAGING_DIR, file) == true) {
+        if (!isFileInDirectory(CWD_DIR, file)) {
+            if (isFileInDirectory(STAGING_DIR, file)) {
                 fileCopy(file, STAGING_DIR, STAGING_REMOVAL_DIR);
                 f = join(STAGING_DIR, file);
                 f.delete();
-                return;
             } else {
                 hash = getTrackedFileHash(c, file);
                 b = readFileFromDirectory(BLOBS_DIR, hash);
@@ -205,14 +168,16 @@ public class Repository implements Serializable {
         }
     }
 
-
-    // Create commits after the initial one.
+    /**
+     * This calls the Commit
+     *
+     * @param message Log message for the Commit.
+     * @param branch  Branch that Commit will use as a second parent in case it was called by merge.
+     */
     public void createCommit(String message, String branch) {
 
         if (message.equals("")) {
             errorMessage("Please enter a commit message.");
-//            System.out.println("Please enter a commit message.");
-//            return;
         }
 
         List<String> staging = getStagingFiles();
@@ -220,10 +185,7 @@ public class Repository implements Serializable {
 
         if (staging.size() == 0 && staging_removal.size() == 0) {
             errorMessage("No changes added to the commit.");
-//            System.out.println("No changes added to the commit.");
-//            return;
         }
-
 
         Commit c = new Commit(message);
         c.parent = HEAD;
@@ -239,9 +201,6 @@ public class Repository implements Serializable {
             c.tracked.putAll(prev.tracked);
         }
 
-
-        // Populate tracking map
-        //        write all files from Staging_add folder to blobs folder, update tracking for this commit
         for (String file : staging) {
             File staging_file = join(STAGING_DIR, file);
             String hash = getFileHash(staging_file);
@@ -250,7 +209,7 @@ public class Repository implements Serializable {
             writeContents(blob_file, readContents(staging_file));
             staging_file.delete();
         }
-        // remove files in the staging_removal folder from the tracked tree in the current commit
+
         for (String file : staging_removal) {
             File staging_removal_file = join(STAGING_REMOVAL_DIR, file);
             c.tracked.remove(file);
@@ -259,17 +218,12 @@ public class Repository implements Serializable {
 
         c.saveCommit();
 
-//        String hash = c.generateId();
         HEAD = c.generateId();
         BRANCHES.put(CURRENT_BRANCH, HEAD);
 
         if (branch != null) {
             BRANCHES.put(branch, HEAD);
         }
-
-//        String current_branch = BRANCHES.get("current_branch");
-//        BRANCHES.put(current_branch, hash);
-//        BRANCHES.put("HEAD", hash);
 
         saveRepository();
     }
@@ -290,7 +244,6 @@ public class Repository implements Serializable {
 
     public void find(String msg) {
         List<String> L = getListOfDirectoryFiles(COMMITS_DIR);
-//        Collections.sort(L);
 
         int counter = 0;
         for (String curr : L) {
@@ -342,7 +295,7 @@ public class Repository implements Serializable {
         }
 
         System.out.println("=== Branches ===");
-//        String m = CURRENT_BRANCH;
+
         List<String> STG = getListOfDirectoryFiles(STAGING_DIR);
         Collections.sort(STG);
         List<String> REM = getListOfDirectoryFiles(STAGING_REMOVAL_DIR);
@@ -359,8 +312,7 @@ public class Repository implements Serializable {
             }
         }
         System.out.println();
-        // If the file is in Staging, but has been deleted from CWD using Unix rm,
-        // then move to staging removal and remove file from staging_add.
+
         System.out.println("=== Staged Files ===");
         for (String a : STG) {
             if (!CWD.contains(a)) {
@@ -383,12 +335,13 @@ public class Repository implements Serializable {
         System.out.println();
     }
 
-
     public File getFileFromString(File dir, String file) {
         File result = join(dir, file);
         if (result.exists()) {
             return result;
-        } else return result;
+        } else {
+            return result;
+        }
     }
 
     public String getFileHash(File file) {
@@ -410,10 +363,8 @@ public class Repository implements Serializable {
 
     public void saveCommit(Commit c) {
         File write_file = join(Repository.COMMITS_DIR, "Commit_abc");
-//        File write_file = join(Repository.COMMITS_DIR, this.generateId());
         writeObject(write_file, this);
     }
-
 
     public boolean hasBranches() {
         return BRANCHES.size() > 0;
@@ -434,22 +385,10 @@ public class Repository implements Serializable {
         saveRepository();
     }
 
-
-    public static Repository loadRepository() {
-        File temp = join(GITLET_DIR, "repository");
-        if (!temp.exists()) {
-            System.out.println("Not in an initialized Gitlet directory.");
-            System.exit(0);
-        }
-
-        return readObject(temp, Repository.class);
-    }
-
     private byte[] readFileFromDirectory(File dir, String file) {
         return readContents(join(dir, file));
     }
 
-    // Writes the file to the staging folder
     public void addFileToStaging(String filename) {
 
         if (isFileInDirectory(STAGING_REMOVAL_DIR, filename)) {
@@ -458,30 +397,23 @@ public class Repository implements Serializable {
             return;
         }
 
-        // Add file to staging
-        if (isFileInDirectory(CWD_DIR, filename) == true) {
+        if (isFileInDirectory(CWD_DIR, filename)) {
             fileCopy(filename, CWD_DIR, STAGING_DIR);
         }
 
         if (!isFileInDirectory(CWD_DIR, filename)) {
             errorMessage("File does not exist.");
         }
-        // Get current commit
+
         Commit c = Commit.loadCommit(HEAD);
 
         String blob_hash = c.tracked.get(filename);
 
-
-        // Get hash code for the staged file
         File staging_file = join(STAGING_DIR, filename);
         String staging_hash = getFileHash(staging_file);
-//        File blob = join(BLOBS_DIR, hash);
 
-        // If an identical copy of this file is already being tracked, remove it from staging.
         if (staging_hash.equals(blob_hash)) {
-//        if (blob.exists()) {
             staging_file.delete();
-            return;
         }
 
     }
@@ -537,7 +469,6 @@ public class Repository implements Serializable {
 
         resetHelper(BRANCHES.get(branch));
 
-        // switch current_branch and update HEAD
         CURRENT_BRANCH = branch;
         HEAD = BRANCHES.get(CURRENT_BRANCH);
         saveRepository();
@@ -565,8 +496,6 @@ public class Repository implements Serializable {
             errorMessage("No commit with that id exists");
         }
         List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
-        // If a working file is untracked in the current commit, and tracked in the reset commit, show error.
-        // If the working file is tracked in the current commit, but not in the reset commit, delete it.
 
         for (String file_name : cwd_files) {
             if (!isFileTracked(HEAD, file_name) && isFileTracked(commit_id, file_name)) {
@@ -609,6 +538,7 @@ public class Repository implements Serializable {
         return c.tracked.get(file_name);
     }
 
+
     private void writeBlobToCWD(String blob, String file_name) {
         File blob_file = join(BLOBS_DIR, blob);
         byte[] blob_object = readContents(blob_file);
@@ -616,9 +546,14 @@ public class Repository implements Serializable {
         writeContents(cwd_file, blob_object);
     }
 
+    /**
+     * Merges the specified branch into the current branch.
+     *
+     * @param branch The name of the branch to merge into the current branch.
+     * @throws IllegalArgumentException if the branch is the current branch, has uncommitted changes,
+     *                                  or if the branch does not exist.
+     */
     public void merge(String branch) {
-
-//        resetHelper(HEAD);
 
         if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("Cannot merge a branch with itself.");
@@ -640,9 +575,6 @@ public class Repository implements Serializable {
         }
 
         List<String> cwd_files = plainFilenamesIn(Repository.CWD_DIR);
-        // If a working file is untracked in the current commit, and tracked in the reset commit, show error.
-        // If the working file is tracked in the current commit, but not in the reset commit, delete it.
-
 
         String split_id = getSplitPoint(branch);
 
@@ -667,24 +599,9 @@ public class Repository implements Serializable {
         Commit current = Commit.loadCommit(current_id);
         Commit given = Commit.loadCommit(given_id);
 
-//        // checkout all of the files in the given commit
-//        for (String i : given.tracked.keySet()) {
-//            checkout(given_id, i);
-//        }
-//        // checkout all of the files in the current commit
-//        for (String i : current.tracked.keySet()) {
-//            checkout(current_id, i);
-//        }
-
         Set<String> combinedKeys = new TreeSet<>(current.tracked.keySet());
         combinedKeys.addAll(given.tracked.keySet());
         List<String> combinedKeysList = new ArrayList<>(combinedKeys);
-
-
-//        // get list of all files in CWD, which should be current + given + untracked
-//        List<String> cwd_files = plainFilenamesIn(CWD_DIR);
-
-        // iterate through the cwd_files list
 
         for (String i : combinedKeysList) {
 
@@ -692,83 +609,43 @@ public class Repository implements Serializable {
             String c = current.tracked.get(i);
             String g = given.tracked.get(i);
 
-
-// null case first
             if (c == null && g == null) {
                 continue;
             }
 
-            // ignore if current element equals given element.
-            if (c != null && g != null && c.equals(g)) {
+            if (c != null && c.equals(g)) {
                 continue;
             }
 
-
-            // do deletes first
-            // Deleted in current, unchanged in given - implicit stage for removal - do nothing
-//            if(c.equals(null) && g.equals(s)){
-////                checkout(g,i);
-////                addFileToStaging(i);
-//                continue;
-//            }
-            // unchanged in current, deleted in given - stage for removal - current commit
             if (c != null && c.equals(s) && g == null) {
-//                conflict_count+=1;
                 removeFile(i);
                 continue;
             }
 
-            // deleted in current, unchanged in given
-            // do something
-
-            // deleted in current, changed in given
-            // this is a conflict because both branches changed?
             if (c == null && g != null && s != null && !g.equals(s)) {
                 conflict_count += 1;
                 processConflict(i, c, g);
                 continue;
             }
 
-            // changed in current, deleted in given
-            // this is a conflict because both branches changed?
-            // case 35
             if (c != null && g == null && s != null && !c.equals(s)) {
                 conflict_count += 1;
                 processConflict(i, c, g);
                 continue;
             }
 
-
-            // case #1 - given changes vs split, current stays the same vs split. checkout given and stage for addition
             if (g != null && c != null && !g.equals(s) && c.equals(s)) {
                 checkout(given_id, i);
                 addFileToStaging(i);
                 continue;
             }
 
-            // case #1 - current changes vs split, given stays the same vs split. checkout current and stage for addition
-            // no need to do anything
-//            if(!c.equals(s) && g.equals(s)){
-//                checkout(i);
-//                addFileToStaging(i);
-//                continue;
-//            }
-
-            // case #5 - new file since split, file is only in given
             if (s == null && c == null && g != null) {
-//                conflict_count+=1;
                 checkout(given_id, i);
                 addFileToStaging(i);
                 continue;
             }
-            // case #5 - new file since split, file is only in current - do nothing
-//            if(s.equals(null) && !c.equals(null) && g.equals(null)){
-//                checkout(given_id, i);
-//                addFileToStaging(i);
-//                continue;
-//            }
 
-            // Case of conflict
             if (s != null && g != null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)) {
                 conflict_count += 1;
                 processConflict(i, c, g);
@@ -788,6 +665,13 @@ public class Repository implements Serializable {
         }
     }
 
+    /**
+     * Processes a conflict between the current and given versions of a file, and stages the result.
+     *
+     * @param filename The name of the file in conflict.
+     * @param current  The current version's blob ID of the file.
+     * @param given    The given version's blob ID of the file.
+     */
     private void processConflict(String filename, String current, String given) {
 
         String result = "<<<<<<< HEAD\n";
@@ -808,37 +692,26 @@ public class Repository implements Serializable {
 
         result = result.concat(">>>>>>>\n");
 
-//        String result = "<<<<<<< HEAD\n" + c + "=======\n" + g + ">>>>>>>";
-
-//        if (current==null){
-//             result = "<<<<<<< HEAD" +  "=======" + g + ">>>>>>>";
-//        }
-//
-//        if (given==null){
-//             result = "<<<<<<< HEAD" + c + "=======" + ">>>>>>>";
-//        }
         writeContents(join(CWD_DIR, filename), result);
         addFileToStaging(filename);
     }
 
+    /**
+     * Determines the split point between the current branch and a given branch.
+     *
+     * @param branch the name of the branch to compare with the current branch
+     * @return the commit ID of the split point between the current and given branch
+     * @throws IllegalArgumentException if the given branch is an ancestor of the current branch
+     */
     private String getSplitPoint(String branch) {
 
         String current_id = HEAD;
         String given_id = BRANCHES.get(branch);
 
-//        if (current_id.equals(given_id)) {
-//            errorMessage("Given branch is an ancestor of the current branch");
-//        }
-
         String result = null;
 
         Commit current = Commit.loadCommit(current_id);
         Commit given = Commit.loadCommit(given_id);
-
-//        if (given.parent.equals(current_id)) {
-//            checkoutBranch(branch);
-//            errorMessage("Current branch fast-forwarded");
-//        }
 
         List<String> current_parents = new ArrayList<>();
         List<String> given_parents = new ArrayList<>();
@@ -846,7 +719,6 @@ public class Repository implements Serializable {
         current_parents.add(current_id);
         given_parents.add(given_id);
 
-        // populate the lists
         while (current.parent != null) {
             current_parents.add(current.parent);
 
@@ -863,7 +735,6 @@ public class Repository implements Serializable {
             given = Commit.loadCommit(given.parent);
         }
 
-        // iterate through given_parents to find matching id in current_parents
         for (String i : given_parents) {
             if (current_parents.contains(i)) {
                 result = i;
