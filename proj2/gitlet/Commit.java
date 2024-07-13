@@ -14,14 +14,13 @@ import static gitlet.Utils.*;
 
 /**
  * Represents a gitlet commit object.
- *
  */
 public class Commit implements Serializable {
     /**
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided one example for `message`.
-     *
+     * <p>
      * ts is the timestamp when the Commit is made.
      * Message is the Commit message.
      * Parent is the hash code of the parent commit
@@ -29,11 +28,11 @@ public class Commit implements Serializable {
      * Tracked is a treemap of the files tracked by the Commit and the versions of these files.
      */
 
-     Instant ts;
-     String message;
-     String parent;
-     String secondParent;
-     TreeMap<String, String> tracked;
+        Instant ts;
+        String message;
+        String parent;
+        String secondParent;
+        TreeMap<String, String> tracked;
 
     /**
      * This method is a Commit constructor that does just the initial commit in a repository.

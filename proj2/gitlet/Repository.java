@@ -537,9 +537,6 @@ public class Repository implements Serializable {
                 break;
             }
         }
-        if (commitId.length() < 40) {
-
-        }
 
         Commit c = Commit.loadCommit(commitId);
         if (c == null) {
@@ -609,7 +606,8 @@ public class Repository implements Serializable {
 
         for (String fileName : cwdFiles) {
             if (!isFileTracked(HEAD, fileName) && isFileTracked(commitId, fileName)) {
-                errorMessage("There is an untracked file in the way; delete it, or add and commit it first");
+                errorMessage(
+            "There is an untracked file in the way; delete it, or add and commit it first");
             }
             if (isFileTracked(HEAD, fileName) && !isFileTracked(commitId, fileName)) {
                 f = join(CWD_DIR, fileName);
@@ -631,8 +629,8 @@ public class Repository implements Serializable {
      * @param dir The directory.
      */
     private void deleteAllFilesInDirectory(File dir) {
-        List<String> directory_files = plainFilenamesIn(dir);
-        for (String fileName : directory_files) {
+        List<String> directoryFiles = plainFilenamesIn(dir);
+        for (String fileName : directoryFiles) {
             File temp = join(dir, fileName);
             temp.delete();
         }
@@ -663,7 +661,7 @@ public class Repository implements Serializable {
     /**
      * Retrieves the hash of a tracked file in a commit.
      *
-     * @param c         The commit.
+     * @param c        The commit.
      * @param fileName The name of the file.
      * @return The hash of the tracked file.
      */
@@ -674,7 +672,7 @@ public class Repository implements Serializable {
     /**
      * Writes a blob to the current working directory.
      *
-     * @param blob      The blob hash.
+     * @param blob     The blob hash.
      * @param fileName The name of the file.
      */
     private void writeBlobToCWD(String blob, String fileName) {
@@ -688,101 +686,81 @@ public class Repository implements Serializable {
      * Merges the specified branch into the current branch.
      *
      * @param branch The name of the branch to merge into the current branch.
-     * @throws IllegalArgumentException if the branch is the current branch, has uncommitted changes,
-     *                                  or if the branch does not exist.
+     * @throws IllegalArgumentException if the branch is the current branch,
+     * has uncommitted changes, or if the branch does not exist.
      */
     public void merge(String branch) {
         if (branch.equals(CURRENT_BRANCH)) {
             errorMessage("Cannot merge a branch with itself.");
         }
-
         List<String> stgTest = plainFilenamesIn(STAGING_DIR);
         List<String> stgRemoval = plainFilenamesIn(STAGING_REMOVAL_DIR);
-
         if (plainFilenamesIn(STAGING_DIR).size() > 0) {
             errorMessage("You have uncommitted changes.");
         }
-
         if (plainFilenamesIn(STAGING_REMOVAL_DIR).size() > 0) {
             errorMessage("You have uncommitted changes.");
         }
-
         if (!BRANCHES.containsKey(branch)) {
             errorMessage("A branch with that name does not exist.");
         }
-
         List<String> cwdFiles = plainFilenamesIn(Repository.CWD_DIR);
-
         String splitId = getSplitPoint(branch);
-
         Integer conflictCount = 0;
-
         String currentId = HEAD;
         String givenId = BRANCHES.get(branch);
-
         boolean test1;
         boolean test2;
-
         for (String fileName : cwdFiles) {
             test1 = isFileTracked(HEAD, fileName);
             test2 = isFileTracked(givenId, fileName);
 
             if (!isFileTracked(HEAD, fileName) && isFileTracked(givenId, fileName)) {
-                errorMessage("There is an untracked file in the way; delete it, or add and commit it first.");
+                errorMessage(
+            "There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
-
         Commit splitpoint = Commit.loadCommit(splitId);
         Commit current = Commit.loadCommit(currentId);
         Commit given = Commit.loadCommit(givenId);
-
         Set<String> combinedKeys = new TreeSet<>(current.tracked.keySet());
         combinedKeys.addAll(given.tracked.keySet());
         List<String> combinedKeysList = new ArrayList<>(combinedKeys);
-
         for (String i : combinedKeysList) {
             String s = splitpoint.tracked.get(i);
             String c = current.tracked.get(i);
             String g = given.tracked.get(i);
-
             if (c == null && g == null) {
                 continue;
             }
-
             if (c != null && c.equals(g)) {
                 continue;
             }
-
             if (c != null && c.equals(s) && g == null) {
                 removeFile(i);
                 continue;
             }
-
             if (c == null && g != null && s != null && !g.equals(s)) {
                 conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
             }
-
             if (c != null && g == null && s != null && !c.equals(s)) {
                 conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
             }
-
             if (g != null && c != null && !g.equals(s) && c.equals(s)) {
                 checkout(givenId, i);
                 addFileToStaging(i);
                 continue;
             }
-
             if (s == null && c == null && g != null) {
                 checkout(givenId, i);
                 addFileToStaging(i);
                 continue;
             }
-
-            if (s != null && g != null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)) {
+            if (s!=null && g!=null && c != null && !c.equals(s) && !g.equals(s) && !c.equals(g)){
                 conflictCount += 1;
                 processConflict(i, c, g);
                 continue;
@@ -795,7 +773,6 @@ public class Repository implements Serializable {
         }
         String message = "Merged " + branch + " into " + CURRENT_BRANCH + ".";
         createCommit(message, branch);
-
         if (conflictCount > 0) {
             System.out.println("Encountered a merge conflict.");
         }
